@@ -424,7 +424,7 @@ void HggSelector::Loop(){
       //make sure combine jets gave sensible input
       //must pass met filters!
       //must be barrel photons
-      bool barrel_pho12 = fabs(ph1.Eta()) < 1.4442 && fabs(ph2.Eta()) < 1.442;
+      bool barrel_pho12 = fabs(p1.Eta()) < 1.4442 && fabs(p2.Eta()) < 1.442;
       bool calcRazor = tmpJet.size() >= 2 && jetlist.size() >= min_jet_cut && PassMETFilters()
         && barrel_pho12;
 
@@ -456,7 +456,7 @@ void HggSelector::Loop(){
 
         if(variable > 0) Rvariable = MT/variable;
         if(variable_SS > 0) Rvariable_SS = MT_SS/variable_SS;
-        if(variable_OS > 0) Rvariable_OS = MT_SS/variable_OS;
+        if(variable_OS > 0) Rvariable_OS = MT_OS/variable_OS;
         
         //razor variables
         //no seeding
@@ -1507,7 +1507,7 @@ vector<TLorentzVector> HggSelector::CombineJets_R_no_seed(vector<TLorentzVector>
   return mynewjets;    
 }
 
-vector<TLorentzVector> RazorDiPhoton::CombineJets_R_SSorOS(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2, bool SS){
+vector<TLorentzVector> HggSelector::CombineJets_R_SSorOS(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2, bool SS){
   
   vector<TLorentzVector> mynewjets;
   TLorentzVector j1, j2;
@@ -1558,7 +1558,7 @@ vector<TLorentzVector> RazorDiPhoton::CombineJets_R_SSorOS(vector<TLorentzVector
   }
 
   //handle the special case of jetlist 1
-  if(myjets.size() == 1 && OS) {
+  if(myjets.size() == 1 && !SS) {
     float poss1 = (ph1 + myjets[0]).M2() + ph2.M2();
     float poss2 = ph1.M2() + (ph2 + myjets[0]).M2();
     
@@ -1575,10 +1575,11 @@ vector<TLorentzVector> RazorDiPhoton::CombineJets_R_SSorOS(vector<TLorentzVector
     j1 = ph1 + ph2;
     j2 = myjets[0];
   }
+  
   //if we require no jet we end up with terrible SS scenarios
-  else if(myjets.size() == 0) {
+  if(myjets.size() == 0) {
     if(SS) {
-      cut << "WARNING: NO JETS AND SAME SAME MR Rsq RECONSRUCTION" << endl;
+      cout << "WARNING: NO JETS AND SAME SAME MR Rsq RECONSRUCTION" << endl;
       j1 = ph1 + ph2;
       j2.SetPtEtaPhiM(0, 0, 0, 0.0);;
     }
@@ -1662,6 +1663,5 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
 
 bool HggSelector::PassMETFilters(){
   //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively)
-  return  ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag;
-  
+  return  ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag;  
 }
