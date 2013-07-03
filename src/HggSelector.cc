@@ -423,7 +423,12 @@ void HggSelector::Loop(){
 
       //make sure combine jets gave sensible input
       //must pass met filters!
-      if(tmpJet.size() >= 2 && jetlist.size() >= min_jet_cut && PassMETFilters()) {		
+      //must be barrel photons
+      bool barrel_pho12 = fabs(ph1.Eta()) < 1.4442 && fabs(ph2.Eta()) < 1.442;
+      bool calcRazor = tmpJet.size() >= 2 && jetlist.size() >= min_jet_cut && PassMETFilters()
+        && barrel_pho12;
+
+      if(calcRazor) {		
         TLorentzVector PFHem1 = tmpJet[0];
         TLorentzVector PFHem2 = tmpJet[1];
 
