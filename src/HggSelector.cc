@@ -406,41 +406,45 @@ void HggSelector::Loop(){
       cosThetaLeadPFCiC = p1.Vect().Dot(gg.Vect())/p1.Vect().Mag()/gg.Vect().Mag();
       
       catPFCiC_ = getCategoryPFCiC();
-    
+      
       //////////////CALCULATE RAZOR VARIABLES/////////////
       //////////////ONLY FOR PFCIC ANALYSIS//////////////      
 
       //get the jet list
       vector<TLorentzVector> jetlist = GetJetList(p1,p2);
 
-      //combine the photons and jets into hemispheres
+      
+      //combine the photons and jets into hemispheres      
       vector<TLorentzVector> tmpJet = CombineJets_R_no_seed(jetlist, p1, p2);
 
+      //cut on the number of jets in the event
+      float min_jet_cut = 1;
+
       //make sure combine jets gave sensible input
-      if(tmpJet.size() >= 2) {		
-	TLorentzVector PFHem1 = tmpJet[0];
-	TLorentzVector PFHem2 = tmpJet[1];
-
-	//calculate the variables
-	double MT = CalcMTR(PFHem1, PFHem2, pfMet);
-	double variable = -999999.;
-	double Rvariable = -999999.;
-	variable = CalcGammaMRstar(PFHem1, PFHem2);
-	if(variable > 0) Rvariable = MT/variable;
-	
-	//razor
-	PFMR = variable;
-	PFR = Rvariable;
-	nBtags = 0;
-
-	//hemispheres
-	ptHem1 = PFHem1.Pt();
-	etaHem1 = PFHem1.Eta();
-	phiHem1 =  PFHem1.Phi();
-	
-	ptHem2 = PFHem2.Pt();
-	etaHem2 = PFHem2.Eta();
-	phiHem2 = PFHem2.Phi();      
+      if(tmpJet.size() >= 2 && jetlist.size() >= min_jet_cut) {		
+        TLorentzVector PFHem1 = tmpJet[0];
+        TLorentzVector PFHem2 = tmpJet[1];
+        
+        //calculate the variables
+        double MT = CalcMTR(PFHem1, PFHem2, pfMet);
+        double variable = -999999.;
+        double Rvariable = -999999.;
+        variable = CalcGammaMRstar(PFHem1, PFHem2);
+        if(variable > 0) Rvariable = MT/variable;
+        
+        //razor
+        PFMR = variable;
+        PFR = Rvariable;
+        nBtags = 0;
+        
+        //hemispheres
+        ptHem1 = PFHem1.Pt();
+        etaHem1 = PFHem1.Eta();
+        phiHem1 =  PFHem1.Phi();
+        
+        ptHem2 = PFHem2.Pt();
+        etaHem2 = PFHem2.Eta();
+        phiHem2 = PFHem2.Phi();      
       }
       else{
 	//razor
@@ -1408,6 +1412,102 @@ vector<TLorentzVector> HggSelector::CombineJets_R_no_seed(vector<TLorentzVector>
   return mynewjets;    
 }
 
+vector<TLorentzVector> RazorDiPhoton::CombineJets_R_SSorOS(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2, bool SS){
+  
+  vector<TLorentzVector> mynewjets;
+  TLorentzVector j1, j2;
+  bool foundGood = false;
+  
+  int N_comb = 1;
+  for(int i = 0; i < myjets.size(); i++){
+    N_comb *= 2;
+  }
+
+  double M_min = 9999999999.0;
+  int j_count;
+  for(int i = 0; i < N_comb; i++){
+    TLorentzVector j_temp1, j_temp2;
+
+    if(SS) {
+      j_temp1+=ph1;
+      j_temp1+=ph2;
+    }
+    else {
+      j_temp1+=ph1;
+      j_temp2+=ph2;
+    }
+
+    int itemp = i;
+    j_count = N_comb/2;
+    int count = 0;
+    while(j_count > 0){
+      if(itemp/j_count == 1){
+        j_temp1 += myjets[count];
+      } else {
+        j_temp2 += myjets[count];
+      }
+      itemp -= j_count*(itemp/j_count);
+      j_count /= 2;
+      count++;
+    }    
+    double M_temp = j_temp1.M2()+j_temp2.M2();
+    // smallest mass
+    if(M_temp < M_min){
+      // R selection
+      foundGood = true;
+      M_min = M_temp;
+      j1 = j_temp1;
+      j2 = j_temp2;
+    }
+  }
+
+  //handle the special case of jetlist 1
+  if(myjets.size() == 1 && OS) {
+    float poss1 = (ph1+myjets[0]).M2() + ph2.M2();
+    float poss2 = ph1.M2() + (ph2+myjets[0]).M2();
+    
+    if(poss1 < poss2) {
+      j1 = ph1 + myjets[0];
+      j2 = ph2;
+    }
+    else {
+      j1 = ph2 + myjets[0];
+      j2 = ph1;
+    }
+  }
+  else {
+    j1 = ph1 + ph2;
+    j2 = myjets[0];
+  }
+  //if we require no jet we end up with terrible SS scenarios
+  else if(myjets.size() == 0) {
+    if(SS) {
+      cut << "WARNING: NO JETS AND SAME SAME MR Rsq RECONSRUCTION" << endl;
+      j1 = ph1+ph2;
+      j2 = 0;
+    }
+    else {
+      j1 = ph1;
+      j2 = ph2;
+    }
+  }
+
+  // set masses to 0
+  j1.SetPtEtaPhiM(j1.Pt(),j1.Eta(),j1.Phi(),0.0);
+  j2.SetPtEtaPhiM(j2.Pt(),j2.Eta(),j2.Phi(),0.0);
+  
+
+  if(j2.Pt() > j1.Pt()){
+    TLorentzVector temp = j1;
+    j1 = j2;
+    j2 = temp;
+  }
+  
+  mynewjets.push_back(j1);
+  mynewjets.push_back(j2);
+  return mynewjets;  
+}
+
 double HggSelector::CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb){
   double A = ja.P();
   double B = jb.P();
@@ -1447,8 +1547,10 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
 
   std::vector<VecbosJet>::iterator jIt;
   for(jIt = Jets_->begin(); jIt != Jets_->end(); jIt++){
+    //eta cut
+    if(fabs(jIt->eta) > 2.6) continue;
     //pt cut
-    if(jIt->pt < 20.) continue;
+    if(jIt->pt < 30.) continue;
     //jet id cut
     if(!passJetID(&*jIt)) continue;
 
