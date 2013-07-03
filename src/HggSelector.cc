@@ -412,7 +412,6 @@ void HggSelector::Loop(){
 
       //get the jet list
       vector<TLorentzVector> jetlist = GetJetList(p1,p2);
-
       
       //combine the photons and jets into hemispheres      
       vector<TLorentzVector> tmpJet = CombineJets_R_no_seed(jetlist, p1, p2);
@@ -423,7 +422,8 @@ void HggSelector::Loop(){
       float min_jet_cut = 1;
 
       //make sure combine jets gave sensible input
-      if(tmpJet.size() >= 2 && jetlist.size() >= min_jet_cut) {		
+      //must pass met filters!
+      if(tmpJet.size() >= 2 && jetlist.size() >= min_jet_cut && PassMETFilters()) {		
         TLorentzVector PFHem1 = tmpJet[0];
         TLorentzVector PFHem2 = tmpJet[1];
 
@@ -433,7 +433,7 @@ void HggSelector::Loop(){
         TLorentzVector PFHem1_OS = tmpJet_OS[0];
         TLorentzVector PFHem2_OS = tmpJet_OS[1];
         
-        //calculate the variables
+        //calculate the variables, no seed, SS, and OS
         double MT = CalcMTR(PFHem1, PFHem2, pfMet);
         double MT_SS = CalcMTR(PFHem1_SS, PFHem2_SS, pfMet);
         double MT_OS = CalcMTR(PFHem1_OS, PFHem2_OS, pfMet);
@@ -916,7 +916,7 @@ void HggSelector::setBranchAddresses(){
   fChain->SetBranchAddress("runNumber",&runNumber);
   fChain->SetBranchAddress("evtNumber",&evtNumber);
   //fChain->SetBranchAddress("isRealData",&_isData);
-  
+ 
   fChain->SetBranchAddress("eeBadScFilterFlag",&eeBadScFilterFlag);
   fChain->SetBranchAddress("hcalLaserEventFilterFlag",&hcalLaserEventFilterFlag);
   fChain->SetBranchAddress("HBHENoiseFilterResultFlag",&HBHENoiseFilterResultFlag);
@@ -1653,4 +1653,10 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
   }
 
   return jetlist;
+}
+
+bool HggSelector::PassMETFilters(){
+  //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively)
+  return  ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag;
+  
 }

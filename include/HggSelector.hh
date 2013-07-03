@@ -44,7 +44,7 @@ public:
   double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
   double CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met);
   vector<TLorentzVector> GetJetList(TLorentzVector p1, TLorentzVector p2);
-  
+  bool PassMETFilters();
 
 private:
   TChain* fChain;
