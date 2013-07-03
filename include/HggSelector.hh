@@ -40,11 +40,11 @@ public:
 
   ////////////RAZOR METHODS////////////////
   vector<TLorentzVector> CombineJets_R_no_seed(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2);
-  vector<TLorentzVector> CombineJets_R_SSorOS(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2, bool SS)
+  vector<TLorentzVector> CombineJets_R_SSorOS(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2, bool SS);
   double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
   double CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met);
   vector<TLorentzVector> GetJetList(TLorentzVector p1, TLorentzVector p2);
-
+  
 
 private:
   TChain* fChain;
@@ -338,9 +338,12 @@ private:
   ////////////RAZOR VARIABLES////////////////
   
   //razor
+  int nBtags;
+
+
+  //NO SEEDING
   float PFMR;
   float PFR;
-  int nBtags;
 
   //hemispheres
   float ptHem1;
@@ -350,4 +353,29 @@ private:
   float ptHem2;
   float etaHem2;
   float phiHem2;
+
+  //SAME SIDE SEEING
+  float PFMR_SS;
+  float PFR_SS;
+
+  //hemispheres
+  float ptHem1_SS;
+  float etaHem1_SS;
+  float phiHem1_SS;
+
+  float ptHem2_SS;
+  float etaHem2_SS;
+  float phiHem2_SS;
+
+  //OPPOSITE SIDE SEEING
+  float PFMR_OS;
+  float PFR_OS;
+
+  float ptHem1_OS;
+  float etaHem1_OS;
+  float phiHem1_OS;
+
+  float ptHem2_OS;
+  float etaHem2_OS;
+  float phiHem2_OS;
 };

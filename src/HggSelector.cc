@@ -416,6 +416,8 @@ void HggSelector::Loop(){
       
       //combine the photons and jets into hemispheres      
       vector<TLorentzVector> tmpJet = CombineJets_R_no_seed(jetlist, p1, p2);
+      vector<TLorentzVector> tmpJet_SS = CombineJets_R_SSorOS(jetlist, p1, p2, true);
+      vector<TLorentzVector> tmpJet_OS = CombineJets_R_SSorOS(jetlist, p1, p2, false);
 
       //cut on the number of jets in the event
       float min_jet_cut = 1;
@@ -424,20 +426,47 @@ void HggSelector::Loop(){
       if(tmpJet.size() >= 2 && jetlist.size() >= min_jet_cut) {		
         TLorentzVector PFHem1 = tmpJet[0];
         TLorentzVector PFHem2 = tmpJet[1];
+
+        TLorentzVector PFHem1_SS = tmpJet_SS[0];
+        TLorentzVector PFHem2_SS = tmpJet_SS[1];
+
+        TLorentzVector PFHem1_OS = tmpJet_OS[0];
+        TLorentzVector PFHem2_OS = tmpJet_OS[1];
         
         //calculate the variables
         double MT = CalcMTR(PFHem1, PFHem2, pfMet);
+        double MT_SS = CalcMTR(PFHem1_SS, PFHem2_SS, pfMet);
+        double MT_OS = CalcMTR(PFHem1_OS, PFHem2_OS, pfMet);
+
         double variable = -999999.;
         double Rvariable = -999999.;
+        double variable_SS = -999999.;
+        double Rvariable_SS = -999999.;
+        double variable_OS = -999999.;
+        double Rvariable_OS = -999999.;
+
         variable = CalcGammaMRstar(PFHem1, PFHem2);
-        if(variable > 0) Rvariable = MT/variable;
+        variable_SS = CalcGammaMRstar(PFHem1_SS, PFHem2_SS);
+        variable_OS = CalcGammaMRstar(PFHem1_OS, PFHem2_OS);
+
+        if(variable_SS > 0) Rvariable_SS = MT_SS/variable_SS;
+        if(variable_OS > 0) Rvariable_OS = MT_SS/variable_OS;
         
-        //razor
+        //razor variables
+        //no seeding
         PFMR = variable;
         PFR = Rvariable;
+        //same side photons
+        PFMR_SS = variable_SS;
+        PFR_SS = Rvariable_SS;
+        //opposite side
+        PFMR_OS = variable_OS;
+        PFR_OS = Rvariable_OS;
+
         nBtags = 0;
         
-        //hemispheres
+
+        //no seeding hemispheres
         ptHem1 = PFHem1.Pt();
         etaHem1 = PFHem1.Eta();
         phiHem1 =  PFHem1.Phi();
@@ -445,21 +474,56 @@ void HggSelector::Loop(){
         ptHem2 = PFHem2.Pt();
         etaHem2 = PFHem2.Eta();
         phiHem2 = PFHem2.Phi();      
+
+        //same side hemispheres
+        ptHem1_SS = PFHem1_SS.Pt();
+        etaHem1_SS = PFHem1_SS.Eta();
+        phiHem1_SS =  PFHem1_SS.Phi();
+        
+        ptHem2_SS = PFHem2_SS.Pt();
+        etaHem2_SS = PFHem2_SS.Eta();
+        phiHem2_SS = PFHem2_SS.Phi();      
+
+        //opposite side hemispheres
+        ptHem1_OS = PFHem1_OS.Pt();
+        etaHem1_OS = PFHem1_OS.Eta();
+        phiHem1_OS =  PFHem1_OS.Phi();
+        
+        ptHem2_OS = PFHem2_OS.Pt();
+        etaHem2_OS = PFHem2_OS.Eta();
+        phiHem2_OS = PFHem2_OS.Phi();      
       }
       else{
-	//razor
-	PFMR = 0;
-	PFR = 0;
-	nBtags = 0;
+        //no seed
+        PFMR = 0;
+        PFR = 0;
+        nBtags = 0;        
+        ptHem1= 0 ;
+        etaHem1= 0 ;
+        phiHem1= 0 ;        
+        ptHem2= 0 ;
+        etaHem2= 0 ;
+        phiHem2= 0 ;      
+        //same side
+        PFMR_SS = 0;
+        PFR_SS = 0;
 
-	//hemispheres
-	ptHem1= 0 ;
-	etaHem1= 0 ;
-	phiHem1= 0 ;
-	
-	ptHem2= 0 ;
-	etaHem2= 0 ;
-	phiHem2= 0 ;      
+        ptHem1_SS= 0 ;
+        etaHem1_SS= 0 ;
+        phiHem1_SS= 0 ;        
+        ptHem2_SS= 0 ;
+        etaHem2_SS= 0 ;
+        phiHem2_SS= 0 ;      
+        //opposite side
+        PFMR_OS = 0;
+        PFR_OS = 0;
+
+        ptHem1_OS= 0 ;
+        etaHem1_OS= 0 ;
+        phiHem1_OS= 0 ;        
+        ptHem2_OS= 0 ;
+        etaHem2_OS= 0 ;
+        phiHem2_OS= 0 ;      
       }
     }
     else{
@@ -1046,11 +1110,12 @@ void HggSelector::setupOutputTree(){
 
   ////////////RAZOR VARIABLES////////////////
   //razor
+  outTree->Branch("nBtags",&nBtags,"nBtags/I");
+
+  //NO SEEDING VARIABLES
   outTree->Branch("PFMR",&PFMR,"PFMR/F");
   outTree->Branch("PFR",&PFR,"PFR/F");
-  outTree->Branch("nBtags",&nBtags,"nBtags/I");
-  
-  //hemispheres
+
   outTree->Branch("ptHem1",&ptHem1,"ptHem1/F");
   outTree->Branch("etaHem1",&etaHem1,"etaHem1/F");
   outTree->Branch("phiHem1",&phiHem1,"phiHem1/F");
@@ -1058,6 +1123,31 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("ptHem2",&ptHem2,"ptHem2/F");
   outTree->Branch("etaHem2",&etaHem2,"etaHem2/F");
   outTree->Branch("phiHem2",&phiHem2,"phiHem2/F");  
+
+  //SAME SIDE VARIABLES
+  outTree->Branch("PFMR_SS",&PFMR_SS,"PFMR_SS/F");
+  outTree->Branch("PFR_SS",&PFR_SS,"PFR_SS/F");
+
+  outTree->Branch("ptHem1_SS",&ptHem1_SS,"ptHem1_SS/F");
+  outTree->Branch("etaHem1_SS",&etaHem1_SS,"etaHem1_SS/F");
+  outTree->Branch("phiHem1_SS",&phiHem1_SS,"phiHem1_SS/F");
+  
+  outTree->Branch("ptHem2_SS",&ptHem2_SS,"ptHem2_SS/F");
+  outTree->Branch("etaHem2_SS",&etaHem2_SS,"etaHem2_SS/F");
+  outTree->Branch("phiHem2_SS",&phiHem2_SS,"phiHem2_SS/F");  
+  
+  //OPPOSITE SIDE VARIABLES
+  outTree->Branch("PFMR_OS",&PFMR_OS,"PFMR_OS/F");
+  outTree->Branch("PFR_OS",&PFR_OS,"PFR_OS/F");
+
+  outTree->Branch("ptHem1_OS",&ptHem1_OS,"ptHem1_OS/F");
+  outTree->Branch("etaHem1_OS",&etaHem1_OS,"etaHem1_OS/F");
+  outTree->Branch("phiHem1_OS",&phiHem1_OS,"phiHem1_OS/F");
+  
+  outTree->Branch("ptHem2_OS",&ptHem2_OS,"ptHem2_OS/F");
+  outTree->Branch("etaHem2_OS",&etaHem2_OS,"etaHem2_OS/F");
+  outTree->Branch("phiHem2_OS",&phiHem2_OS,"phiHem2_OS/F");  
+
 }
 
 void HggSelector::fillMuMuGamma(){
