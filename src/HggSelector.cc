@@ -449,6 +449,7 @@ void HggSelector::Loop(){
         variable_SS = CalcGammaMRstar(PFHem1_SS, PFHem2_SS);
         variable_OS = CalcGammaMRstar(PFHem1_OS, PFHem2_OS);
 
+        if(variable > 0) Rvariable = MT/variable;
         if(variable_SS > 0) Rvariable_SS = MT_SS/variable_SS;
         if(variable_OS > 0) Rvariable_OS = MT_SS/variable_OS;
         
@@ -465,7 +466,6 @@ void HggSelector::Loop(){
 
         nBtags = 0;
         
-
         //no seeding hemispheres
         ptHem1 = PFHem1.Pt();
         etaHem1 = PFHem1.Eta();
@@ -1518,6 +1518,7 @@ vector<TLorentzVector> RazorDiPhoton::CombineJets_R_SSorOS(vector<TLorentzVector
   for(int i = 0; i < N_comb; i++){
     TLorentzVector j_temp1, j_temp2;
 
+    //seed the photons based on SS
     if(SS) {
       j_temp1+=ph1;
       j_temp1+=ph2;
@@ -1553,8 +1554,8 @@ vector<TLorentzVector> RazorDiPhoton::CombineJets_R_SSorOS(vector<TLorentzVector
 
   //handle the special case of jetlist 1
   if(myjets.size() == 1 && OS) {
-    float poss1 = (ph1+myjets[0]).M2() + ph2.M2();
-    float poss2 = ph1.M2() + (ph2+myjets[0]).M2();
+    float poss1 = (ph1 + myjets[0]).M2() + ph2.M2();
+    float poss2 = ph1.M2() + (ph2 + myjets[0]).M2();
     
     if(poss1 < poss2) {
       j1 = ph1 + myjets[0];
@@ -1573,8 +1574,8 @@ vector<TLorentzVector> RazorDiPhoton::CombineJets_R_SSorOS(vector<TLorentzVector
   else if(myjets.size() == 0) {
     if(SS) {
       cut << "WARNING: NO JETS AND SAME SAME MR Rsq RECONSRUCTION" << endl;
-      j1 = ph1+ph2;
-      j2 = 0;
+      j1 = ph1 + ph2;
+      j2.SetPtEtaPhiM(0, 0, 0, 0.0);;
     }
     else {
       j1 = ph1;
