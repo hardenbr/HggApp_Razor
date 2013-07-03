@@ -413,22 +413,26 @@ void HggSelector::Loop(){
       //get the jet list
       vector<TLorentzVector> jetlist = GetJetList(p1,p2);
       
-      //combine the photons and jets into hemispheres      
-      vector<TLorentzVector> tmpJet = CombineJets_R_no_seed(jetlist, p1, p2);
-      vector<TLorentzVector> tmpJet_SS = CombineJets_R_SSorOS(jetlist, p1, p2, true);
-      vector<TLorentzVector> tmpJet_OS = CombineJets_R_SSorOS(jetlist, p1, p2, false);
 
       //cut on the number of jets in the event
       float min_jet_cut = 1;
 
-      //make sure combine jets gave sensible input
       //must pass met filters!
       //must be barrel photons
       bool barrel_pho12 = fabs(p1.Eta()) < 1.4442 && fabs(p2.Eta()) < 1.442;
-      bool calcRazor = tmpJet.size() >= 2 && jetlist.size() >= min_jet_cut && PassMETFilters()
+      bool calcRazor = jetlist.size() >= min_jet_cut && PassMETFilters()
         && barrel_pho12;
 
       if(calcRazor) {		
+	//combine the photons and jets into hemispheres      
+	vector<TLorentzVector> tmpJet = CombineJets_R_no_seed(jetlist, p1, p2);
+	vector<TLorentzVector> tmpJet_SS = CombineJets_R_SSorOS(jetlist, p1, p2, true);
+	vector<TLorentzVector> tmpJet_OS = CombineJets_R_SSorOS(jetlist, p1, p2, false);
+
+	if((tmpJet.size() != 2) || (tmpJet.size() != 2) || (tmpJet.size() != 2)) {
+	  cout << "HEMISPHERE MAKER DOES NOT RETURN 2 HEMISPHERES" << endl;
+	}
+	
         TLorentzVector PFHem1 = tmpJet[0];
         TLorentzVector PFHem2 = tmpJet[1];
 
@@ -1571,7 +1575,7 @@ vector<TLorentzVector> HggSelector::CombineJets_R_SSorOS(vector<TLorentzVector> 
       j2 = ph1;
     }
   }
-  else {
+  if(myjets.size() == 1 && SS) {
     j1 = ph1 + ph2;
     j2 = myjets[0];
   }
