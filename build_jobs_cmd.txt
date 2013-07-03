@@ -1,0 +1,2 @@
+python batchSub.py --FilesPerJob=5 --DirName="DoublePhoton_Run2012D_Prompt" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp/HggSelectorApp --isData #IFL# #OF0# hgg/selector_loosePt_MORIOND.cfg" --outputName="reduced.root" --OutputDir="/raid3/jhardenbrook/DoublePhoton_Run2012D_Prompt" Hgg_53X/Caltech/Reduced/DoublePhoton_Run2012D_Prompt.list
+
