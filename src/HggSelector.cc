@@ -424,8 +424,6 @@ void HggSelector::Loop(){
       bool calcRazor = (jetlist.size() >= min_jet_cut) && PassMETFilters()
         && bothBarrel;
 
-      if(!barrel_pho12) cout <<"NO BARREL PHOTONS" << endl;
-
       if(calcRazor) {		
 	//combine the photons and jets into hemispheres      
 	vector<TLorentzVector> tmpJet = CombineJets_R_no_seed(jetlist, p1, p2);
