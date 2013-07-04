@@ -1648,7 +1648,7 @@ bool HggSelector::PassMETFilters(){
   /*  if( !HBHENoiseFilterResultFlag ) cout << "HBHE Noise Flagged Bit 6" << endl;
   if( !hcalLaserEventFilterFlag ) cout << "HCAL Laser Flagged Bit 7" << endl;
   if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" << endl;*/
-  cout << "--------------End MET FLAG-------------" << endl;
+  if( !decision ) cout << "--------------End MET FLAG-------------" << endl;
   return decision;
 }
 
