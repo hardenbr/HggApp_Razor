@@ -46,7 +46,7 @@ public:
   vector<TLorentzVector> GetJetList(TLorentzVector p1, TLorentzVector p2);
   bool PassMETFilters();
   void FillRazorVarsWith(int n);
-
+  void PrintEventNumbers();
 private:
   TChain* fChain;
   bool valid;

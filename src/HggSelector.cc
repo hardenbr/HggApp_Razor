@@ -1631,9 +1631,26 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
   return jetlist;
 }
 
+void HggSelector::PrintEventNumbers() {
+  cout << runNumber << ":" << lumiBLock << ":" << evtNumber << endl;
+}
+
 bool HggSelector::PassMETFilters(){
-  //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively)
-  return  (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
+  //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively
+
+  bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
+  if( !decision ) {
+    cout << "------------Begin MET FLAG-----------" << endl;
+    PrintEventNumbers();
+  }
+  if( !ECALTPFilterFlag ) cout << "Ecal dead cell Flagged Bit 0" << endl;
+  if( !CSCHaloFilterFlag ) cout << "CSC Beam Halo Flagged Bit 3" << endl;
+  if( !trackerFailureFilterFlag ) cout << "tracker Failure Flagged Bit 4" << endl;
+  if( !HBHENoiseFilterResultFlag ) cout << "HBHE Noise Flagged Bit 6" << endl;
+  if( !hcalLaserEventFilterFlag ) cout << "HCAL Laser Flagged Bit 7" << endl;
+  if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" << endl;
+  cout << "--------------End MET FLAG-------------" << endl;
+  return decision
 }
 
 void HggSelector::FillRazorVarsWith(int n){
