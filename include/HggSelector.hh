@@ -355,6 +355,9 @@ private:
   float etaHem2;
   float phiHem2;
 
+  float mHem1;
+  float mHem2;
+
   //SAME SIDE SEEING
   float PFMR_SS;
   float PFR_SS;
@@ -368,6 +371,9 @@ private:
   float etaHem2_SS;
   float phiHem2_SS;
 
+  float mHem1_SS;
+  float mHem2_SS;
+
   //OPPOSITE SIDE SEEING
   float PFMR_OS;
   float PFR_OS;
@@ -379,4 +385,10 @@ private:
   float ptHem2_OS;
   float etaHem2_OS;
   float phiHem2_OS;
+
+  float mHem1_OS;
+  float mHem2_OS;
+
+  int bothBarrel;
+  int nJets;
 };

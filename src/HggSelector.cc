@@ -413,15 +413,16 @@ void HggSelector::Loop(){
       //get the jet list
       vector<TLorentzVector> jetlist = GetJetList(p1,p2);
       
+      nJets = jetlist.size();
 
       //cut on the number of jets in the event
       float min_jet_cut = 1;
 
       //must pass met filters!
-      //must be barrel photons
-      bool barrel_pho12 = fabs(p1.Eta()) < 1.4442 && fabs(p2.Eta()) < 1.4442;
+      //must be barrel photons (Use the supercluster)
+      bothBarrel = fabs(pho1_.SC.eta) < 1.48 && fabs(pho2_.SC.eta) < 1.48;
       bool calcRazor = (jetlist.size() >= min_jet_cut) && PassMETFilters()
-        && barrel_pho12;
+        && bothBarrel;
 
       if(!barrel_pho12) cout <<"NO BARREL PHOTONS" << endl;
 
@@ -486,6 +487,9 @@ void HggSelector::Loop(){
         etaHem2 = PFHem2.Eta();
         phiHem2 = PFHem2.Phi();      
 
+        mHem1 = PFHem1.M();
+        mHem2 = PFHem2.M();
+
         //same side hemispheres
         ptHem1_SS = PFHem1_SS.Pt();
         etaHem1_SS = PFHem1_SS.Eta();
@@ -495,6 +499,9 @@ void HggSelector::Loop(){
         etaHem2_SS = PFHem2_SS.Eta();
         phiHem2_SS = PFHem2_SS.Phi();      
 
+        mHem1_SS = PFHem1_SS.M();
+        mHem2_SS = PFHem2_SS.M();
+
         //opposite side hemispheres
         ptHem1_OS = PFHem1_OS.Pt();
         etaHem1_OS = PFHem1_OS.Eta();
@@ -503,6 +510,10 @@ void HggSelector::Loop(){
         ptHem2_OS = PFHem2_OS.Pt();
         etaHem2_OS = PFHem2_OS.Eta();
         phiHem2_OS = PFHem2_OS.Phi();      
+
+        mHem1_OS = PFHem1_SS.M();
+        mHem2_OS = PFHem2_SS.M();
+
       }
       else{
         FillRazorVarsWith(0);
@@ -1084,6 +1095,7 @@ void HggSelector::setupOutputTree(){
   ////////////RAZOR VARIABLES////////////////
   //razor
   outTree->Branch("nBtags",&nBtags,"nBtags/I");
+  outTree->Branch("bothBarrel", &bothBarrel, "bothBarrel/I");
 
   //NO SEEDING VARIABLES
   outTree->Branch("PFMR",&PFMR,"PFMR/F");
@@ -1097,6 +1109,9 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("etaHem2",&etaHem2,"etaHem2/F");
   outTree->Branch("phiHem2",&phiHem2,"phiHem2/F");  
 
+  outTree->Branch("mHem1",&mHem1,"mHem1/F");
+  outTree->Branch("mHem2",&mHem2,"mHem2/F");
+
   //SAME SIDE VARIABLES
   outTree->Branch("PFMR_SS",&PFMR_SS,"PFMR_SS/F");
   outTree->Branch("PFR_SS",&PFR_SS,"PFR_SS/F");
@@ -1109,6 +1124,9 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("etaHem2_SS",&etaHem2_SS,"etaHem2_SS/F");
   outTree->Branch("phiHem2_SS",&phiHem2_SS,"phiHem2_SS/F");  
   
+  outTree->Branch("mHem1_SS",&mHem1_SS,"mHem1_SS/F");
+  outTree->Branch("mHem2_SS",&mHem2_SS,"mHem2_SS/F");
+
   //OPPOSITE SIDE VARIABLES
   outTree->Branch("PFMR_OS",&PFMR_OS,"PFMR_OS/F");
   outTree->Branch("PFR_OS",&PFR_OS,"PFR_OS/F");
@@ -1121,6 +1139,8 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("etaHem2_OS",&etaHem2_OS,"etaHem2_OS/F");
   outTree->Branch("phiHem2_OS",&phiHem2_OS,"phiHem2_OS/F");  
 
+  outTree->Branch("mHem1_OS",&mHem1_OS,"mHem1_OS/F");
+  outTree->Branch("mHem2_OS",&mHem2_OS,"mHem2_OS/F");
 }
 
 void HggSelector::fillMuMuGamma(){
@@ -1434,16 +1454,15 @@ vector<TLorentzVector> HggSelector::CombineJets_R_no_seed(vector<TLorentzVector>
   double M_min = 9999999999.0;
   int j_count;
   for(int i = 1; i < N_comb-1; i++){
-    TLorentzVector j_temp1, j_temp2;
-
+    TLorentzVector j_temp1, j_temp2;    
     int itemp = i;
     j_count = N_comb/2;
     int count = 0;
     while(j_count > 0){
       if(itemp/j_count == 1){
-	j_temp1 += myjets[count];
+        j_temp1 += myjets[count];
       } else {
-	j_temp2 += myjets[count];
+        j_temp2 += myjets[count];
       }
       itemp -= j_count*(itemp/j_count);
       j_count /= 2;
@@ -1669,7 +1688,9 @@ void HggSelector::FillRazorVarsWith(int n){
   ptHem2= n ;
   etaHem2= n ;
   phiHem2= n ;      
-  
+  mHem1=n;
+  mHem2=n;
+
   //same side
   PFMR_SS = n;
   PFR_SS = n;
@@ -1679,7 +1700,8 @@ void HggSelector::FillRazorVarsWith(int n){
   ptHem2_SS= n ;
   etaHem2_SS= n ;
   phiHem2_SS= n ;      
-  
+  mHem1_SS=n;
+  mHem2_SS=n;
   //opposite side
   PFMR_OS = n;
   PFR_OS = n;
@@ -1689,4 +1711,6 @@ void HggSelector::FillRazorVarsWith(int n){
   ptHem2_OS= n ;
   etaHem2_OS= n ;
   phiHem2_OS= n ;      
+  mHem1_OS=n;
+  mHem2_OS=n;
 }
