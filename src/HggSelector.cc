@@ -507,12 +507,14 @@ void HggSelector::Loop(){
         phiHem2_OS = PFHem2_OS.Phi();      
       }
       else{
-	FillRazorVarsWith(0);
+        FillRazorVarsWith(0);
       }
     }
     else{
       mPairPFCiC_=-1;
       catPFCiC_ = -1;
+      //To reduce file size, only fill the tree if we reconstruct the razor
+      continue;
       FillRazorVarsWith(-99);
     }
 
@@ -579,6 +581,7 @@ void HggSelector::Loop(){
     drBoundaryOut                = drBoundary;
     ECALTPFilterFlagOut          = ECALTPFilterFlag;
 
+    
     outTree->Fill();
   }//while(fChain...
 
@@ -1630,8 +1633,7 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
 
 bool HggSelector::PassMETFilters(){
   //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively)
-  return true;
-  //  return  !(ECALTPFilterFlag || CSCHaloFilterFlag || trackerFailureFilterFlag || HBHENoiseFilterResultFlag || hcalLaserEventFilterFlag || eeBadScFilterFlag);  
+  return  (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
 }
 
 void HggSelector::FillRazorVarsWith(int n){
