@@ -243,7 +243,8 @@ def main():
 #            queue = "all.q@compute-2-2.local,all.q@compute-2-4.local,all.q@compute-3-2.local,all.q@compute-3-3.local,all.q@compute-3-4.local,all.q@compute-3-5.local,all.q@compute-3-6.local,all.q@compute-3-7.local,all.q@compute-3-8.local,all.q@compute-3-9.local,all.q@compute-3-10.local,all.q@compute-3-11.local,all.q@compute-3-12.local"
             #queue = "all.q@compute-2-2.local,all.q@compute-2-4.local,all.q@compute-3-2.local"
             #           bsub = "qsub -q  %s %s" % (queue,scriptFile)
-            bsub = "qsub -o %s/log -e %s/log -q %s %s" % (DirName, DirName, queue ,scriptFile)
+            logarea = wd + "/" + DirName
+            bsub = "qsub -o %s/log -e %s/log -q %s %s" % (logarea, logarea, queue ,scriptFile)
             print bsub
             os.system(bsub)
             
