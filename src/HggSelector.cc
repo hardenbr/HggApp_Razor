@@ -511,11 +511,11 @@ void HggSelector::Loop(){
         etaHem2_OS = PFHem2_OS.Eta();
         phiHem2_OS = PFHem2_OS.Phi();      
 
-        mHem1_OS = PFHem1_SS.M();
-        mHem2_OS = PFHem2_SS.M();
+        mHem1_OS = PFHem1_OS.M();
+        mHem2_OS = PFHem2_OS.M();
 
       }
-      else{
+      else{ // calcRazor == false
         FillRazorVarsWith(0);
       }
     }
@@ -1095,6 +1095,7 @@ void HggSelector::setupOutputTree(){
   ////////////RAZOR VARIABLES////////////////
   //razor
   outTree->Branch("nBtags",&nBtags,"nBtags/I");
+  outTree->Branch("nJets",&nJets,"nJets/I");
   outTree->Branch("bothBarrel", &bothBarrel, "bothBarrel/I");
 
   //NO SEEDING VARIABLES
@@ -1441,7 +1442,6 @@ float HggSelector::getDiPhoMVA(int indexPho1, int indexPho2, float mva1, float m
 vector<TLorentzVector> HggSelector::CombineJets_R_no_seed(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2){
   vector<TLorentzVector> mynewjets;
   TLorentzVector j1, j2;
-  bool foundGood = false;
   
   myjets.push_back(ph1);
   myjets.push_back(ph2);
@@ -1472,7 +1472,6 @@ vector<TLorentzVector> HggSelector::CombineJets_R_no_seed(vector<TLorentzVector>
     // smallest mass
     if(M_temp < M_min){
       // R selection
-      foundGood = true;
       M_min = M_temp;
       j1 = j_temp1;
       j2 = j_temp2;
@@ -1498,7 +1497,6 @@ vector<TLorentzVector> HggSelector::CombineJets_R_SSorOS(vector<TLorentzVector> 
   
   vector<TLorentzVector> mynewjets;
   TLorentzVector j1, j2;
-  bool foundGood = false;
   
   int N_comb = 1;
   for(int i = 0; i < myjets.size(); i++){
@@ -1537,7 +1535,6 @@ vector<TLorentzVector> HggSelector::CombineJets_R_SSorOS(vector<TLorentzVector> 
     // smallest mass
     if(M_temp < M_min){
       // R selection
-      foundGood = true;
       M_min = M_temp;
       j1 = j_temp1;
       j2 = j_temp2;
@@ -1656,8 +1653,8 @@ bool HggSelector::PassMETFilters(){
   //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively
 
   // remove bits 6 7 8 for now (unfilled) 
-  //  bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
-  bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag);
+  bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
+  //bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag);
   if( !decision ) {
     cout << "------------Begin MET FLAG-----------" << endl;
     PrintEventNumbers();
@@ -1669,9 +1666,9 @@ bool HggSelector::PassMETFilters(){
   if( !trackerFailureFilterFlag ) cout << "tracker Failure Flagged Bit 4" << endl;
 
   //remove these bits for now
-  /*  if( !HBHENoiseFilterResultFlag ) cout << "HBHE Noise Flagged Bit 6" << endl;
+  if( !HBHENoiseFilterResultFlag ) cout << "HBHE Noise Flagged Bit 6" << endl;
   if( !hcalLaserEventFilterFlag ) cout << "HCAL Laser Flagged Bit 7" << endl;
-  if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" << endl;*/
+  if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" << endl;
   if( !decision ) cout << "--------------End MET FLAG-------------" << endl;
   return decision;
 }
