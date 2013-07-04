@@ -45,6 +45,7 @@ public:
   double CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met);
   vector<TLorentzVector> GetJetList(TLorentzVector p1, TLorentzVector p2);
   bool PassMETFilters();
+  void FillRazorVarsWith(int n);
 
 private:
   TChain* fChain;

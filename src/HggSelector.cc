@@ -419,9 +419,13 @@ void HggSelector::Loop(){
 
       //must pass met filters!
       //must be barrel photons
-      bool barrel_pho12 = fabs(p1.Eta()) < 1.4442 && fabs(p2.Eta()) < 1.442;
-      bool calcRazor = jetlist.size() >= min_jet_cut && PassMETFilters()
+      bool barrel_pho12 = fabs(p1.Eta()) < 1.4442 && fabs(p2.Eta()) < 1.4442;
+      bool calcRazor = (jetlist.size() >= min_jet_cut) && PassMETFilters()
         && barrel_pho12;
+
+      if(!PassMETFilters()) cout << "DID NOT PASS MET FILTERS" << endl;
+      if(!barrel_pho12) cout <<"NO BARREL PHOTONS" << endl;
+
 
       if(calcRazor) {		
 	//combine the photons and jets into hemispheres      
@@ -503,54 +507,13 @@ void HggSelector::Loop(){
         phiHem2_OS = PFHem2_OS.Phi();      
       }
       else{
-        //no seed
-        PFMR = 0;
-        PFR = 0;
-        nBtags = 0;        
-        ptHem1= 0 ;
-        etaHem1= 0 ;
-        phiHem1= 0 ;        
-        ptHem2= 0 ;
-        etaHem2= 0 ;
-        phiHem2= 0 ;      
-        //same side
-        PFMR_SS = 0;
-        PFR_SS = 0;
-
-        ptHem1_SS= 0 ;
-        etaHem1_SS= 0 ;
-        phiHem1_SS= 0 ;        
-        ptHem2_SS= 0 ;
-        etaHem2_SS= 0 ;
-        phiHem2_SS= 0 ;      
-        //opposite side
-        PFMR_OS = 0;
-        PFR_OS = 0;
-
-        ptHem1_OS= 0 ;
-        etaHem1_OS= 0 ;
-        phiHem1_OS= 0 ;        
-        ptHem2_OS= 0 ;
-        etaHem2_OS= 0 ;
-        phiHem2_OS= 0 ;      
+	FillRazorVarsWith(0);
       }
     }
     else{
       mPairPFCiC_=-1;
       catPFCiC_ = -1;
-      //razor
-      PFMR = -99;
-      PFR = -99;
-      nBtags = 0;
-      
-      //hemispheres
-      ptHem1= -99;
-      etaHem1= -99;
-      phiHem1= -99;
-      
-      ptHem2= -99;
-      etaHem2= -99;
-      phiHem2= -99;
+      FillRazorVarsWith(-99);
     }
 
     //if(index1CiC > -1 && index2CiC > -1){
@@ -1667,5 +1630,40 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
 
 bool HggSelector::PassMETFilters(){
   //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively)
-  return  ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag;  
+  return true;
+  //  return  !(ECALTPFilterFlag || CSCHaloFilterFlag || trackerFailureFilterFlag || HBHENoiseFilterResultFlag || hcalLaserEventFilterFlag || eeBadScFilterFlag);  
+}
+
+void HggSelector::FillRazorVarsWith(int n){
+  nBtags = 0;        
+  
+  //no seed
+  PFMR = n;
+  PFR = n;
+  ptHem1= n ;
+  etaHem1= n ;
+  phiHem1= n ;        
+  ptHem2= n ;
+  etaHem2= n ;
+  phiHem2= n ;      
+  
+  //same side
+  PFMR_SS = n;
+  PFR_SS = n;
+  ptHem1_SS= n ;
+  etaHem1_SS= n ;
+  phiHem1_SS= n ;        
+  ptHem2_SS= n ;
+  etaHem2_SS= n ;
+  phiHem2_SS= n ;      
+  
+  //opposite side
+  PFMR_OS = n;
+  PFR_OS = n;
+  ptHem1_OS= n ;
+  etaHem1_OS= n ;
+  phiHem1_OS= n ;        
+  ptHem2_OS= n ;
+  etaHem2_OS= n ;
+  phiHem2_OS= n ;      
 }
