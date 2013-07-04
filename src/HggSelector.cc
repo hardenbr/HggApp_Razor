@@ -1632,7 +1632,7 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
 }
 
 void HggSelector::PrintEventNumbers() {
-  cout << runNumber << ":" << lumiBLock << ":" << evtNumber << endl;
+  cout << runNumber << ":" << lumiBlock << ":" << evtNumber << endl;
 }
 
 bool HggSelector::PassMETFilters(){
@@ -1650,7 +1650,7 @@ bool HggSelector::PassMETFilters(){
   if( !hcalLaserEventFilterFlag ) cout << "HCAL Laser Flagged Bit 7" << endl;
   if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" << endl;
   cout << "--------------End MET FLAG-------------" << endl;
-  return decision
+  return decision;
 }
 
 void HggSelector::FillRazorVarsWith(int n){
