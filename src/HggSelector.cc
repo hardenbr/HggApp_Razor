@@ -485,8 +485,8 @@ void HggSelector::Loop(){
         etaHem2 = PFHem2.Eta();
         phiHem2 = PFHem2.Phi();      
 
-        mHem1 = PFHem1.M();
-        mHem2 = PFHem2.M();
+        mHem1 = PFHem1.E();
+        mHem2 = PFHem2.E();
 
         //same side hemispheres
         ptHem1_SS = PFHem1_SS.Pt();
@@ -497,8 +497,8 @@ void HggSelector::Loop(){
         etaHem2_SS = PFHem2_SS.Eta();
         phiHem2_SS = PFHem2_SS.Phi();      
 
-        mHem1_SS = PFHem1_SS.M();
-        mHem2_SS = PFHem2_SS.M();
+        mHem1_SS = PFHem1_SS.E();
+        mHem2_SS = PFHem2_SS.E();
 
         //opposite side hemispheres
         ptHem1_OS = PFHem1_OS.Pt();
@@ -509,8 +509,8 @@ void HggSelector::Loop(){
         etaHem2_OS = PFHem2_OS.Eta();
         phiHem2_OS = PFHem2_OS.Phi();      
 
-        mHem1_OS = PFHem1_OS.M();
-        mHem2_OS = PFHem2_OS.M();
+        mHem1_OS = PFHem1_OS.E();
+        mHem2_OS = PFHem2_OS.E();
 
       }
       else{ // calcRazor == false
