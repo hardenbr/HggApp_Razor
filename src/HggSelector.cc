@@ -420,9 +420,10 @@ void HggSelector::Loop(){
 
       //must pass met filters!
       //must be barrel photons (Use the supercluster)
-      bothBarrel = fabs(pho1_.SC.eta) < 1.48 && fabs(pho2_.SC.eta) < 1.48;
-      bool calcRazor = (jetlist.size() >= min_jet_cut) && PassMETFilters()
-        && bothBarrel;
+      bothBarrel = fabs(pho1_.SC.eta) < 1.48 && fabs(pho2_.SC.eta) < 1.48;      
+      bool bothEndcaps = fabs(pho1_.SC.eta) < 2.6 && fabs(pho2_.SC.eta) < 2.6;
+
+      bool calcRazor = (jetlist.size() >= min_jet_cut) && PassMETFilters() && bothEndcaps;
 
       if(calcRazor) {		
 	//combine the photons and jets into hemispheres      
