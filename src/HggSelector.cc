@@ -258,31 +258,31 @@ void HggSelector::Loop(){
       } // Done with smearing
       
       for(int iScale=-nSigma;iScale<=nSigma;iScale++){ //do the scaling systematic
-	indices = getBestPair(mvaOut,-999,iScale);
-	diPhoMVAScale.push_back(mvaOut[0]);
-	pho1MVAScale.push_back(mvaOut[1]);
-	pho2MVAScale.push_back(mvaOut[2]);
-
-	if(indices.first == -1 || indices.second==-1){
-	  mPairScale.push_back(-1);
-	}else{
-	  mPairScale.push_back(getMPair(indices.first,indices.second));
-	}
+        indices = getBestPair(mvaOut,-999,iScale);
+        diPhoMVAScale.push_back(mvaOut[0]);
+        pho1MVAScale.push_back(mvaOut[1]);
+        pho2MVAScale.push_back(mvaOut[2]);
+        
+        if(indices.first == -1 || indices.second==-1){
+          mPairScale.push_back(-1);
+        }else{
+          mPairScale.push_back(getMPair(indices.first,indices.second));
+        }
 		//do the smearing for the PFCiC Analysis
-	indices = getBestPairCiC(-999,iScale,true);
-	if(indices.first == -1 || indices.second==-1){
-	  mPairScalePFCiC.push_back(-1);
-	}else{
-	  mPairScalePFCiC.push_back(getMPair(indices.first,indices.second));
-	}
-
+        indices = getBestPairCiC(-999,iScale,true);
+        if(indices.first == -1 || indices.second==-1){
+          mPairScalePFCiC.push_back(-1);
+        }else{
+          mPairScalePFCiC.push_back(getMPair(indices.first,indices.second));
+        }
+        
 		//do the smearing for the CiC Analysis
-	indices = getBestPairCiC(-999,iScale,false);
-	if(indices.first == -1 || indices.second==-1){
-	  mPairScaleCiC.push_back(-1);
-	}else{
-	  mPairScaleCiC.push_back(getMPair(indices.first,indices.second));
-	}
+        indices = getBestPairCiC(-999,iScale,false);
+        if(indices.first == -1 || indices.second==-1){
+          mPairScaleCiC.push_back(-1);
+        }else{
+          mPairScaleCiC.push_back(getMPair(indices.first,indices.second));
+        }
       }
     }
     
@@ -954,6 +954,8 @@ void HggSelector::setBranchAddresses(){
  fChain->SetBranchAddress("PFMET",&pfMet);
  fChain->SetBranchAddress("PFMETPhi",&pfMetPhi);
 
+ fChain->SetBranchAddress("CaloMETPhi", &CaloMETPhi);
+ fChain->SetBranchAddress("CaloMET", &CaloMET);
 
  vector<string>::const_iterator trigIt;
  int i=0;
@@ -1096,6 +1098,9 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("nBtags",&nBtags,"nBtags/I");
   outTree->Branch("nJets",&nJets,"nJets/I");
   outTree->Branch("bothBarrel", &bothBarrel, "bothBarrel/I");
+
+  outTree->Branch("CaloMETPhi", &CaloMETPhi, "CaloMETPhi/F");
+  outTree->Branch("CaloMET", &CaloMET, "CaloMET/F");
 
   //NO SEEDING VARIABLES
   outTree->Branch("PFMR",&PFMR,"PFMR/F");

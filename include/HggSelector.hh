@@ -337,6 +337,9 @@ private:
   bool ECALTPFilterFlag;
 
   ////////////RAZOR VARIABLES////////////////
+
+  float CaloMET;
+  float CaloMetPhi;
   
   //razor
   int nBtags;
