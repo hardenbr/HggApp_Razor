@@ -246,7 +246,7 @@ def main():
             logarea = wd + "/" + DirName
             bsub = "qsub -o %s/log -e %s/log -q %s %s" % (logarea, logarea, queue ,scriptFile)
             print bsub
-            os.system(bsub)
+#            os.system(bsub)
             
 if __name__=="__main__":
     main()
