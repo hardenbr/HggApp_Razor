@@ -344,7 +344,7 @@ private:
   ////////////RAZOR VARIABLES////////////////
 
   float CaloMET;
-  float CaloMetPhi;
+  float CaloMETPhi;
   
   //razor
   int nBtags;
