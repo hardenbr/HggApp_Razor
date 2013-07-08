@@ -420,12 +420,15 @@ void HggSelector::Loop(){
       //cut on the number of jets in the event
       float min_jet_cut = 1;
 
-      //must pass met filters!
+
       //must be barrel photons (Use the supercluster)
       bothBarrel = fabs(pho1_.SC.eta) < 1.48 && fabs(pho2_.SC.eta) < 1.48;      
+      //check the bad event list
+      badEventList = isFlagged();
       bool bothEndcaps = fabs(pho1_.SC.eta) < 2.6 && fabs(pho2_.SC.eta) < 2.6;
 
-      bool calcRazor = (jetlist.size() >= min_jet_cut) && PassMETFilters() && bothEndcaps;
+      //must pass met filters! and not be in the bad event list
+      bool calcRazor = (jetlist.size() >= min_jet_cut) && PassMETFilters() && bothEndcaps && !badEventList;
 
       if(calcRazor) {		
 	//combine the photons and jets into hemispheres      
@@ -1722,7 +1725,9 @@ void HggSelector::FillRazorVarsWith(int n){
 //list with this method
 bool HggSelector::isFlagged(){
   EventIndex index;
-  index.EventNumber = eventNumber;
+
+  //fixed the names of variables
+  index.EventNumber = evtNumber;
   index.RunNumber = runNumber;
   
   if(EventCounts.find(index) == EventCounts.end()){ //yes

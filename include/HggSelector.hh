@@ -398,6 +398,7 @@ private:
   float mHem2_OS;
 
   int bothBarrel;
+  int badEventList;
   int nJets;
 
   //running over bad event list
