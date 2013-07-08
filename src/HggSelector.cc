@@ -75,6 +75,8 @@ int HggSelector::init(){
 
   triggerDec = new int[triggers.size()];
 
+  //initialize the bad event list
+  InitEventFlag("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/AllBadABCDNEWTAUID.txt")
   
   this->setBranchAddresses();
   this->setupOutputTree();
@@ -1715,3 +1717,77 @@ void HggSelector::FillRazorVarsWith(int n){
   mHem1_OS=n;
   mHem2_OS=n;
 }
+
+//after the initeventflag is called we can check the bad event
+//list with this method
+bool HggSelector::isFlagged(){
+  EventIndex index;
+  index.EventNumber = eventNumber;
+  index.RunNumber = runNumber;
+  
+  if(EventCounts.find(index) == EventCounts.end()){ //yes
+    //cout << "Event not in list" << endl;
+    return false;
+  } else {
+    //cout << "Event IS in list" << endl;
+    return true;
+    if(EventCounts[index] == 1){
+      //cout << "Found the event - all is good in the world" << endl;
+      return true;
+    }
+  } 
+}
+
+//initialize the list of bad events
+//and construct the eventindex object
+void HggSelector::InitEventFlag(char *s_Event){
+  ifstream inputfile(s_Event);
+  
+  int RUN_NUMBER;
+  int LS_NUMBER;
+  Long64_t EVENT_NUMBER;
+  
+  EventIndex index;
+  
+  cout << "Reading bad event list" << endl;
+	
+  while(!inputfile.eof()){
+    inputfile >> RUN_NUMBER >> LS_NUMBER >> EVENT_NUMBER;
+    
+    index.RunNumber = RUN_NUMBER;
+    index.EventNumber = EVENT_NUMBER;
+    
+    if(index.RunNumber < 0 || index.EventNumber < 0)
+      continue;
+    
+    //Is this event/run-number combo alreading in the map?
+    if(EventCounts.find(index) == EventCounts.end()){ //no
+      EventCounts.insert(pair<EventIndex, int>(index, 1));
+    } 
+    else { //yes
+      EventCounts[index] = EventCounts[index] + 1;
+    }
+    
+    index.RunNumber = -1;
+    index.EventNumber = -1;
+  }
+}
+
+//The event index object for checking the list of bad
+//events
+struct HggSelector::EventIndex {
+	int RunNumber;
+	Long64_t EventNumber;
+	
+	EventIndex() : RunNumber(0), EventNumber(0) {}
+	
+	bool operator <(const EventIndex &other) const
+	{
+      if(RunNumber < other.RunNumber)  return true;
+      if(RunNumber > other.RunNumber)  return false;
+      if(EventNumber < other.EventNumber return true;
+      if(EventNumber > other.EventNumber) return false;
+      
+      return false;
+	}
+};

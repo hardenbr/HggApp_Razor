@@ -44,9 +44,14 @@ public:
   double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
   double CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met);
   vector<TLorentzVector> GetJetList(TLorentzVector p1, TLorentzVector p2);
-  bool PassMETFilters();
-  void FillRazorVarsWith(int n);
+  bool PassMETFilters(); //check the actual bits
+  void FillRazorVarsWith(int n); 
   void PrintEventNumbers();
+  //reading bad event methods
+  void InitEventFlag(char *s_Event);
+  bool isFlagged();
+
+
 private:
   TChain* fChain;
   bool valid;
@@ -394,4 +399,9 @@ private:
 
   int bothBarrel;
   int nJets;
+
+  //running over bad event list
+  struct EventIndex;
+  map<EventIndex, int> EventCounts;
+
 };
