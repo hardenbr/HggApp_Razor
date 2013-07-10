@@ -97,7 +97,7 @@ int HggSelector::init(){
   triggerDec = new int[triggers.size()];
 
   //initialize the bad event list
-  InitEventFlag("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/AllBadABCDNEWTAUID.txt");
+  //  InitEventFlag("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/AllBadABCDNEWTAUID.txt");
   
   this->setBranchAddresses();
   this->setupOutputTree();
@@ -444,8 +444,8 @@ void HggSelector::Loop(){
 
       //must be barrel photons (Use the supercluster)
       bothBarrel = fabs(pho1_.SC.eta) < 1.48 && fabs(pho2_.SC.eta) < 1.48;      
-      //check the bad event list
-      badEventList = isFlagged();
+      //check the bad event list (needs to be produced)
+      //      badEventList = isFlagged();
       bool bothEndcaps = fabs(pho1_.SC.eta) < 2.6 && fabs(pho2_.SC.eta) < 2.6;
 
       //must pass met filters! and not be in the bad event list
