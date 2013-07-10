@@ -1,5 +1,8 @@
 #include <HggSelector.hh>
 #include "ReadConfig.hh"
+#include <iostream>
+#include <string>
+#include <vector>
 
 //includes for the TMVA ID
 #include "TMVA/Tools.h"
@@ -11,6 +14,24 @@ using namespace std;
 using namespace TMVA;
 
 #define debugSelector 0
+
+//events
+struct HggSelector::EventIndex {
+  int RunNumber;
+  Long64_t EventNumber;
+  
+  EventIndex() : RunNumber(0), EventNumber(0) {}
+  
+  bool operator <(const EventIndex &other) const
+  {
+    if(RunNumber < other.RunNumber)  return true;
+    if(RunNumber > other.RunNumber)  return false;
+    if(EventNumber < other.EventNumber) return true;
+    if(EventNumber > other.EventNumber) return false;
+    
+    return false;
+  }
+};
 
 HggSelector::HggSelector():
   fChain(0),
@@ -76,7 +97,7 @@ int HggSelector::init(){
   triggerDec = new int[triggers.size()];
 
   //initialize the bad event list
-  InitEventFlag("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/AllBadABCDNEWTAUID.txt")
+  InitEventFlag("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/AllBadABCDNEWTAUID.txt");
   
   this->setBranchAddresses();
   this->setupOutputTree();
@@ -1722,7 +1743,7 @@ void HggSelector::FillRazorVarsWith(int n){
 //list with this method
 bool HggSelector::isFlagged(){
   EventIndex index;
-
+  
   //fixed the names of variables
   index.EventNumber = evtNumber;
   index.RunNumber = runNumber;
@@ -1776,20 +1797,5 @@ void HggSelector::InitEventFlag(char *s_Event){
 }
 
 //The event index object for checking the list of bad
-//events
-struct HggSelector::EventIndex {
-	int RunNumber;
-	Long64_t EventNumber;
-	
-	EventIndex() : RunNumber(0), EventNumber(0) {}
-	
-	bool operator <(const EventIndex &other) const
-	{
-      if(RunNumber < other.RunNumber)  return true;
-      if(RunNumber > other.RunNumber)  return false;
-      if(EventNumber < other.EventNumber return true;
-      if(EventNumber > other.EventNumber) return false;
-      
-      return false;
-	}
-};
+
+  
