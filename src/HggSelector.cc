@@ -1,5 +1,11 @@
 #include <HggSelector.hh>
 #include "ReadConfig.hh"
+<<<<<<< HEAD
+=======
+#include <iostream>
+#include <string>
+#include <vector>
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
 
 //includes for the TMVA ID
 #include "TMVA/Tools.h"
@@ -12,6 +18,27 @@ using namespace TMVA;
 
 #define debugSelector 0
 
+<<<<<<< HEAD
+=======
+//events
+struct HggSelector::EventIndex {
+  int RunNumber;
+  Long64_t EventNumber;
+  
+  EventIndex() : RunNumber(0), EventNumber(0) {}
+  
+  bool operator <(const EventIndex &other) const
+  {
+    if(RunNumber < other.RunNumber)  return true;
+    if(RunNumber > other.RunNumber)  return false;
+    if(EventNumber < other.EventNumber) return true;
+    if(EventNumber > other.EventNumber) return false;
+    
+    return false;
+  }
+};
+
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
 HggSelector::HggSelector():
   fChain(0),
   valid(false),
@@ -75,6 +102,11 @@ int HggSelector::init(){
 
   triggerDec = new int[triggers.size()];
 
+<<<<<<< HEAD
+=======
+  //initialize the bad event list
+  //  InitEventFlag("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/AllBadABCDNEWTAUID.txt");
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
   
   this->setBranchAddresses();
   this->setupOutputTree();
@@ -180,6 +212,10 @@ void HggSelector::Loop(){
   int index1=-1,index2=-1;
   int index1PFCiC=-1,index2PFCiC=-1;
   int index1CiC=-1,index2CiC=-1;
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
   while(fChain->GetEntry(++jentry)){
     if(jentry%500==0) cout << ">> Processing Entry " << jentry << "/" << nEntries << endl;
 
@@ -229,6 +265,7 @@ void HggSelector::Loop(){
     
     if(nSigma>0 && !isData_){ //do the energy scale and energy resolution systematics
       for(int iSmear=-nSigma;iSmear<=nSigma;iSmear++){
+<<<<<<< HEAD
 	//Do the Smearing for the MVA analysis
 	indices = getBestPair(mvaOut,iSmear,0);
 	diPhoMVASmear.push_back(mvaOut[0]);
@@ -282,6 +319,61 @@ void HggSelector::Loop(){
 	}else{
 	  mPairScaleCiC.push_back(getMPair(indices.first,indices.second));
 	}
+=======
+        //Do the Smearing for the MVA analysis
+        indices = getBestPair(mvaOut,iSmear,0);
+        diPhoMVASmear.push_back(mvaOut[0]);
+        pho1MVASmear.push_back(mvaOut[1]);
+        pho2MVASmear.push_back(mvaOut[2]);
+
+        if(indices.first == -1 || indices.second==-1){
+          mPairSmear.push_back(-1);
+        }else{
+          mPairSmear.push_back(getMPair(indices.first,indices.second));
+        }
+        //do the smearing for the PFCiC Analysis
+        indices = getBestPairCiC(iSmear,0,true);
+        if(indices.first == -1 || indices.second==-1){
+          mPairSmearPFCiC.push_back(-1);
+        }else{
+          mPairSmearPFCiC.push_back(getMPair(indices.first,indices.second));
+        }
+        //do the smearing for the CiC Analysis
+        indices = getBestPairCiC(iSmear,0,false);
+        if(indices.first == -1 || indices.second==-1){
+          mPairSmearCiC.push_back(-1);
+        }else{
+          mPairSmearCiC.push_back(getMPair(indices.first,indices.second));
+        }
+      } // Done with smearing
+      
+      for(int iScale=-nSigma;iScale<=nSigma;iScale++){ //do the scaling systematic
+        indices = getBestPair(mvaOut,-999,iScale);
+        diPhoMVAScale.push_back(mvaOut[0]);
+        pho1MVAScale.push_back(mvaOut[1]);
+        pho2MVAScale.push_back(mvaOut[2]);
+        
+        if(indices.first == -1 || indices.second==-1){
+          mPairScale.push_back(-1);
+        }else{
+          mPairScale.push_back(getMPair(indices.first,indices.second));
+        }
+		//do the smearing for the PFCiC Analysis
+        indices = getBestPairCiC(-999,iScale,true);
+        if(indices.first == -1 || indices.second==-1){
+          mPairScalePFCiC.push_back(-1);
+        }else{
+          mPairScalePFCiC.push_back(getMPair(indices.first,indices.second));
+        }
+        
+		//do the smearing for the CiC Analysis
+        indices = getBestPairCiC(-999,iScale,false);
+        if(indices.first == -1 || indices.second==-1){
+          mPairScaleCiC.push_back(-1);
+        }else{
+          mPairScaleCiC.push_back(getMPair(indices.first,indices.second));
+        }
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       }
     }
     
@@ -308,7 +400,12 @@ void HggSelector::Loop(){
     if(debugSelector) cout << "indicesPFCiC: " << index1PFCiC << "  " << index2PFCiC << endl;
     if(debugSelector) cout << "indicesCiC: " << index1CiC << "  " << index2CiC << endl;
 
+<<<<<<< HEAD
     if(index1 > -1 && index2 > -1){
+=======
+    //    if(index1 > -1 && index2 > -1){
+    if(false){ /////////DO NOT FILL MVA  VARIABLES FOR RAZOR ANALYSIS////////
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       //fill MVA variables
       int selectedVertex = getVertexIndex(index1,index2);
       if(debugSelector) cout << "Final Selection MVA: " << selectedVertex << endl;
@@ -365,7 +462,11 @@ void HggSelector::Loop(){
       mPair_=-1;      
       cat_=-1;
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
     if(index1PFCiC > -1 && index2PFCiC > -1){
       //fill PFCiC variables
       int selectedVertex = getVertexIndex(index1PFCiC,index2PFCiC);
@@ -395,13 +496,19 @@ void HggSelector::Loop(){
       TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
       TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
       if(p1.Pt() < p2.Pt()){
+<<<<<<< HEAD
 	TLorentzVector tmp = p1;
 	p1=p2; p2=tmp;
+=======
+        TLorentzVector tmp = p1;
+        p1=p2; p2=tmp;
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       }
       TLorentzVector gg = p1+p2;
       TVector3 boost = -1*gg.BoostVector();
       p1.Boost(boost);
       cosThetaLeadPFCiC = p1.Vect().Dot(gg.Vect())/p1.Vect().Mag()/gg.Vect().Mag();
+<<<<<<< HEAD
 
       catPFCiC_ = getCategoryPFCiC();
     }else{
@@ -410,6 +517,135 @@ void HggSelector::Loop(){
     }
 
     if(index1CiC > -1 && index2CiC > -1){
+=======
+      
+      catPFCiC_ = getCategoryPFCiC();
+      
+      //////////////CALCULATE RAZOR VARIABLES/////////////
+      //////////////ONLY FOR PFCIC ANALYSIS//////////////      
+
+      //get the jet list
+      vector<TLorentzVector> jetlist = GetJetList(p1,p2);
+      
+      nJets = jetlist.size();
+
+      //cut on the number of jets in the event
+      float min_jet_cut = 1;
+
+
+      //must be barrel photons (Use the supercluster)
+      bothBarrel = fabs(pho1_.SC.eta) < 1.48 && fabs(pho2_.SC.eta) < 1.48;      
+      //check the bad event list (needs to be produced)
+      //      badEventList = isFlagged();
+      bool bothEndcaps = fabs(pho1_.SC.eta) < 2.6 && fabs(pho2_.SC.eta) < 2.6;
+
+      //must pass met filters! and not be in the bad event list
+      bool calcRazor = (jetlist.size() >= min_jet_cut) && PassMETFilters() && bothEndcaps && !badEventList;
+
+      if(calcRazor) {		
+	//combine the photons and jets into hemispheres      
+	vector<TLorentzVector> tmpJet = CombineJets_R_no_seed(jetlist, p1, p2);
+	vector<TLorentzVector> tmpJet_SS = CombineJets_R_SSorOS(jetlist, p1, p2, true);
+	vector<TLorentzVector> tmpJet_OS = CombineJets_R_SSorOS(jetlist, p1, p2, false);
+
+	if((tmpJet.size() != 2) || (tmpJet.size() != 2) || (tmpJet.size() != 2)) {
+	  cout << "HEMISPHERE MAKER DOES NOT RETURN 2 HEMISPHERES" << endl;
+	}
+	
+        TLorentzVector PFHem1 = tmpJet[0];
+        TLorentzVector PFHem2 = tmpJet[1];
+
+        TLorentzVector PFHem1_SS = tmpJet_SS[0];
+        TLorentzVector PFHem2_SS = tmpJet_SS[1];
+
+        TLorentzVector PFHem1_OS = tmpJet_OS[0];
+        TLorentzVector PFHem2_OS = tmpJet_OS[1];
+        
+        //calculate the variables, no seed, SS, and OS
+        double MT = CalcMTR(PFHem1, PFHem2, pfMet);
+        double MT_SS = CalcMTR(PFHem1_SS, PFHem2_SS, pfMet);
+        double MT_OS = CalcMTR(PFHem1_OS, PFHem2_OS, pfMet);
+
+        double variable = -999999.;
+        double Rvariable = -999999.;
+        double variable_SS = -999999.;
+        double Rvariable_SS = -999999.;
+        double variable_OS = -999999.;
+        double Rvariable_OS = -999999.;
+
+        variable = CalcGammaMRstar(PFHem1, PFHem2);
+        variable_SS = CalcGammaMRstar(PFHem1_SS, PFHem2_SS);
+        variable_OS = CalcGammaMRstar(PFHem1_OS, PFHem2_OS);
+
+        if(variable > 0) Rvariable = MT/variable;
+        if(variable_SS > 0) Rvariable_SS = MT_SS/variable_SS;
+        if(variable_OS > 0) Rvariable_OS = MT_OS/variable_OS;
+        
+        //razor variables
+        //no seeding
+        PFMR = variable;
+        PFR = Rvariable;
+        //same side photons
+        PFMR_SS = variable_SS;
+        PFR_SS = Rvariable_SS;
+        //opposite side
+        PFMR_OS = variable_OS;
+        PFR_OS = Rvariable_OS;
+
+        nBtags = 0;
+        
+        //no seeding hemispheres
+        ptHem1 = PFHem1.Pt();
+        etaHem1 = PFHem1.Eta();
+        phiHem1 =  PFHem1.Phi();
+        
+        ptHem2 = PFHem2.Pt();
+        etaHem2 = PFHem2.Eta();
+        phiHem2 = PFHem2.Phi();      
+
+        mHem1 = PFHem1.E();
+        mHem2 = PFHem2.E();
+
+        //same side hemispheres
+        ptHem1_SS = PFHem1_SS.Pt();
+        etaHem1_SS = PFHem1_SS.Eta();
+        phiHem1_SS =  PFHem1_SS.Phi();
+        
+        ptHem2_SS = PFHem2_SS.Pt();
+        etaHem2_SS = PFHem2_SS.Eta();
+        phiHem2_SS = PFHem2_SS.Phi();      
+
+        mHem1_SS = PFHem1_SS.E();
+        mHem2_SS = PFHem2_SS.E();
+
+        //opposite side hemispheres
+        ptHem1_OS = PFHem1_OS.Pt();
+        etaHem1_OS = PFHem1_OS.Eta();
+        phiHem1_OS =  PFHem1_OS.Phi();
+        
+        ptHem2_OS = PFHem2_OS.Pt();
+        etaHem2_OS = PFHem2_OS.Eta();
+        phiHem2_OS = PFHem2_OS.Phi();      
+
+        mHem1_OS = PFHem1_OS.E();
+        mHem2_OS = PFHem2_OS.E();
+
+      }
+      else{ // calcRazor == false
+        FillRazorVarsWith(0);
+      }
+    }
+    else{
+      mPairPFCiC_=-1;
+      catPFCiC_ = -1;
+      //To reduce file size, only fill the tree if we reconstruct the razor
+      continue;
+      FillRazorVarsWith(-99);
+    }
+
+    //if(index1CiC > -1 && index2CiC > -1){
+    if(false){ /////////DO NOT FILL CiC VARIABLES FOR RAZOR ANALYSIS////////
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       //fill CiC variables
       int selectedVertex = getVertexIndex(index1CiC,index2CiC);
       if(debugSelector) cout << "Final Selection CiC: " << selectedVertex << endl;
@@ -471,6 +707,10 @@ void HggSelector::Loop(){
     drBoundaryOut                = drBoundary;
     ECALTPFilterFlagOut          = ECALTPFilterFlag;
 
+<<<<<<< HEAD
+=======
+    
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
     outTree->Fill();
   }//while(fChain...
 
@@ -525,6 +765,7 @@ std::pair<int,int> HggSelector::getBestPairCiC(int smearShift,int scaleShift,boo
     for(int iPho1=0; iPho1<nPho_;iPho1++){
       if(photonMatchedElectron[iPho1] && doElectronVeto) continue;
       for(int iPho2=iPho1; iPho2<nPho_;iPho2++){
+<<<<<<< HEAD
 	if(iPho1==iPho2) continue;
 	if(photonMatchedElectron[iPho2] && doElectronVeto) continue;
 	if(debugSelector) cout << ">> " << iPho1 << "  " << iPho2 << endl;
@@ -559,6 +800,42 @@ std::pair<int,int> HggSelector::getBestPairCiC(int smearShift,int scaleShift,boo
 	  indices.first = iPho1;
 	  indices.second = iPho2;
 	}
+=======
+        if(iPho1==iPho2) continue;
+        if(photonMatchedElectron[iPho2] && doElectronVeto) continue;
+        if(debugSelector) cout << ">> " << iPho1 << "  " << iPho2 << endl;
+        //scale/smear the energy of the photon
+        VecbosPho* pho1 = &(Photons_->at(iPho1));
+        VecbosPho* pho2 = &(Photons_->at(iPho2));
+        int selVtxI = this->getVertexIndex(iPho1,iPho2);
+        TVector3 vtxPos(vtxX[selVtxI],vtxY[selVtxI],vtxZ[selVtxI]);
+        if(!this->preSelectPhotons(pho1,pho2,vtxPos)) continue;
+        if(!isData_){
+	  
+          //apply scale shift	  
+          pho1->finalEnergy = pho1->scaledEnergy + scaleShift*pho1->scaledEnergyError;
+          pho2->finalEnergy = pho2->scaledEnergy + scaleShift*pho2->scaledEnergyError;
+          
+          smearPhoton(pho1,smearShift);
+          smearPhoton(pho2,smearShift);
+        }
+        bool CiC1,CiC2;
+        if(usePF){
+          CiC1 = PhotonID->getIdCiCPF(pho1,nVtx,rho,selVtxI);
+          CiC2 = PhotonID->getIdCiCPF(pho2,nVtx,rho,selVtxI);
+        }else{
+          CiC1 = PhotonID->getIdCiC(pho1,nVtx,rho,selVtxI);
+          CiC2 = PhotonID->getIdCiC(pho2,nVtx,rho,selVtxI);
+        }
+        if(!CiC1 || !CiC2) continue;
+        float thisPtSum = pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()
+          + pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
+        if(thisPtSum > highestPtSum){
+          highestPtSum = thisPtSum;
+          indices.first = iPho1;
+          indices.second = iPho2;
+        }
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       }// for(iPho2...
     }// for(iPho1...
     return indices;
@@ -584,11 +861,19 @@ std::pair<int,int> HggSelector::getBestPair(float* mvaOut, int smearShift,int sc
       if(!this->preSelectPhotons(pho1,pho2,vtxPos)) continue;
       if(!isData_){
 	
+<<<<<<< HEAD
 	//apply scale shift	  
 	pho1->finalEnergy = pho1->scaledEnergy + scaleShift*pho1->scaledEnergyError;
 	pho2->finalEnergy = pho2->scaledEnergy + scaleShift*pho2->scaledEnergyError;
 	smearPhoton(pho1,smearShift);
 	smearPhoton(pho2,smearShift);
+=======
+        //apply scale shift	  
+        pho1->finalEnergy = pho1->scaledEnergy + scaleShift*pho1->scaledEnergyError;
+        pho2->finalEnergy = pho2->scaledEnergy + scaleShift*pho2->scaledEnergyError;
+        smearPhoton(pho1,smearShift);
+        smearPhoton(pho2,smearShift);
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       }
       if(debugSelector) cout << "Getting Photon ID:" << endl;
       float mva1 = PhotonID->getIdMVA(pho1,nVtx,rho,selVtxI);
@@ -598,6 +883,7 @@ std::pair<int,int> HggSelector::getBestPair(float* mvaOut, int smearShift,int sc
       float diPhoMVA =  getDiPhoMVA(iPho1,iPho2,mva1,mva2,false);
       if(debugSelector) cout << "\t\t" << mva1 << "  " << mva2 << "  " << diPhoMVA << endl;
       float thisPtSum = pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()
+<<<<<<< HEAD
 	+ pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
 
       if(diPhoMVA>=-1 &&  thisPtSum > maxSumPt){
@@ -606,6 +892,16 @@ std::pair<int,int> HggSelector::getBestPair(float* mvaOut, int smearShift,int sc
 	indices.second = iPho2;
 	diPhoMVAMax = diPhoMVA;
 	*mvaOut = diPhoMVA;
+=======
+        + pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
+      
+      if(diPhoMVA>=-1 &&  thisPtSum > maxSumPt){
+        maxSumPt = thisPtSum;
+        indices.first = iPho1;
+        indices.second = iPho2;
+        diPhoMVAMax = diPhoMVA;
+        *mvaOut = diPhoMVA;
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       }
     }// for(iPho2...
   }// for(iPho1...
@@ -780,7 +1076,11 @@ void HggSelector::setBranchAddresses(){
   fChain->SetBranchAddress("runNumber",&runNumber);
   fChain->SetBranchAddress("evtNumber",&evtNumber);
   //fChain->SetBranchAddress("isRealData",&_isData);
+<<<<<<< HEAD
   
+=======
+ 
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
   fChain->SetBranchAddress("eeBadScFilterFlag",&eeBadScFilterFlag);
   fChain->SetBranchAddress("hcalLaserEventFilterFlag",&hcalLaserEventFilterFlag);
   fChain->SetBranchAddress("HBHENoiseFilterResultFlag",&HBHENoiseFilterResultFlag);
@@ -835,6 +1135,12 @@ void HggSelector::setBranchAddresses(){
  fChain->SetBranchAddress("PFMET",&pfMet);
  fChain->SetBranchAddress("PFMETPhi",&pfMetPhi);
 
+<<<<<<< HEAD
+=======
+ fChain->SetBranchAddress("CaloMETPhi", &CaloMETPhi);
+ fChain->SetBranchAddress("CaloMET", &CaloMET);
+
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
  vector<string>::const_iterator trigIt;
  int i=0;
  for(trigIt=triggers.begin();trigIt!=triggers.end();trigIt++,i++){
@@ -970,6 +1276,63 @@ void HggSelector::setupOutputTree(){
     outTreeMuMuG->Branch("isosumoetPho",isosumoetPho,"isosumoetPho[nMuMuG]");
     outTreeMuMuG->Branch("mvaPho",mvaPho,"mvaPho[nMuMuG]");
   }
+<<<<<<< HEAD
+=======
+
+  ////////////RAZOR VARIABLES////////////////
+  //razor
+  outTree->Branch("nBtags",&nBtags,"nBtags/I");
+  outTree->Branch("nJets",&nJets,"nJets/I");
+  outTree->Branch("bothBarrel", &bothBarrel, "bothBarrel/I");
+
+  outTree->Branch("CaloMETPhi", &CaloMETPhi, "CaloMETPhi/F");
+  outTree->Branch("CaloMET", &CaloMET, "CaloMET/F");
+
+  //NO SEEDING VARIABLES
+  outTree->Branch("PFMR",&PFMR,"PFMR/F");
+  outTree->Branch("PFR",&PFR,"PFR/F");
+
+  outTree->Branch("ptHem1",&ptHem1,"ptHem1/F");
+  outTree->Branch("etaHem1",&etaHem1,"etaHem1/F");
+  outTree->Branch("phiHem1",&phiHem1,"phiHem1/F");
+  
+  outTree->Branch("ptHem2",&ptHem2,"ptHem2/F");
+  outTree->Branch("etaHem2",&etaHem2,"etaHem2/F");
+  outTree->Branch("phiHem2",&phiHem2,"phiHem2/F");  
+
+  outTree->Branch("mHem1",&mHem1,"mHem1/F");
+  outTree->Branch("mHem2",&mHem2,"mHem2/F");
+
+  //SAME SIDE VARIABLES
+  outTree->Branch("PFMR_SS",&PFMR_SS,"PFMR_SS/F");
+  outTree->Branch("PFR_SS",&PFR_SS,"PFR_SS/F");
+
+  outTree->Branch("ptHem1_SS",&ptHem1_SS,"ptHem1_SS/F");
+  outTree->Branch("etaHem1_SS",&etaHem1_SS,"etaHem1_SS/F");
+  outTree->Branch("phiHem1_SS",&phiHem1_SS,"phiHem1_SS/F");
+  
+  outTree->Branch("ptHem2_SS",&ptHem2_SS,"ptHem2_SS/F");
+  outTree->Branch("etaHem2_SS",&etaHem2_SS,"etaHem2_SS/F");
+  outTree->Branch("phiHem2_SS",&phiHem2_SS,"phiHem2_SS/F");  
+  
+  outTree->Branch("mHem1_SS",&mHem1_SS,"mHem1_SS/F");
+  outTree->Branch("mHem2_SS",&mHem2_SS,"mHem2_SS/F");
+
+  //OPPOSITE SIDE VARIABLES
+  outTree->Branch("PFMR_OS",&PFMR_OS,"PFMR_OS/F");
+  outTree->Branch("PFR_OS",&PFR_OS,"PFR_OS/F");
+
+  outTree->Branch("ptHem1_OS",&ptHem1_OS,"ptHem1_OS/F");
+  outTree->Branch("etaHem1_OS",&etaHem1_OS,"etaHem1_OS/F");
+  outTree->Branch("phiHem1_OS",&phiHem1_OS,"phiHem1_OS/F");
+  
+  outTree->Branch("ptHem2_OS",&ptHem2_OS,"ptHem2_OS/F");
+  outTree->Branch("etaHem2_OS",&etaHem2_OS,"etaHem2_OS/F");
+  outTree->Branch("phiHem2_OS",&phiHem2_OS,"phiHem2_OS/F");  
+
+  outTree->Branch("mHem1_OS",&mHem1_OS,"mHem1_OS/F");
+  outTree->Branch("mHem2_OS",&mHem2_OS,"mHem2_OS/F");
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
 }
 
 void HggSelector::fillMuMuGamma(){
@@ -1266,3 +1629,337 @@ float HggSelector::getDiPhoMVA(int indexPho1, int indexPho2, float mva1, float m
 
   return diPhotonMVA->EvaluateMVA(methodName_diPho);
 }
+<<<<<<< HEAD
+=======
+  ////////////RAZOR METHODS////////////////
+vector<TLorentzVector> HggSelector::CombineJets_R_no_seed(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2){
+  vector<TLorentzVector> mynewjets;
+  TLorentzVector j1, j2;
+  
+  myjets.push_back(ph1);
+  myjets.push_back(ph2);
+
+  int N_comb = 1;
+  for(int i = 0; i < myjets.size(); i++){
+    N_comb *= 2;
+  }
+
+  double M_min = 9999999999.0;
+  int j_count;
+  for(int i = 1; i < N_comb-1; i++){
+    TLorentzVector j_temp1, j_temp2;    
+    int itemp = i;
+    j_count = N_comb/2;
+    int count = 0;
+    while(j_count > 0){
+      if(itemp/j_count == 1){
+        j_temp1 += myjets[count];
+      } else {
+        j_temp2 += myjets[count];
+      }
+      itemp -= j_count*(itemp/j_count);
+      j_count /= 2;
+      count++;
+    }    
+    double M_temp = j_temp1.M2()+j_temp2.M2();
+    // smallest mass
+    if(M_temp < M_min){
+      // R selection
+      M_min = M_temp;
+      j1 = j_temp1;
+      j2 = j_temp2;
+    }
+  }
+
+  // set masses to 0
+  j1.SetPtEtaPhiM(j1.Pt(),j1.Eta(),j1.Phi(),0.0);
+  j2.SetPtEtaPhiM(j2.Pt(),j2.Eta(),j2.Phi(),0.0);
+  
+  if(j2.Pt() > j1.Pt()){
+    TLorentzVector temp = j1;
+    j1 = j2;
+    j2 = temp;
+  }
+  
+  mynewjets.push_back(j1);
+  mynewjets.push_back(j2);
+  return mynewjets;    
+}
+
+vector<TLorentzVector> HggSelector::CombineJets_R_SSorOS(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2, bool SS){
+  
+  vector<TLorentzVector> mynewjets;
+  TLorentzVector j1, j2;
+  
+  int N_comb = 1;
+  for(int i = 0; i < myjets.size(); i++){
+    N_comb *= 2;
+  }
+
+  double M_min = 9999999999.0;
+  int j_count;
+  for(int i = 0; i < N_comb; i++){
+    TLorentzVector j_temp1, j_temp2;
+
+    //seed the photons based on SS
+    if(SS) {
+      j_temp1+=ph1;
+      j_temp1+=ph2;
+    }
+    else {
+      j_temp1+=ph1;
+      j_temp2+=ph2;
+    }
+
+    int itemp = i;
+    j_count = N_comb/2;
+    int count = 0;
+    while(j_count > 0){
+      if(itemp/j_count == 1){
+        j_temp1 += myjets[count];
+      } else {
+        j_temp2 += myjets[count];
+      }
+      itemp -= j_count*(itemp/j_count);
+      j_count /= 2;
+      count++;
+    }    
+    double M_temp = j_temp1.M2()+j_temp2.M2();
+    // smallest mass
+    if(M_temp < M_min){
+      // R selection
+      M_min = M_temp;
+      j1 = j_temp1;
+      j2 = j_temp2;
+    }
+  }
+
+  //handle the special case of jetlist 1
+  if(myjets.size() == 1 && !SS) {
+    float poss1 = (ph1 + myjets[0]).M2() + ph2.M2();
+    float poss2 = ph1.M2() + (ph2 + myjets[0]).M2();
+    
+    if(poss1 < poss2) {
+      j1 = ph1 + myjets[0];
+      j2 = ph2;
+    }
+    else {
+      j1 = ph2 + myjets[0];
+      j2 = ph1;
+    }
+  }
+  if(myjets.size() == 1 && SS) {
+    j1 = ph1 + ph2;
+    j2 = myjets[0];
+  }
+  
+  //if we require no jet we end up with terrible SS scenarios
+  if(myjets.size() == 0) {
+    if(SS) {
+      cout << "WARNING: NO JETS AND SAME SAME MR Rsq RECONSRUCTION" << endl;
+      j1 = ph1 + ph2;
+      j2.SetPtEtaPhiM(0, 0, 0, 0.0);;
+    }
+    else {
+      j1 = ph1;
+      j2 = ph2;
+    }
+  }
+
+  // set masses to 0
+  j1.SetPtEtaPhiM(j1.Pt(),j1.Eta(),j1.Phi(),0.0);
+  j2.SetPtEtaPhiM(j2.Pt(),j2.Eta(),j2.Phi(),0.0);
+  
+
+  if(j2.Pt() > j1.Pt()){
+    TLorentzVector temp = j1;
+    j1 = j2;
+    j2 = temp;
+  }
+  
+  mynewjets.push_back(j1);
+  mynewjets.push_back(j2);
+  return mynewjets;  
+}
+
+double HggSelector::CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb){
+  double A = ja.P();
+  double B = jb.P();
+  double az = ja.Pz();
+  double bz = jb.Pz();
+  TVector3 jaT, jbT;
+  jaT.SetXYZ(ja.Px(),ja.Py(),0.0);
+  jbT.SetXYZ(jb.Px(),jb.Py(),0.0);
+  double ATBT = (jaT+jbT).Mag2();
+
+  double temp = sqrt((A+B)*(A+B)-(az+bz)*(az+bz)-
+                     (jbT.Dot(jbT)-jaT.Dot(jaT))*(jbT.Dot(jbT)-jaT.Dot(jaT))/(jaT+jbT).Mag2());
+
+  double mybeta = (jbT.Dot(jbT)-jaT.Dot(jaT))/
+    sqrt(ATBT*((A+B)*(A+B)-(az+bz)*(az+bz)));
+
+  double mygamma = 1./sqrt(1.-mybeta*mybeta);
+
+  //gamma times MRstar                                                                                                                                                                              
+  temp *= mygamma;
+
+  return temp;
+}
+
+double HggSelector::CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met){
+
+  double temp = met.Mag()*(ja.Pt()+jb.Pt()) - met.Dot(ja.Vect()+jb.Vect());
+  temp /= 2.;
+
+  temp = sqrt(temp);
+
+  return temp;
+}
+
+vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector p2){
+  vector<TLorentzVector> jetlist;
+
+  std::vector<VecbosJet>::iterator jIt;
+  for(jIt = Jets_->begin(); jIt != Jets_->end(); jIt++){
+    //eta cut
+    if(fabs(jIt->eta) > 2.6) continue;
+    //pt cut
+    if(jIt->pt < 30.) continue;
+    //jet id cut
+    if(!passJetID(&*jIt)) continue;
+
+    //photon matching
+    if(DeltaR(jIt->eta,p1.Eta(),jIt->phi,p1.Phi()) < 0.5 ) continue;
+    if(DeltaR(jIt->eta,p2.Eta(),jIt->phi,p2.Phi()) < 0.5 ) continue;
+
+    jetlist.push_back(jIt->getP4());
+  }
+
+  return jetlist;
+}
+
+void HggSelector::PrintEventNumbers() {
+  cout << runNumber << ":" << lumiBlock << ":" << evtNumber << endl;
+}
+
+bool HggSelector::PassMETFilters(){
+  //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively
+
+  // remove bits 6 7 8 for now (unfilled) 
+  bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
+  //bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag);
+  if( !decision ) {
+    cout << "------------Begin MET FLAG-----------" << endl;
+  }
+
+  //print flags which occur
+  if( !ECALTPFilterFlag ) cout << "Ecal dead cell Flagged Bit 0";PrintEventNumbers();
+  if( !CSCHaloFilterFlag ) cout << "CSC Beam Halo Flagged Bit 3";PrintEventNumbers();
+  if( !trackerFailureFilterFlag ) cout << "tracker Failure Flagged Bit 4";PrintEventNumbers();
+  if( !HBHENoiseFilterResultFlag ) cout << "HBHE Noise Flagged Bit 6" ;PrintEventNumbers();
+  if( !hcalLaserEventFilterFlag ) cout << "HCAL Laser Flagged Bit 7" ;PrintEventNumbers();
+  if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" ;PrintEventNumbers();
+  if( !decision ) cout << "--------------End MET FLAG-------------" << endl;
+  return decision;
+}
+
+void HggSelector::FillRazorVarsWith(int n){
+  nBtags = 0;        
+  
+  //no seed
+  PFMR = n;
+  PFR = n;
+  ptHem1= n ;
+  etaHem1= n ;
+  phiHem1= n ;        
+  ptHem2= n ;
+  etaHem2= n ;
+  phiHem2= n ;      
+  mHem1=n;
+  mHem2=n;
+
+  //same side
+  PFMR_SS = n;
+  PFR_SS = n;
+  ptHem1_SS= n ;
+  etaHem1_SS= n ;
+  phiHem1_SS= n ;        
+  ptHem2_SS= n ;
+  etaHem2_SS= n ;
+  phiHem2_SS= n ;      
+  mHem1_SS=n;
+  mHem2_SS=n;
+  //opposite side
+  PFMR_OS = n;
+  PFR_OS = n;
+  ptHem1_OS= n ;
+  etaHem1_OS= n ;
+  phiHem1_OS= n ;        
+  ptHem2_OS= n ;
+  etaHem2_OS= n ;
+  phiHem2_OS= n ;      
+  mHem1_OS=n;
+  mHem2_OS=n;
+}
+
+//after the initeventflag is called we can check the bad event
+//list with this method
+bool HggSelector::isFlagged(){
+  EventIndex index;
+  
+  //fixed the names of variables
+  index.EventNumber = evtNumber;
+  index.RunNumber = runNumber;
+  
+  if(EventCounts.find(index) == EventCounts.end()){ //yes
+    //cout << "Event not in list" << endl;
+    return false;
+  } else {
+    //cout << "Event IS in list" << endl;
+    return true;
+    if(EventCounts[index] == 1){
+      //cout << "Found the event - all is good in the world" << endl;
+      return true;
+    }
+  } 
+}
+
+//initialize the list of bad events
+//and construct the eventindex object
+void HggSelector::InitEventFlag(char *s_Event){
+  ifstream inputfile(s_Event);
+  
+  int RUN_NUMBER;
+  int LS_NUMBER;
+  Long64_t EVENT_NUMBER;
+  
+  EventIndex index;
+  
+  cout << "Reading bad event list" << endl;
+	
+  while(!inputfile.eof()){
+    inputfile >> RUN_NUMBER >> LS_NUMBER >> EVENT_NUMBER;
+    
+    index.RunNumber = RUN_NUMBER;
+    index.EventNumber = EVENT_NUMBER;
+    
+    if(index.RunNumber < 0 || index.EventNumber < 0)
+      continue;
+    
+    //Is this event/run-number combo alreading in the map?
+    if(EventCounts.find(index) == EventCounts.end()){ //no
+      EventCounts.insert(pair<EventIndex, int>(index, 1));
+    } 
+    else { //yes
+      EventCounts[index] = EventCounts[index] + 1;
+    }
+    
+    index.RunNumber = -1;
+    index.EventNumber = -1;
+  }
+}
+
+//The event index object for checking the list of bad
+
+  
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a

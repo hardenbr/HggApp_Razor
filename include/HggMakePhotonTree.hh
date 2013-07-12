@@ -18,6 +18,7 @@ private:
   static constexpr float rhoFacBad = 0.52;
   static constexpr float isoSumConst = 0;//5;
   static constexpr float isoSumConstBad = 0;//7;
+
   bool usePF;
   string outFName;
   void init();

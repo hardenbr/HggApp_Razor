@@ -37,6 +37,24 @@ public:
   void setForceVertexZero(){forceVtxZero=true;}
   void setIsData(bool d){isData_=d;}
   void Loop();
+<<<<<<< HEAD
+=======
+
+  ////////////RAZOR METHODS////////////////
+  vector<TLorentzVector> CombineJets_R_no_seed(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2);
+  vector<TLorentzVector> CombineJets_R_SSorOS(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2, bool SS);
+  double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
+  double CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met);
+  vector<TLorentzVector> GetJetList(TLorentzVector p1, TLorentzVector p2);
+  bool PassMETFilters(); //check the actual bits
+  void FillRazorVarsWith(int n); 
+  void PrintEventNumbers();
+  //reading bad event methods
+  void InitEventFlag(char *s_Event);
+  bool isFlagged();
+
+
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
 private:
   TChain* fChain;
   bool valid;
@@ -78,10 +96,17 @@ private:
   bool doPtOverM;
   float PtOverMLead;
   float PtOverMSubLead;
+<<<<<<< HEAD
   static constexpr float rhoFac    = 0.17;
   static constexpr float rhoFacBad = 0.52;
   static constexpr float isoSumConst = 0;//5;
   static constexpr float isoSumConstBad = 0;//7;
+=======
+  const static float rhoFac    = 0.17;
+  const static float rhoFacBad = 0.52;
+  const static float isoSumConst = 0;//5;
+  const static float isoSumConstBad = 0;//7;
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
 
   vector<string> triggers;
   int *triggerDec;
@@ -213,7 +238,11 @@ private:
   std::vector<float> mPairSmearCiC;
 
   //for mumuG
+<<<<<<< HEAD
   static constexpr int maxMuMuG = 500;
+=======
+  const static int maxMuMuG = 500;
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
   int nMuMuG;
   float massMuMuGamma[maxMuMuG];
   float massMuMuRegGamma[maxMuMuG];
@@ -251,7 +280,11 @@ private:
 
 
   //member data
+<<<<<<< HEAD
   static constexpr int maxPho = 100;
+=======
+  const static int maxPho = 100;
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
   int nPho_;
   std::vector<VecbosPho> *Photons_; // this contains ALL photons
   
@@ -273,7 +306,11 @@ private:
   // for each photon, a vector of floats giving the track iso from each ggVertex
 
   int nVtx; 
+<<<<<<< HEAD
   static constexpr int MAXVX = 100;
+=======
+  static const int MAXVX = 100;
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
   float vtxX[MAXVX];
   float vtxY[MAXVX];
   float vtxZ[MAXVX];
@@ -325,4 +362,72 @@ private:
   bool drDead; 
   bool drBoundary;
   bool ECALTPFilterFlag;
+<<<<<<< HEAD
+=======
+
+  ////////////RAZOR VARIABLES////////////////
+
+  float CaloMET;
+  float CaloMETPhi;
+  
+  //razor
+  int nBtags;
+
+
+  //NO SEEDING
+  float PFMR;
+  float PFR;
+
+  //hemispheres
+  float ptHem1;
+  float etaHem1;
+  float phiHem1;
+
+  float ptHem2;
+  float etaHem2;
+  float phiHem2;
+
+  float mHem1;
+  float mHem2;
+
+  //SAME SIDE SEEING
+  float PFMR_SS;
+  float PFR_SS;
+
+  //hemispheres
+  float ptHem1_SS;
+  float etaHem1_SS;
+  float phiHem1_SS;
+
+  float ptHem2_SS;
+  float etaHem2_SS;
+  float phiHem2_SS;
+
+  float mHem1_SS;
+  float mHem2_SS;
+
+  //OPPOSITE SIDE SEEING
+  float PFMR_OS;
+  float PFR_OS;
+
+  float ptHem1_OS;
+  float etaHem1_OS;
+  float phiHem1_OS;
+
+  float ptHem2_OS;
+  float etaHem2_OS;
+  float phiHem2_OS;
+
+  float mHem1_OS;
+  float mHem2_OS;
+
+  int bothBarrel;
+  int badEventList;
+  int nJets;
+
+  //running over bad event list
+  struct EventIndex;
+  map<EventIndex, int> EventCounts;
+
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
 };

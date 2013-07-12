@@ -35,6 +35,7 @@ public:
   std::vector<float> minEta;
   std::vector<float> maxEta;
   std::vector<float> dzRes;
+
   static constexpr int sphericalIndex=1;
   float getResolution(VecbosPho*);
 private:

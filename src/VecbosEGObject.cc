@@ -807,6 +807,7 @@ void VecbosJet::Init(VecbosBase* o, int i,VecbosJet::JetType jtype = PFPUcorr){
   HFHadronEnergy   = o->HFHadronEnergyAK5PFPUcorrJet[i];
   HFEMEnergy       = o->HFEMEnergyAK5PFPUcorrJet[i];
 
+
    break;
 
   case PFNoPU:

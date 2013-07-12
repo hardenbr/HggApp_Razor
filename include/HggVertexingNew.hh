@@ -9,7 +9,11 @@
 #define HggVertexing_h
 
 #include "VecbosBase.hh"
+<<<<<<< HEAD
 //#include "Vecbos.hh"
+=======
+#include "Vecbos.hh"
+>>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
 #include "Jet.hh"
 #include "CaloTower.hh"
 #include "CommonTools/include/Utils.hh"
