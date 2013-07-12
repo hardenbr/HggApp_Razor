@@ -15,7 +15,7 @@
 using namespace std;
 using namespace TMVA;
 
-#define debugSelector 0
+#define debugSelector 1
 
 
 //events
@@ -190,7 +190,7 @@ int HggSelector::init(){
   MjjDists["Final"] = new TH1F("Final","",200,0,2000);
 
 
-  this->setupTMVA();
+  //  this->setupTMVA();// RAZOR TURN OFF
   return 0;
 }
 
@@ -244,9 +244,7 @@ void HggSelector::Loop(){
 	}
 	smearPhoton(pho,0);	
       }
-    }
-    if(doMuMuGamma) this->fillMuMuGamma();
-    
+    }    
 
     if(debugSelector) cout << "done" << endl;
     if(debugSelector) cout << "# Photons: " << nPho_ << endl;
@@ -259,17 +257,6 @@ void HggSelector::Loop(){
     if(nSigma>0 && !isData_){ //do the energy scale and energy resolution systematics
       for(int iSmear=-nSigma;iSmear<=nSigma;iSmear++){
 
-	//Do the Smearing for the MVA analysis
-	indices = getBestPair(mvaOut,iSmear,0);
-	diPhoMVASmear.push_back(mvaOut[0]);
-	pho1MVASmear.push_back(mvaOut[1]);
-	pho2MVASmear.push_back(mvaOut[2]);
-
-	if(indices.first == -1 || indices.second==-1){
-	  mPairSmear.push_back(-1);
-	}else{
-	  mPairSmear.push_back(getMPair(indices.first,indices.second));
-	}
 	//do the smearing for the PFCiC Analysis
 	indices = getBestPairCiC(iSmear,0,true);
 	if(indices.first == -1 || indices.second==-1){
@@ -277,127 +264,29 @@ void HggSelector::Loop(){
 	}else{
 	  mPairSmearPFCiC.push_back(getMPair(indices.first,indices.second));
 	}
-	//do the smearing for the CiC Analysis
-	indices = getBestPairCiC(iSmear,0,false);
-	if(indices.first == -1 || indices.second==-1){
-	  mPairSmearCiC.push_back(-1);
-	}else{
-	  mPairSmearCiC.push_back(getMPair(indices.first,indices.second));
-	}
+
       } // Done with smearing
 
       for(int iScale=-nSigma;iScale<=nSigma;iScale++){ //do the scaling systematic
-	indices = getBestPair(mvaOut,-999,iScale);
-	diPhoMVAScale.push_back(mvaOut[0]);
-	pho1MVAScale.push_back(mvaOut[1]);
-	pho2MVAScale.push_back(mvaOut[2]);
-
-	if(indices.first == -1 || indices.second==-1){
-	  mPairScale.push_back(-1);
-	}else{
-	  mPairScale.push_back(getMPair(indices.first,indices.second));
-	}
-		//do the smearing for the PFCiC Analysis
+	//do the smearing for the PFCiC Analysis
 	indices = getBestPairCiC(-999,iScale,true);
 	if(indices.first == -1 || indices.second==-1){
 	  mPairScalePFCiC.push_back(-1);
 	}else{
 	  mPairScalePFCiC.push_back(getMPair(indices.first,indices.second));
 	}
-
-		//do the smearing for the CiC Analysis
-	indices = getBestPairCiC(-999,iScale,false);
-	if(indices.first == -1 || indices.second==-1){
-	  mPairScaleCiC.push_back(-1);
-	}else{
-	  mPairScaleCiC.push_back(getMPair(indices.first,indices.second));
-	}
-
       }
     }
-    
-    indices = getBestPair(&diPhoMVA_,0,0); // no scaling and default smearing
-    index1 = indices.first;
-    index2 = indices.second;
-    indices = make_pair(-1,-1);
-    //Do the PFCiC selection as well!
+
+    //Do the PFCiC selection
     indices = getBestPairCiC(0,0,true); // no scaling and default smearing
     index1PFCiC = indices.first;
     index2PFCiC = indices.second;
     indices = make_pair(-1,-1);
 
-    //Do the CiC selection as well!
-    indices = getBestPairCiC(0,0,false); // no scaling and default smearing
-    index1CiC = indices.first;
-    index2CiC = indices.second;
-    indices = make_pair(-1,-1);
 
     if(debugSelector) cout << "LOOP DONE" << endl;	  
-    
-
-    if(debugSelector) cout << "indices: " << index1 << "  " << index2 << endl;
     if(debugSelector) cout << "indicesPFCiC: " << index1PFCiC << "  " << index2PFCiC << endl;
-    if(debugSelector) cout << "indicesCiC: " << index1CiC << "  " << index2CiC << endl;
-
-
-    //    if(index1 > -1 && index2 > -1){
-    if(false){ /////////DO NOT FILL MVA  VARIABLES FOR RAZOR ANALYSIS////////
-      //fill MVA variables
-      int selectedVertex = getVertexIndex(index1,index2);
-      if(debugSelector) cout << "Final Selection MVA: " << selectedVertex << endl;
-      
-      TVector3 vtxPos(vtxX[selectedVertex],vtxY[selectedVertex],vtxZ[selectedVertex]);
-      pho1_ = Photons_->at(index1);
-      pho2_ = Photons_->at(index2);
-      OutPhotons_.push_back(getReducedData(&pho1_,vtxPos,selectedVertex));
-      OutPhotons_.push_back(getReducedData(&pho2_,vtxPos,selectedVertex));
-
-      if(debugSelector) cout << "Photon Indices: " << pho1_.index << "  " << pho2_.index << endl;
-
-      mPair_ = (pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy) + pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy)).M();
-      mPairNoCorr_ = (pho1_.p4FromVtx(vtxPos,pho1_.energy) + pho2_.p4FromVtx(vtxPos,pho2_.energy)).M();
-      mPairRes_ = massRes->getMassResolutionEonly(&pho1_,&pho2_,vtxPos);
-      mPairResWrongVtx_ = massRes->getMassResolution(&pho1_,&pho2_,vtxPos,true);
-      diPhoVtx_ = selectedVertex;
-      diPhoVtxX_ = vtxX[selectedVertex];
-      diPhoVtxY_ = vtxY[selectedVertex];
-      diPhoVtxZ_ = vtxZ[selectedVertex];
-      vtxProb_ = this->getVertexProb(index1,index2);
-
-      float jpt[2];
-      Mjj_  = this->getVBFMjj(&pho1_,&pho2_,vtxPos,jpt);
-      ptJet1_ = jpt[0];
-      ptJet2_ = jpt[1];
-
-      TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
-      TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
-      if(p1.Pt() < p2.Pt()){
-	TLorentzVector tmp = p1;
-	p1=p2; p2=tmp;
-      }
-      TLorentzVector gg = p1+p2;
-      TVector3 boost = -1*gg.BoostVector();
-      p1.Boost(boost);
-      cosThetaLead = p1.Vect().Dot(gg.Vect())/p1.Vect().Mag()/gg.Vect().Mag();
-
-      cat_ = getCategory();
-
-
-      float mva1 = PhotonID->getIdMVA(&pho1_,nVtx,rho,selectedVertex);
-      float mva2 = PhotonID->getIdMVA(&pho2_,nVtx,rho,selectedVertex);
-
-      for(int i1=0;i1<3;i1++){ for(int i2=0;i2<3;i2++){
-	  float offset1 = 0.01*(i1-1);
-	  float offset2 = 0.01*(i2-1);
-	  diPhoMVAShift_[3*i1+i2] =  getDiPhoMVA(index1,index2,mva1+offset1,mva2+offset2,false);
-	} }
-
-
-
-    }else{
-      mPair_=-1;      
-      cat_=-1;
-    }
 
     if(index1PFCiC > -1 && index2PFCiC > -1){
       //fill PFCiC variables
@@ -457,10 +346,14 @@ void HggSelector::Loop(){
       bothBarrel = fabs(pho1_.SC.eta) < 1.48 && fabs(pho2_.SC.eta) < 1.48;      
       //check the bad event list (needs to be produced)
       //      badEventList = isFlagged();
+      badEventList = false;
       bool bothEndcaps = fabs(pho1_.SC.eta) < 2.6 && fabs(pho2_.SC.eta) < 2.6;
+      
+      bool passFilters = PassMETFilters() || !isData_;
+	
 
       //must pass met filters! and not be in the bad event list
-      bool calcRazor = (jetlist.size() >= min_jet_cut) && PassMETFilters() && bothEndcaps && !badEventList;
+      bool calcRazor = (jetlist.size() >= min_jet_cut) && passFilters && bothEndcaps && !badEventList;
 
       if(calcRazor) {		
 	//combine the photons and jets into hemispheres      
@@ -563,47 +456,6 @@ void HggSelector::Loop(){
       FillRazorVarsWith(-99);
     }
 
-    //if(index1CiC > -1 && index2CiC > -1){
-    if(false){ /////////DO NOT FILL CiC VARIABLES FOR RAZOR ANALYSIS////////
-      //fill CiC variables
-      int selectedVertex = getVertexIndex(index1CiC,index2CiC);
-      if(debugSelector) cout << "Final Selection CiC: " << selectedVertex << endl;
-      
-      TVector3 vtxPos(vtxX[selectedVertex],vtxY[selectedVertex],vtxZ[selectedVertex]);
-      pho1_ = Photons_->at(index1CiC);
-      pho2_ = Photons_->at(index2CiC);
-      OutPhotonsCiC_.push_back(getReducedData(&pho1_,vtxPos,selectedVertex));
-      OutPhotonsCiC_.push_back(getReducedData(&pho2_,vtxPos,selectedVertex));
-      if(debugSelector) cout << "Done Getting Photons" << endl;
-
-      mPairCiC_ = (pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy) + pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy)).M();
-      mPairNoCorrCiC_ = (pho1_.p4FromVtx(vtxPos,pho1_.energy) + pho2_.p4FromVtx(vtxPos,pho2_.energy)).M();
-      mPairResCiC_ = massRes->getMassResolutionEonly(&pho1_,&pho2_,vtxPos);
-      mPairResWrongVtxCiC_ = massRes->getMassResolution(&pho1_,&pho2_,vtxPos,true);
-      diPhoVtxCiC_ = selectedVertex;
-      diPhoVtxXCiC_ = vtxX[selectedVertex];
-      diPhoVtxYCiC_ = vtxY[selectedVertex];
-      diPhoVtxZCiC_ = vtxZ[selectedVertex];
-      vtxProbCiC_ = this->getVertexProb(index1CiC,index2CiC);
-
-      float jpt[2];
-      MjjCiC_  = this->getVBFMjj(&pho1_,&pho2_,vtxPos,jpt);
-      ptJet1CiC_ = jpt[0];
-      ptJet2CiC_ = jpt[1];
-
-      TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
-      TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
-      if(p1.Pt() < p2.Pt()){
-	TLorentzVector tmp = p1;
-	p1=p2; p2=tmp;
-      }
-      TLorentzVector gg = p1+p2;
-      TVector3 boost = -1*gg.BoostVector();
-      p1.Boost(boost);
-      cosThetaLeadCiC = p1.Vect().Dot(gg.Vect())/p1.Vect().Mag()/gg.Vect().Mag();
-    }else{
-      mPairCiC_=-1;
-    }
 
     nOutPhotons_ = OutPhotons_.size();
     nOutPhotonsPFCiC_ = OutPhotonsPFCiC_.size();
@@ -625,7 +477,6 @@ void HggSelector::Loop(){
     drDeadOut                    = drDead; 
     drBoundaryOut                = drBoundary;
     ECALTPFilterFlagOut          = ECALTPFilterFlag;
-
 
     outTree->Fill();
   }//while(fChain...
@@ -718,57 +569,6 @@ std::pair<int,int> HggSelector::getBestPairCiC(int smearShift,int scaleShift,boo
 	}
       }// for(iPho2...
     }// for(iPho1...
-    return indices;
-}
-
-std::pair<int,int> HggSelector::getBestPair(float* mvaOut, int smearShift,int scaleShift){
-  std::pair<int,int> indices(-1,-1);
-  float diPhoMVAMax=-99;
-  float maxSumPt=-1;
-  *mvaOut = -999.;
-  for(int iPho1=0; iPho1<nPho_;iPho1++){
-    if(photonMatchedElectron[iPho1] && doElectronVeto) continue;
-    for(int iPho2=iPho1; iPho2<nPho_;iPho2++){
-      if(iPho1==iPho2) continue;
-      if(photonMatchedElectron[iPho2] && doElectronVeto) continue;
-      if(debugSelector) cout << ">> " << iPho1 << "  " << iPho2 << endl;
-      //NON-PF block
-      //scale/smear the energy of the photon
-      VecbosPho* pho1 = &(Photons_->at(iPho1));
-      VecbosPho* pho2 = &(Photons_->at(iPho2));
-      int selVtxI = this->getVertexIndex(iPho1,iPho2);
-      TVector3 vtxPos(vtxX[selVtxI],vtxY[selVtxI],vtxZ[selVtxI]);
-      if(!this->preSelectPhotons(pho1,pho2,vtxPos)) continue;
-      if(!isData_){
-	
-
-	//apply scale shift	  
-	pho1->finalEnergy = pho1->scaledEnergy + scaleShift*pho1->scaledEnergyError;
-	pho2->finalEnergy = pho2->scaledEnergy + scaleShift*pho2->scaledEnergyError;
-	smearPhoton(pho1,smearShift);
-	smearPhoton(pho2,smearShift);
-
-      }
-      if(debugSelector) cout << "Getting Photon ID:" << endl;
-      float mva1 = PhotonID->getIdMVA(pho1,nVtx,rho,selVtxI);
-      if(debugSelector) cout << "Getting Photon ID:" << endl;
-      float mva2 = PhotonID->getIdMVA(pho2,nVtx,rho,selVtxI);
-      if(debugSelector) cout << "Getting Double Photon MVA" << endl;
-      float diPhoMVA =  getDiPhoMVA(iPho1,iPho2,mva1,mva2,false);
-      if(debugSelector) cout << "\t\t" << mva1 << "  " << mva2 << "  " << diPhoMVA << endl;
-      float thisPtSum = pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()
-	+ pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
-
-      if(diPhoMVA>=-1 &&  thisPtSum > maxSumPt){
-	maxSumPt = thisPtSum;
-	indices.first = iPho1;
-	indices.second = iPho2;
-	diPhoMVAMax = diPhoMVA;
-	*mvaOut = diPhoMVA;
-      }
-    }// for(iPho2...
-  }// for(iPho1...
-  
     return indices;
 }
 
@@ -906,7 +706,7 @@ ReducedPhotonData HggSelector::getReducedData(VecbosPho* pho,TVector3 selVtx,int
   data.r9 = pho->SC.r9;
   data.passPFCiC = PhotonID->getIdCiCPF(pho,nVtx,rho,selVtxI); 
   data.category = (data.r9 < 0.94)+2*(fabs(data.etaSC) > 1.48); 
-  data.idMVA = PhotonID->getIdMVA(pho,nVtx,rho,selVtxI);  
+  //  data.idMVA = PhotonID->getIdMVA(pho,nVtx,rho,selVtxI);  //getidmva
   data.mother = pho->genMatch.idMother; 
   PhotonID->fillIsoVariables(pho,&data,nVtx,rho,selVtxI);
   if(debugSelector) cout << "DONE Filling Reduced Data" <<endl;
@@ -1191,55 +991,6 @@ void HggSelector::setupOutputTree(){
 
 }
 
-void HggSelector::fillMuMuGamma(){
-  nMuMuG=0;
-  TVector3 vtx(vtxX[0],vtxY[0],vtxZ[0]);
-  for(int iMu1=0;iMu1<nMu_;iMu1++){
-    VecbosMu mu1 = Muons_->at(iMu1);    
-    if(mu1.pt < 10) continue;
-    if(!mu1.isGlobalMuon || !mu1.isTrackerMuon) continue;
-    if(mu1.nTrackHits <= 10 || mu1.nPixelHits==0) continue;
-    if(mu1.trackImpactPar >=0.2) continue;
-    if(mu1.trkIso >= 3) continue;
-    for(int iMu2=iMu1+1;iMu2<nMu_;iMu2++){
-      VecbosMu mu2 = Muons_->at(iMu2);
-      if(mu2.pt < 10) continue;
-      if(mu1.pt<20 && mu2.pt<20) continue; // 20/10 selection
-      if(mu1.charge*mu2.charge >=0) continue; //opposite charge
-      if(!mu2.isGlobalMuon || !mu2.isTrackerMuon) continue;
-      if(mu2.nTrackHits <= 10 || mu2.nPixelHits==0) continue;
-      if(mu2.trackImpactPar >=0.2) continue;
-      if(mu2.trkIso >= 3) continue;
-      for(int iPho=0; iPho<nPho_;iPho++){
-	VecbosPho pho = Photons_->at(iPho);
-
-	//fill the different masses
-	TLorentzVector p4Mu1; p4Mu1.SetPtEtaPhiM(mu1.pt,mu1.eta,mu1.phi,0.106);
-	TLorentzVector p4Mu2; p4Mu2.SetPtEtaPhiM(mu2.pt,mu2.eta,mu2.phi,0.106);
-
-	massMuMu[nMuMuG] = (p4Mu1+p4Mu2).M();
-	massMuMuGamma[nMuMuG] = (p4Mu1+p4Mu2+pho.p4FromVtx(vtx,pho.energy,false)).M();
-	massMuMuRegGamma[nMuMuG] = (p4Mu1+p4Mu2+pho.p4FromVtx(vtx,pho.correctedEnergy,false)).M();
-	massMuMuScaleGamma[nMuMuG] = (p4Mu1+p4Mu2+pho.p4FromVtx(vtx,pho.scaledEnergy,false)).M();
-	if(pho.genMatch.index>=0) massMuMuGenGamma[nMuMuG] = (p4Mu1+p4Mu2+pho.p4FromVtx(vtx,pho.genMatch.energy,false)).M();
-	else massMuMuGenGamma[nMuMuG] = -1;
-
-	MMG_Mu1.push_back(mu1);
-	MMG_Mu2.push_back(mu2);
-	MMG_Pho.push_back(pho);
-	float eT = pho.p4FromVtx(vtx,pho.energy,false).Et();
-	isosumoetPho[nMuMuG] = (pho.dr03EcalRecHitSumEtCone + pho.dr04HcalTowerSumEtCone + pho.dr03TrkSumPtHollowCone + isoSumConst - rho*rhoFac)/eT;
-	mvaPho[nMuMuG] = PhotonID->getIdMVA(&pho,nVtx,rho,0); 
-	
-	nMuMuG++;
-      }
-    }
-  }
-
-
-  if(doMuMuGamma) outTreeMuMuG->Fill();
-}
-
 #define debugMjj 0
 float HggSelector::getVBFMjj(VecbosPho* pho1, VecbosPho* pho2,TVector3 SelVtx,float *jetPts){
   TLorentzVector p1 = pho1->p4FromVtx(SelVtx,pho1->finalEnergy);
@@ -1407,84 +1158,6 @@ float HggSelector::getVertexProb(int indexPho1,int indexPho2){
   
 }
 
-float HggSelector::getDiPhoMVA(int indexPho1, int indexPho2, float mva1, float mva2, bool usePFSC){
-  if(debugSelector) cout << "getDiPhoMVA" <<endl;  
-  int selectedVertex = getVertexIndex(indexPho1,indexPho2);
-  if(selectedVertex<0 || selectedVertex >= nVtx){
-    cout << "WARNING: Photons " << indexPho1 << " and " << indexPho2 
-	 << " have no selected vertex!" << endl
-	 << "Skipping this pair" << endl;
-    return -9999.;
-  }
-  if(debugSelector) cout << mva1 << "  " << mva2 << endl;
-  if(mva1 < -999 || mva2 < -999) return -9999.;
-  if(debugSelector) cout << "getting photons" <<endl;  
-  VecbosPho pho1 = Photons_->at(indexPho1);
-  VecbosPho pho2 = Photons_->at(indexPho2);
-  if(debugSelector) cout << "selected Vertex: " << selectedVertex <<endl;  
-
-  if(debugSelector){
-    std::cout << "pho1: " << pho1.finalEnergy << "  " << pho1.scaledEnergy << "  " << pho1.dEoE << "  " << pho1.eta << "  " << std::endl;
-    std::cout << "pho2: " << pho2.finalEnergy << "  " << pho2.scaledEnergy << "  " << pho2.dEoE << "  " << pho2.eta << "  " << std::endl;
-  }
-  TVector3 vtxPos(vtxX[selectedVertex],vtxY[selectedVertex],vtxZ[selectedVertex]);
-
-  TLorentzVector p1 = pho1.p4FromVtx(vtxPos,pho1.finalEnergy);
-  TLorentzVector p2 = pho2.p4FromVtx(vtxPos,pho2.finalEnergy);
-
-  VecbosPho* phoLead = (p1.Et() > p2.Et() ? &pho1 : & pho2); //select the leading photon
-  VecbosPho* phoSubLead = (p1.Et() > p2.Et() ? &pho2 : & pho1); //select the leading photon
-
-  VecbosSC *scLead;
-  VecbosSC *scSubLead;
-  if(usePFSC){
-    scLead = &(phoLead->PFSC);
-    scSubLead = &(phoSubLead->PFSC);
-  }else{
-    scLead = &(phoLead->SC);
-    scSubLead = &(phoSubLead->SC);
-  }
-
-  float mvaLead = (p1.Et() > p2.Et() ? mva1 : mva2);
-  float mvaSubLead = (p1.Et() > p2.Et() ? mva2 : mva1);
-
-  float mPair = (p1+p2).M();
-  if(debugSelector) std::cout << "mPair: " << mPair << std::endl;
-  //fill variables
-  smearedMassErrByMass = massRes->getMassResolutionEonly(&pho1,&pho2,vtxPos)/mPair;
-  smearedMassErrByMassWrongVtx = massRes->getMassResolution(&pho1,&pho2,vtxPos,true)/mPair;
-  if(debugSelector) cout << "Mass Erro resolved. Selected Vertex: " << selectedVertex << endl;
-
-  vtxprob= getVertexProb(indexPho1,indexPho2);
-
-
-  if(debugSelector) cout << "vtx prob: " << vtxprob << endl;
-  pho1PtByMass = max(p1.Et(),p2.Et())/mPair;
-  pho2PtByMass = min(p1.Et(),p2.Et())/mPair;
-  if(debugSelector) cout << "pho1/m: " << pho1PtByMass << endl;
-  if(debugSelector) cout << "pho2/m: " << pho2PtByMass << endl;
-  pho1Eta = (p1.Et() > p2.Et() ? p1.Eta(): p2.Eta());
-  pho2Eta = (p1.Et() > p2.Et() ? p2.Eta(): p1.Eta());
-  if(debugSelector) cout << "pho1 eta: " << pho1Eta << endl;
-  if(debugSelector) cout << "pho2 eta: " << pho2Eta << endl;
-  cosDPhi = TMath::Cos(DeltaPhi(scLead->phi,scSubLead->phi));
-  if(debugSelector) cout << "cos dPhi: " << cosDPhi << endl;
-  pho1IdMVA = mvaLead;
-  pho2IdMVA = mvaSubLead;
-
-  MVAInputs["massRes"]->Fill(smearedMassErrByMass);
-  MVAInputs["massResWrongVtx"]->Fill(smearedMassErrByMassWrongVtx);
-  MVAInputs["vtxProb"]->Fill(vtxprob);
-  MVAInputs["p1_EtByM"]->Fill(pho1PtByMass);
-  MVAInputs["p2_EtByM"]->Fill(pho2PtByMass);
-  MVAInputs["p1_Eta"]->Fill(pho1Eta);
-  MVAInputs["p2_Eta"]->Fill(pho2Eta);
-  MVAInputs["CosDPhi"]->Fill(cosDPhi);
-  MVAInputs["p1_idMVA"]->Fill(pho1IdMVA);
-  MVAInputs["p2_idMVA"]->Fill(pho2IdMVA);
-
-  return diPhotonMVA->EvaluateMVA(methodName_diPho);
-}
 
   ////////////RAZOR METHODS////////////////
 vector<TLorentzVector> HggSelector::CombineJets_R_no_seed(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2){
