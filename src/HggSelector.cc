@@ -316,6 +316,8 @@ void HggSelector::Loop(){
 
       TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
       TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
+      AnglePho = p1.Angle(p2.Vect());
+
       if(p1.Pt() < p2.Pt()){
 
 	TLorentzVector tmp = p1;
@@ -342,15 +344,13 @@ void HggSelector::Loop(){
       float min_jet_cut = 1;
 
 
-      //must be barrel photons (Use the supercluster)
+      //use the supercluster eta
       bothBarrel = fabs(pho1_.SC.eta) < 1.48 && fabs(pho2_.SC.eta) < 1.48;      
       //check the bad event list (needs to be produced)
       //      badEventList = isFlagged();
       badEventList = false;
-      bool bothEndcaps = fabs(pho1_.SC.eta) < 2.6 && fabs(pho2_.SC.eta) < 2.6;
-      
-      bool passFilters = PassMETFilters() || !isData_;
-	
+      bool bothEndcaps = fabs(pho1_.SC.eta) < 2.6 && fabs(pho2_.SC.eta) < 2.6;      
+      bool passFilters = PassMETFilters() || !isData_;	
 
       //must pass met filters! and not be in the bad event list
       bool calcRazor = (jetlist.size() >= min_jet_cut) && passFilters && bothEndcaps && !badEventList;
@@ -362,17 +362,20 @@ void HggSelector::Loop(){
 	vector<TLorentzVector> tmpJet_OS = CombineJets_R_SSorOS(jetlist, p1, p2, false);
 
 	if((tmpJet.size() != 2) || (tmpJet.size() != 2) || (tmpJet.size() != 2)) {
-	  cout << "HEMISPHERE MAKER DOES NOT RETURN 2 HEMISPHERES" << endl;
+	  cout << "ERROR: HEMISPHERE MAKER DOES NOT RETURN 2 HEMISPHERES" << endl;
 	}
 	
         TLorentzVector PFHem1 = tmpJet[0];
         TLorentzVector PFHem2 = tmpJet[1];
+	AngleHem = PFHem1.Angle(PFHem2.Vect());
 
         TLorentzVector PFHem1_SS = tmpJet_SS[0];
         TLorentzVector PFHem2_SS = tmpJet_SS[1];
+	AngleHem_SS = PFHem1_SS.Angle(PFHem2_SS.Vect());
 
         TLorentzVector PFHem1_OS = tmpJet_OS[0];
         TLorentzVector PFHem2_OS = tmpJet_OS[1];
+	AngleHem_OS = PFHem1_OS.Angle(PFHem2_OS.Vect());
         
         //calculate the variables, no seed, SS, and OS
         double MT = CalcMTR(PFHem1, PFHem2, pfMet);
@@ -463,6 +466,7 @@ void HggSelector::Loop(){
 
     MET = pfMet;
     METPhi = pfMetPhi;
+
     lumiBlockOut = lumiBlock;
     runNumberOut = runNumber;
     evtNumberOut = evtNumber;
@@ -913,27 +917,6 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("runNumber",&runNumberOut);
   outTree->Branch("evtNumber",&evtNumberOut);
   outTree->Branch("lumiBlock",&lumiBlockOut);
-  
-
-  if(doMuMuGamma){
-    outTreeMuMuG = new TTree("MuMuGamma","");
-    outTreeMuMuG->Branch("nMuMuG",&nMuMuG);
-
-    outTreeMuMuG->Branch("massMuMuGamma",massMuMuGamma,"massMuMuGamma[nMuMuG]");
-    outTreeMuMuG->Branch("massMuMuRegGamma",massMuMuRegGamma,"massMuMuRegGamma[nMuMuG]");
-    outTreeMuMuG->Branch("massMuMuScaleGamma",massMuMuScaleGamma,"massMuMuScaleGamma[nMuMuG]");
-    outTreeMuMuG->Branch("massMuMuGenGamma",massMuMuGenGamma,"massMuMuGenGamma[nMuMuG]");
-    outTreeMuMuG->Branch("massMuMu",massMuMu,"massMuMu[nMuMuG]");
-    outTreeMuMuG->Branch("puWeight",puWeight,"puWeight[nMuMuG]");
-
-    outTreeMuMuG->Branch("Muon1",&MMG_Mu1);
-    outTreeMuMuG->Branch("Muon2",&MMG_Mu2);
-    outTreeMuMuG->Branch("Photon",&MMG_Pho);
-  
-    outTreeMuMuG->Branch("isosumoetPho",isosumoetPho,"isosumoetPho[nMuMuG]");
-    outTreeMuMuG->Branch("mvaPho",mvaPho,"mvaPho[nMuMuG]");
-  }
-
 
   ////////////RAZOR VARIABLES////////////////
   //razor
@@ -988,6 +971,12 @@ void HggSelector::setupOutputTree(){
 
   outTree->Branch("mHem1_OS",&mHem1_OS,"mHem1_OS/F");
   outTree->Branch("mHem2_OS",&mHem2_OS,"mHem2_OS/F");
+
+  //Angle Variables
+  outTree->Branch("AnglePho",&AnglePho,"AnglePho/F");
+  outTree->Branch("AngleHem",&AngleHem,"AngleHem/F");
+  outTree->Branch("AngleHem_OS",&AngleHem_OS,"AngleHem_OS/F");
+  outTree->Branch("AngleHem_SS",&AngleHem_SS,"AngleHem_SS/F");
 
 }
 
@@ -1405,7 +1394,7 @@ void HggSelector::FillRazorVarsWith(int n){
   phiHem2= n ;      
   mHem1=n;
   mHem2=n;
-
+  AngleHem = n;
   //same side
   PFMR_SS = n;
   PFR_SS = n;
@@ -1417,6 +1406,7 @@ void HggSelector::FillRazorVarsWith(int n){
   phiHem2_SS= n ;      
   mHem1_SS=n;
   mHem2_SS=n;
+  AngleHem_SS = n;
   //opposite side
   PFMR_OS = n;
   PFR_OS = n;
@@ -1428,6 +1418,7 @@ void HggSelector::FillRazorVarsWith(int n){
   phiHem2_OS= n ;      
   mHem1_OS=n;
   mHem2_OS=n;
+  AngleHem_OS=n;
 }
 
 //after the initeventflag is called we can check the bad event

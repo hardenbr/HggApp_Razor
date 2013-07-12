@@ -412,6 +412,12 @@ private:
   int badEventList;
   int nJets;
 
+  //Angular Variables
+  float AnglePho;
+  float AngleHem;
+  float AngleHem_OS;
+  float AngleHem_SS;
+
   //running over bad event list
   struct EventIndex;
   map<EventIndex, int> EventCounts;
