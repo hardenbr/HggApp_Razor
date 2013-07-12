@@ -25,10 +25,11 @@ void HggPhotonID::Init(){
     return;
   }
 
-  weightFile_IdEB_2011 = cfg.getParameter("weightFile_IdEB_2011");
+  /*  weightFile_IdEB_2011 = cfg.getParameter("weightFile_IdEB_2011");
   weightFile_IdEE_2011 = cfg.getParameter("weightFile_IdEE_2011");
   weightFile_IdEB_2012 = cfg.getParameter("weightFile_IdEB_2012");
   weightFile_IdEE_2012 = cfg.getParameter("weightFile_IdEE_2012");
+  */ //RAZOR UNNCESSARY
   methodName_Id  = cfg.getParameter("methodName_Id");
 
   version = cfg.getParameter("PhotonIDVersion");
@@ -51,7 +52,7 @@ void HggPhotonID::Init(){
   InputDists["isosumoetPF"] = new TH1F("isosumoetPF","",200,0,100);
   InputDists["isosumoetbadPF"] = new TH1F("isosumoetbadPF","",200,0,100);
 
-  this->setupTMVA();
+  //  this->setupTMVA();//not necessary for RAZOR
 }
 
 void HggPhotonID::setVertices(int nPV, float* xPV, float *yPV, float *zPV){
@@ -164,8 +165,8 @@ void HggPhotonID::setupTMVA(){
   photonMVA_EE_2011->AddVariable("PhiWidth",&scphiwidth);             
   
   //book MVAs:
-  photonMVA_EB_2011->BookMVA( methodName_Id, weightFile_IdEB_2011);
-  photonMVA_EE_2011->BookMVA( methodName_Id, weightFile_IdEE_2011);
+  /*  photonMVA_EB_2011->BookMVA( methodName_Id, weightFile_IdEB_2011);
+      photonMVA_EE_2011->BookMVA( methodName_Id, weightFile_IdEE_2011);*/ //RAZOR
 
   //
   //   2012 Photon ID MVA
@@ -203,8 +204,8 @@ void HggPhotonID::setupTMVA(){
   
   photonMVA_EE_2012->AddVariable("myphoton_ESEffSigmaRR",   &sigRR);
 
- photonMVA_EB_2012->BookMVA( methodName_Id, weightFile_IdEB_2012);
- photonMVA_EE_2012->BookMVA( methodName_Id, weightFile_IdEE_2012);
+  // photonMVA_EB_2012->BookMVA( methodName_Id, weightFile_IdEB_2012); //RAZOR UNNCESSARY
+  // photonMVA_EE_2012->BookMVA( methodName_Id, weightFile_IdEE_2012);
   
   }
 

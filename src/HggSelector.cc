@@ -114,7 +114,7 @@ int HggSelector::init(){
     valid = false;
     return -1;
   }
-  weightFile_diPho = cfg.getParameter("weightFile_diPho");
+  //  weightFile_diPho = cfg.getParameter("weightFile_diPho"); RAZOR
   methodName_diPho  = cfg.getParameter("methodName_diPho");
   triggers = cfg.getTokens("Triggers",",");
   doRegression = cfg.getParameter("redoRegression").compare("yes")==0;
@@ -136,7 +136,7 @@ int HggSelector::init(){
   }
 
   cout << "Parameters: " << endl
-       << weightFile_diPho << endl
+    //       << weightFile_diPho << endl RAZOR
        << methodName_diPho << endl;
 
   string MassResConfig = cfg.getParameter("MassResolutionConfig");
@@ -929,7 +929,7 @@ void HggSelector::setupTMVA(){
   diPhotonMVA->AddVariable("ph2.idmva",&pho2IdMVA);
 
   //book MVAs:
-  diPhotonMVA->BookMVA(  methodName_diPho, weightFile_diPho);
+  //  diPhotonMVA->BookMVA(  methodName_diPho, weightFile_diPho); RAZOR
 }
 
 void HggSelector::setBranchAddresses(){
