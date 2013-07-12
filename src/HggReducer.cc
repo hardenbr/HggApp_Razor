@@ -306,7 +306,7 @@ void HggReducer::Loop(string outFileName, int start, int stop) {
     } // end of photon isolation loop
 
     //fill remaining collections
-    if(!_isData) this->fillGeneratorInfo();
+    //    if(!_isData) this->fillGeneratorInfo();
     this->matchPhotonsElectrons();
    //cout << "Filling Collection" << endl;
     outTree->Fill();
