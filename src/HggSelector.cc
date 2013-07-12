@@ -15,7 +15,7 @@
 using namespace std;
 using namespace TMVA;
 
-#define debugSelector 1
+#define debugSelector 0
 
 
 //events
@@ -1376,7 +1376,7 @@ bool HggSelector::PassMETFilters(){
   // remove bits 6 7 8 for now (unfilled) 
   bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
   //bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag);
-  if( !decision ) {
+  if( !decision && isData_ ) {
     cout << "------------Begin MET FLAG-----------" << endl;
   }
 
