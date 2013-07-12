@@ -48,17 +48,12 @@ private:
 
   string version;
 
-<<<<<<< HEAD
+
   static constexpr float isoSumConst = 0;
   static constexpr float isoSumConstPF = 2.5;
   static constexpr float rhoFac = 0.09;
   static constexpr float rhoFacBad = 0.23;
-=======
-  const static float isoSumConst = 0;
-  const static float isoSumConstPF = 2.5;
-  const static float rhoFac = 0.09;
-  const static float rhoFacBad = 0.23;
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
 
   string weightFile_IdEB_2011;
   string weightFile_IdEE_2011;

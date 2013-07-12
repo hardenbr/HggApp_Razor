@@ -1,11 +1,10 @@
 #include <HggSelector.hh>
 #include "ReadConfig.hh"
-<<<<<<< HEAD
-=======
+
 #include <iostream>
 #include <string>
 #include <vector>
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
 
 //includes for the TMVA ID
 #include "TMVA/Tools.h"
@@ -18,8 +17,7 @@ using namespace TMVA;
 
 #define debugSelector 0
 
-<<<<<<< HEAD
-=======
+
 //events
 struct HggSelector::EventIndex {
   int RunNumber;
@@ -38,7 +36,7 @@ struct HggSelector::EventIndex {
   }
 };
 
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
 HggSelector::HggSelector():
   fChain(0),
   valid(false),
@@ -102,11 +100,9 @@ int HggSelector::init(){
 
   triggerDec = new int[triggers.size()];
 
-<<<<<<< HEAD
-=======
   //initialize the bad event list
   //  InitEventFlag("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/AllBadABCDNEWTAUID.txt");
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
   
   this->setBranchAddresses();
   this->setupOutputTree();
@@ -212,10 +208,7 @@ void HggSelector::Loop(){
   int index1=-1,index2=-1;
   int index1PFCiC=-1,index2PFCiC=-1;
   int index1CiC=-1,index2CiC=-1;
-<<<<<<< HEAD
-=======
 
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
   while(fChain->GetEntry(++jentry)){
     if(jentry%500==0) cout << ">> Processing Entry " << jentry << "/" << nEntries << endl;
 
@@ -265,7 +258,7 @@ void HggSelector::Loop(){
     
     if(nSigma>0 && !isData_){ //do the energy scale and energy resolution systematics
       for(int iSmear=-nSigma;iSmear<=nSigma;iSmear++){
-<<<<<<< HEAD
+
 	//Do the Smearing for the MVA analysis
 	indices = getBestPair(mvaOut,iSmear,0);
 	diPhoMVASmear.push_back(mvaOut[0]);
@@ -319,61 +312,7 @@ void HggSelector::Loop(){
 	}else{
 	  mPairScaleCiC.push_back(getMPair(indices.first,indices.second));
 	}
-=======
-        //Do the Smearing for the MVA analysis
-        indices = getBestPair(mvaOut,iSmear,0);
-        diPhoMVASmear.push_back(mvaOut[0]);
-        pho1MVASmear.push_back(mvaOut[1]);
-        pho2MVASmear.push_back(mvaOut[2]);
 
-        if(indices.first == -1 || indices.second==-1){
-          mPairSmear.push_back(-1);
-        }else{
-          mPairSmear.push_back(getMPair(indices.first,indices.second));
-        }
-        //do the smearing for the PFCiC Analysis
-        indices = getBestPairCiC(iSmear,0,true);
-        if(indices.first == -1 || indices.second==-1){
-          mPairSmearPFCiC.push_back(-1);
-        }else{
-          mPairSmearPFCiC.push_back(getMPair(indices.first,indices.second));
-        }
-        //do the smearing for the CiC Analysis
-        indices = getBestPairCiC(iSmear,0,false);
-        if(indices.first == -1 || indices.second==-1){
-          mPairSmearCiC.push_back(-1);
-        }else{
-          mPairSmearCiC.push_back(getMPair(indices.first,indices.second));
-        }
-      } // Done with smearing
-      
-      for(int iScale=-nSigma;iScale<=nSigma;iScale++){ //do the scaling systematic
-        indices = getBestPair(mvaOut,-999,iScale);
-        diPhoMVAScale.push_back(mvaOut[0]);
-        pho1MVAScale.push_back(mvaOut[1]);
-        pho2MVAScale.push_back(mvaOut[2]);
-        
-        if(indices.first == -1 || indices.second==-1){
-          mPairScale.push_back(-1);
-        }else{
-          mPairScale.push_back(getMPair(indices.first,indices.second));
-        }
-		//do the smearing for the PFCiC Analysis
-        indices = getBestPairCiC(-999,iScale,true);
-        if(indices.first == -1 || indices.second==-1){
-          mPairScalePFCiC.push_back(-1);
-        }else{
-          mPairScalePFCiC.push_back(getMPair(indices.first,indices.second));
-        }
-        
-		//do the smearing for the CiC Analysis
-        indices = getBestPairCiC(-999,iScale,false);
-        if(indices.first == -1 || indices.second==-1){
-          mPairScaleCiC.push_back(-1);
-        }else{
-          mPairScaleCiC.push_back(getMPair(indices.first,indices.second));
-        }
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       }
     }
     
@@ -400,12 +339,9 @@ void HggSelector::Loop(){
     if(debugSelector) cout << "indicesPFCiC: " << index1PFCiC << "  " << index2PFCiC << endl;
     if(debugSelector) cout << "indicesCiC: " << index1CiC << "  " << index2CiC << endl;
 
-<<<<<<< HEAD
-    if(index1 > -1 && index2 > -1){
-=======
+
     //    if(index1 > -1 && index2 > -1){
     if(false){ /////////DO NOT FILL MVA  VARIABLES FOR RAZOR ANALYSIS////////
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       //fill MVA variables
       int selectedVertex = getVertexIndex(index1,index2);
       if(debugSelector) cout << "Final Selection MVA: " << selectedVertex << endl;
@@ -462,11 +398,7 @@ void HggSelector::Loop(){
       mPair_=-1;      
       cat_=-1;
     }
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
     if(index1PFCiC > -1 && index2PFCiC > -1){
       //fill PFCiC variables
       int selectedVertex = getVertexIndex(index1PFCiC,index2PFCiC);
@@ -496,28 +428,16 @@ void HggSelector::Loop(){
       TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
       TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
       if(p1.Pt() < p2.Pt()){
-<<<<<<< HEAD
+
 	TLorentzVector tmp = p1;
 	p1=p2; p2=tmp;
-=======
-        TLorentzVector tmp = p1;
-        p1=p2; p2=tmp;
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
       }
       TLorentzVector gg = p1+p2;
       TVector3 boost = -1*gg.BoostVector();
       p1.Boost(boost);
       cosThetaLeadPFCiC = p1.Vect().Dot(gg.Vect())/p1.Vect().Mag()/gg.Vect().Mag();
-<<<<<<< HEAD
 
-      catPFCiC_ = getCategoryPFCiC();
-    }else{
-      mPairPFCiC_=-1;
-      catPFCiC_ = -1;
-    }
-
-    if(index1CiC > -1 && index2CiC > -1){
-=======
       
       catPFCiC_ = getCategoryPFCiC();
       
@@ -645,7 +565,6 @@ void HggSelector::Loop(){
 
     //if(index1CiC > -1 && index2CiC > -1){
     if(false){ /////////DO NOT FILL CiC VARIABLES FOR RAZOR ANALYSIS////////
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       //fill CiC variables
       int selectedVertex = getVertexIndex(index1CiC,index2CiC);
       if(debugSelector) cout << "Final Selection CiC: " << selectedVertex << endl;
@@ -707,10 +626,7 @@ void HggSelector::Loop(){
     drBoundaryOut                = drBoundary;
     ECALTPFilterFlagOut          = ECALTPFilterFlag;
 
-<<<<<<< HEAD
-=======
-    
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
     outTree->Fill();
   }//while(fChain...
 
@@ -765,7 +681,7 @@ std::pair<int,int> HggSelector::getBestPairCiC(int smearShift,int scaleShift,boo
     for(int iPho1=0; iPho1<nPho_;iPho1++){
       if(photonMatchedElectron[iPho1] && doElectronVeto) continue;
       for(int iPho2=iPho1; iPho2<nPho_;iPho2++){
-<<<<<<< HEAD
+
 	if(iPho1==iPho2) continue;
 	if(photonMatchedElectron[iPho2] && doElectronVeto) continue;
 	if(debugSelector) cout << ">> " << iPho1 << "  " << iPho2 << endl;
@@ -800,42 +716,6 @@ std::pair<int,int> HggSelector::getBestPairCiC(int smearShift,int scaleShift,boo
 	  indices.first = iPho1;
 	  indices.second = iPho2;
 	}
-=======
-        if(iPho1==iPho2) continue;
-        if(photonMatchedElectron[iPho2] && doElectronVeto) continue;
-        if(debugSelector) cout << ">> " << iPho1 << "  " << iPho2 << endl;
-        //scale/smear the energy of the photon
-        VecbosPho* pho1 = &(Photons_->at(iPho1));
-        VecbosPho* pho2 = &(Photons_->at(iPho2));
-        int selVtxI = this->getVertexIndex(iPho1,iPho2);
-        TVector3 vtxPos(vtxX[selVtxI],vtxY[selVtxI],vtxZ[selVtxI]);
-        if(!this->preSelectPhotons(pho1,pho2,vtxPos)) continue;
-        if(!isData_){
-	  
-          //apply scale shift	  
-          pho1->finalEnergy = pho1->scaledEnergy + scaleShift*pho1->scaledEnergyError;
-          pho2->finalEnergy = pho2->scaledEnergy + scaleShift*pho2->scaledEnergyError;
-          
-          smearPhoton(pho1,smearShift);
-          smearPhoton(pho2,smearShift);
-        }
-        bool CiC1,CiC2;
-        if(usePF){
-          CiC1 = PhotonID->getIdCiCPF(pho1,nVtx,rho,selVtxI);
-          CiC2 = PhotonID->getIdCiCPF(pho2,nVtx,rho,selVtxI);
-        }else{
-          CiC1 = PhotonID->getIdCiC(pho1,nVtx,rho,selVtxI);
-          CiC2 = PhotonID->getIdCiC(pho2,nVtx,rho,selVtxI);
-        }
-        if(!CiC1 || !CiC2) continue;
-        float thisPtSum = pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()
-          + pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
-        if(thisPtSum > highestPtSum){
-          highestPtSum = thisPtSum;
-          indices.first = iPho1;
-          indices.second = iPho2;
-        }
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       }// for(iPho2...
     }// for(iPho1...
     return indices;
@@ -861,19 +741,13 @@ std::pair<int,int> HggSelector::getBestPair(float* mvaOut, int smearShift,int sc
       if(!this->preSelectPhotons(pho1,pho2,vtxPos)) continue;
       if(!isData_){
 	
-<<<<<<< HEAD
+
 	//apply scale shift	  
 	pho1->finalEnergy = pho1->scaledEnergy + scaleShift*pho1->scaledEnergyError;
 	pho2->finalEnergy = pho2->scaledEnergy + scaleShift*pho2->scaledEnergyError;
 	smearPhoton(pho1,smearShift);
 	smearPhoton(pho2,smearShift);
-=======
-        //apply scale shift	  
-        pho1->finalEnergy = pho1->scaledEnergy + scaleShift*pho1->scaledEnergyError;
-        pho2->finalEnergy = pho2->scaledEnergy + scaleShift*pho2->scaledEnergyError;
-        smearPhoton(pho1,smearShift);
-        smearPhoton(pho2,smearShift);
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
       }
       if(debugSelector) cout << "Getting Photon ID:" << endl;
       float mva1 = PhotonID->getIdMVA(pho1,nVtx,rho,selVtxI);
@@ -883,7 +757,6 @@ std::pair<int,int> HggSelector::getBestPair(float* mvaOut, int smearShift,int sc
       float diPhoMVA =  getDiPhoMVA(iPho1,iPho2,mva1,mva2,false);
       if(debugSelector) cout << "\t\t" << mva1 << "  " << mva2 << "  " << diPhoMVA << endl;
       float thisPtSum = pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()
-<<<<<<< HEAD
 	+ pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
 
       if(diPhoMVA>=-1 &&  thisPtSum > maxSumPt){
@@ -892,16 +765,6 @@ std::pair<int,int> HggSelector::getBestPair(float* mvaOut, int smearShift,int sc
 	indices.second = iPho2;
 	diPhoMVAMax = diPhoMVA;
 	*mvaOut = diPhoMVA;
-=======
-        + pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
-      
-      if(diPhoMVA>=-1 &&  thisPtSum > maxSumPt){
-        maxSumPt = thisPtSum;
-        indices.first = iPho1;
-        indices.second = iPho2;
-        diPhoMVAMax = diPhoMVA;
-        *mvaOut = diPhoMVA;
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
       }
     }// for(iPho2...
   }// for(iPho1...
@@ -1076,11 +939,7 @@ void HggSelector::setBranchAddresses(){
   fChain->SetBranchAddress("runNumber",&runNumber);
   fChain->SetBranchAddress("evtNumber",&evtNumber);
   //fChain->SetBranchAddress("isRealData",&_isData);
-<<<<<<< HEAD
-  
-=======
- 
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
   fChain->SetBranchAddress("eeBadScFilterFlag",&eeBadScFilterFlag);
   fChain->SetBranchAddress("hcalLaserEventFilterFlag",&hcalLaserEventFilterFlag);
   fChain->SetBranchAddress("HBHENoiseFilterResultFlag",&HBHENoiseFilterResultFlag);
@@ -1135,12 +994,10 @@ void HggSelector::setBranchAddresses(){
  fChain->SetBranchAddress("PFMET",&pfMet);
  fChain->SetBranchAddress("PFMETPhi",&pfMetPhi);
 
-<<<<<<< HEAD
-=======
+
  fChain->SetBranchAddress("CaloMETPhi", &CaloMETPhi);
  fChain->SetBranchAddress("CaloMET", &CaloMET);
 
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
  vector<string>::const_iterator trigIt;
  int i=0;
  for(trigIt=triggers.begin();trigIt!=triggers.end();trigIt++,i++){
@@ -1276,8 +1133,7 @@ void HggSelector::setupOutputTree(){
     outTreeMuMuG->Branch("isosumoetPho",isosumoetPho,"isosumoetPho[nMuMuG]");
     outTreeMuMuG->Branch("mvaPho",mvaPho,"mvaPho[nMuMuG]");
   }
-<<<<<<< HEAD
-=======
+
 
   ////////////RAZOR VARIABLES////////////////
   //razor
@@ -1332,7 +1188,7 @@ void HggSelector::setupOutputTree(){
 
   outTree->Branch("mHem1_OS",&mHem1_OS,"mHem1_OS/F");
   outTree->Branch("mHem2_OS",&mHem2_OS,"mHem2_OS/F");
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
 }
 
 void HggSelector::fillMuMuGamma(){
@@ -1629,8 +1485,7 @@ float HggSelector::getDiPhoMVA(int indexPho1, int indexPho2, float mva1, float m
 
   return diPhotonMVA->EvaluateMVA(methodName_diPho);
 }
-<<<<<<< HEAD
-=======
+
   ////////////RAZOR METHODS////////////////
 vector<TLorentzVector> HggSelector::CombineJets_R_no_seed(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2){
   vector<TLorentzVector> mynewjets;
@@ -1962,4 +1817,4 @@ void HggSelector::InitEventFlag(char *s_Event){
 //The event index object for checking the list of bad
 
   
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+

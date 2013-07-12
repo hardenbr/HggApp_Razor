@@ -149,10 +149,7 @@ void HggReducer::Loop(string outFileName, int start, int stop) {
       std::cout << "[GoodRunLS]::Run " << lastRun << " LS " << lastLumi << " is OK" << std::endl;
     }    
 
-<<<<<<< HEAD
     ECALLaserFilter           = METFlags & (1 << 9);
-=======
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
     eeBadScFilterFlag         = METFlags & (1 << 8);
     hcalLaserEventFilterFlag  = METFlags & (1 << 7);
     HBHENoiseFilterResultFlag = METFlags & (1 << 6);
@@ -309,11 +306,7 @@ void HggReducer::Loop(string outFileName, int start, int stop) {
     } // end of photon isolation loop
 
     //fill remaining collections
-<<<<<<< HEAD
-    //    if(!_isData) this->fillGeneratorInfo();
-=======
-    if(!_isData) this->fillGeneratorInfo();
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+    //    if(!_isData) this->fillGeneratorInfo(); //RAZOR
     this->matchPhotonsElectrons();
    //cout << "Filling Collection" << endl;
     outTree->Fill();
@@ -520,11 +513,8 @@ void HggReducer::fillJets(){
   caloMetPhi =  phiMet[0];
   pfMet = TMath::Sqrt(TMath::Power(pxPFMet[0],2)+TMath::Power(pyPFMet[0],2));
   pfMetPhi = phiPFMet[0];
-<<<<<<< HEAD
   pfMetType1 = TMath::Sqrt(TMath::Power(pxPFMet[2],2)+TMath::Power(pyPFMet[2],2));
   pfMetType1Phi = phiPFMet[2];
-=======
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
   tcMet =  TMath::Sqrt(TMath::Power(pxTCMet[0],2)+TMath::Power(pyTCMet[0],2));
   tcMetPhi = phiTCMet[0];
 
@@ -631,10 +621,7 @@ outTree->Branch("evtNumber",&evtNumberO,"evtNumber/I");
  outTree->Branch("isRealData",&_isData,"isRealData/I");
 
  // MET Flags
-<<<<<<< HEAD
  outTree->Branch("ECALLaserFilter",&ECALLaserFilter,"ECALLaserFilter/B");
-=======
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
  outTree->Branch("eeBadScFilterFlag",&eeBadScFilterFlag,"eeBadScFilterFlag/B");
  outTree->Branch("hcalLaserEventFilterFlag",&hcalLaserEventFilterFlag,"hcalLaserEventFilterFlag/B");
  outTree->Branch("HBHENoiseFilterResultFlag",&HBHENoiseFilterResultFlag,"HBHENoiseFilterResultFlag/B");
@@ -712,12 +699,8 @@ outTree->Branch("evtNumber",&evtNumberO,"evtNumber/I");
  outTree->Branch("PFMET",&pfMet,"PFMET");
  outTree->Branch("PFMETPhi",&pfMetPhi,"PFMETPhi");
 
-<<<<<<< HEAD
  outTree->Branch("type1PFMET",&pfMetType1,"type1PFMET");
  outTree->Branch("type1PFMETPhi",&pfMetType1Phi,"type1PFMETPhi");
-
-=======
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
  outTree->Branch("TCMET",&tcMet,"TCMET");
  outTree->Branch("TCMETPhi",&tcMetPhi,"TCMETPhi");
 

@@ -37,8 +37,7 @@ public:
   void setForceVertexZero(){forceVtxZero=true;}
   void setIsData(bool d){isData_=d;}
   void Loop();
-<<<<<<< HEAD
-=======
+
 
   ////////////RAZOR METHODS////////////////
   vector<TLorentzVector> CombineJets_R_no_seed(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2);
@@ -54,7 +53,7 @@ public:
   bool isFlagged();
 
 
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
 private:
   TChain* fChain;
   bool valid;
@@ -96,17 +95,12 @@ private:
   bool doPtOverM;
   float PtOverMLead;
   float PtOverMSubLead;
-<<<<<<< HEAD
+
   static constexpr float rhoFac    = 0.17;
   static constexpr float rhoFacBad = 0.52;
   static constexpr float isoSumConst = 0;//5;
   static constexpr float isoSumConstBad = 0;//7;
-=======
-  const static float rhoFac    = 0.17;
-  const static float rhoFacBad = 0.52;
-  const static float isoSumConst = 0;//5;
-  const static float isoSumConstBad = 0;//7;
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
 
   vector<string> triggers;
   int *triggerDec;
@@ -238,11 +232,9 @@ private:
   std::vector<float> mPairSmearCiC;
 
   //for mumuG
-<<<<<<< HEAD
+
   static constexpr int maxMuMuG = 500;
-=======
-  const static int maxMuMuG = 500;
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
   int nMuMuG;
   float massMuMuGamma[maxMuMuG];
   float massMuMuRegGamma[maxMuMuG];
@@ -280,11 +272,9 @@ private:
 
 
   //member data
-<<<<<<< HEAD
+
   static constexpr int maxPho = 100;
-=======
-  const static int maxPho = 100;
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
   int nPho_;
   std::vector<VecbosPho> *Photons_; // this contains ALL photons
   
@@ -306,11 +296,9 @@ private:
   // for each photon, a vector of floats giving the track iso from each ggVertex
 
   int nVtx; 
-<<<<<<< HEAD
+
   static constexpr int MAXVX = 100;
-=======
-  static const int MAXVX = 100;
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
   float vtxX[MAXVX];
   float vtxY[MAXVX];
   float vtxZ[MAXVX];
@@ -362,8 +350,7 @@ private:
   bool drDead; 
   bool drBoundary;
   bool ECALTPFilterFlag;
-<<<<<<< HEAD
-=======
+
 
   ////////////RAZOR VARIABLES////////////////
 
@@ -429,5 +416,5 @@ private:
   struct EventIndex;
   map<EventIndex, int> EventCounts;
 
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
 };

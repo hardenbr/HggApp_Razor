@@ -408,8 +408,6 @@ public:
   float combinedSecondaryVertex;
   float simpleSecondaryVertexHighPur;
   float simpleSecondaryVertexHighEff;
-<<<<<<< HEAD
-
   //Summer13 Variables
   int chargedHadronMultiplicity;
   int neutralHadronMultiplicity;
@@ -425,8 +423,7 @@ public:
   float muonEnergy;
   float HFHadronEnergy;
   float HFEMEnergy;
-=======
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
+
 };
 
 typedef std::vector<VecbosPho> PhoCollection;

@@ -1,10 +1,6 @@
 //
 // Original Author:  Fedor Ratnikov Nov 9, 2007
-<<<<<<< HEAD
 // $Id: JetCorrectorParameters.h,v 1.1 2010/12/24 15:17:56 emanuele Exp $
-=======
-// $Id: JetCorrectorParameters.h,v 1.1 2012/05/28 11:25:50 amott Exp $
->>>>>>> d9db9bdd2e20dd5561b4790426fe877a8407754a
 //
 // Generic parameters for Jet corrections
 //
