@@ -317,6 +317,7 @@ void HggSelector::Loop(){
       TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
       TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
       AnglePho = p1.Angle(p2.Vect());
+      AngleMET = DeltaPhi(pfMetPhi,CaloMETPhi);
 
       if(p1.Pt() < p2.Pt()){
 
@@ -977,6 +978,7 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("AngleHem",&AngleHem,"AngleHem/F");
   outTree->Branch("AngleHem_OS",&AngleHem_OS,"AngleHem_OS/F");
   outTree->Branch("AngleHem_SS",&AngleHem_SS,"AngleHem_SS/F");
+  outTree->Branch("AngleMET",&AngleMET,"AngleMET/F");
 
 }
 
