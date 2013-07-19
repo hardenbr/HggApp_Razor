@@ -286,6 +286,49 @@ bool HggPhotonID::getIdCiCPF(VecbosPho* pho, int nVertex, float rhoFastJet,int s
   return true;
 }
 
+bool HggPhotonID::getIdCiCPF_Fake(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex){
+  if(selVtxIndex < 0 || selVtxIndex >= vertices.size()){
+    cout << "WARNING: Selected Vertex Index out of range: " << selVtxIndex << "/" << vertices.size() <<endl;
+    return false;
+  }
+  this->fillVariables(pho,nVertex,rhoFastJet,selVtxIndex);
+  if(! this->getPreSelection(pho,nVertex,rhoFastJet,selVtxIndex) ) return false;
+  //2012 CiC Cuts:
+  const int nCats=4;
+  float cut_r9[nCats]       = {0.94,0.298,0.94,0.24};
+  float cut_hoe[nCats]      = {0.124, 0.092,0.142,0.063};
+  float cut_sieie[nCats]    = {0.0108,0.0102,0.028,0.028};
+  float cut_pfiso[nCats]    = {3.8,2.5,3.1,2.2};
+  float cut_isoGood[nCats]  = {6.,4.7,5.6,3.6};
+  float cut_isoBad[nCats]   = {10.,6.5,5.6,4.4};
+
+  int cat = this->getCiCCat(pho);
+  if(debugPhotonID) std::cout << "CiC Cat: " << cat << "   Photon SC Eta: " << pho->SC.eta << "  r9: " << pho->SC.r9 <<std::endl;
+
+  if(debugPhotonID) std::cout << "H/E: " << pho->HoverE << "\tsieie: " << pho->SC.sigmaIEtaIEta
+			      << "\tPFCharged: " << pfChargedIsoGood03oet << std::endl
+			      << "isosum: " << isosumoetPF << "\tisosumoetbadPF: " << isosumoetbadPF << std::endl;
+  
+  //FAKE ID: USUAL CUTS, EXCEPT (!SIEIE  | !(2 COMB ISOLATIONS))
+  
+  if(pho->SC.r9 < cut_r9[cat]) return false;
+  if(pho->HoverE > cut_hoe[cat]) return false;
+
+  bool pass_sietaieta = pho->SC.sigmaIEtaIEta > cut_sieie[cat];
+  bool pass_charged = pfChargedIsoGood03oet > cut_pfiso[cat];
+  bool pass_sumgood = isosumoetPF > cut_isoGood[cat];
+  bool pass_sumbad = isosumoetbadPF > cut_isoBad[cat];
+
+  //catches all two fail scenarios except all passing
+  bool one_pass = (pass_charged ^ pass_sumgood) ^ pass_sumbad;
+  //catch the all passing scenario
+  bool all_pass = pass_charged && pass_sumgood && pass_sumbad;
+
+  bool is_fake = one_pass && !all_pass;
+
+  return is_fake;    
+}
+
 int HggPhotonID::getCiCCat(VecbosPho* pho){
   return (pho->SC.r9<0.94)+2*(fabs(pho->SC.eta) > 1.48);
 }
