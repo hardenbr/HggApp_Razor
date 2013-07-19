@@ -68,7 +68,7 @@ private:
   string outputFile;
 
   std::pair<int,int> getBestPair(float*,int,int);
-  std::pair<int,int> getBestPairCiC(int,int,bool,bool);
+  std::pair<int,int> getBestPairCiC(int, int, bool, bool);
   
 
   bool preSelectPhotons(VecbosPho*,VecbosPho*,TVector3); // kinematic photons selections
@@ -359,7 +359,7 @@ private:
   
   //razor
   int nBtags;
-
+  int iSamp; //sample integer
 
   //NO SEEDING
   float PFMR;

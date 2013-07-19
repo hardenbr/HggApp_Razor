@@ -258,7 +258,7 @@ void HggSelector::Loop(){
       for(int iSmear=-nSigma;iSmear<=nSigma;iSmear++){
 
 	//do the smearing for the PFCiC Analysis
-	indices = getBestPairCiC(iSmear,0,true);
+	indices = getBestPairCiC(iSmear,0,true,false);
 	if(indices.first == -1 || indices.second==-1){
 	  mPairSmearPFCiC.push_back(-1);
 	}else{
@@ -269,7 +269,7 @@ void HggSelector::Loop(){
 
       for(int iScale=-nSigma;iScale<=nSigma;iScale++){ //do the scaling systematic
 	//do the smearing for the PFCiC Analysis
-	indices = getBestPairCiC(-999,iScale,true);
+	indices = getBestPairCiC(-999,iScale,true,false);
 	if(indices.first == -1 || indices.second==-1){
 	  mPairScalePFCiC.push_back(-1);
 	}else{
@@ -279,16 +279,36 @@ void HggSelector::Loop(){
     }
 
     //Do the PFCiC selection
-    indices = getBestPairCiC(0,0,true); // no scaling and default smearing
+    indices = getBestPairCiC(0,0,true,false); // no scaling and default smearing
+    //Get the Fake indicies
+    indices_fake = getBestPairCiC(0,0,true,true);
     index1PFCiC = indices.first;
     index2PFCiC = indices.second;
+    
+    index1PFCiC_fake = indices_fake.first;
+    index2PFCiC_fake = indices_fake.second;
+
     indices = make_pair(-1,-1);
 
 
     if(debugSelector) cout << "LOOP DONE" << endl;	  
     if(debugSelector) cout << "indicesPFCiC: " << index1PFCiC << "  " << index2PFCiC << endl;
 
-    if(index1PFCiC > -1 && index2PFCiC > -1){
+    bool found_tight = index1PFCiC > -1 && index2PFCiC > -1;
+    bool found_fake = index1PFCiC_fake > -1 && index2PFCiC_fake > -1;
+
+    //ensure we will fill one sample
+    if(found_tight || found_fake){
+      if(!found_tight && found_fake) {
+	//switch the photon indicies
+	index1PFCiC = index1PFCiC_fake;
+	index2PFCiC = index2PFCiC_fake;
+	iSamp = 1; //fake sample
+      }
+      else{
+	iSamp = 0; //tight sample
+      }	
+      
       //fill PFCiC variables
       int selectedVertex = getVertexIndex(index1PFCiC,index2PFCiC);
       if(debugSelector) cout << "Final Selection PFCiC: " << selectedVertex << endl;
@@ -343,7 +363,6 @@ void HggSelector::Loop(){
 
       //cut on the number of jets in the event
       float min_jet_cut = 1;
-
 
       //use the supercluster eta
       bothBarrel = fabs(pho1_.SC.eta) < 1.48 && fabs(pho2_.SC.eta) < 1.48;      
@@ -922,7 +941,9 @@ void HggSelector::setupOutputTree(){
 
   ////////////RAZOR VARIABLES////////////////
   //razor
+  outTree->Branch("iSamp",&iSamp,"iSamp/I");
   outTree->Branch("nBtags",&nBtags,"nBtags/I");
+
   outTree->Branch("nJets",&nJets,"nJets/I");
   outTree->Branch("bothBarrel", &bothBarrel, "bothBarrel/I");
 
