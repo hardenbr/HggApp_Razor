@@ -207,6 +207,7 @@ void HggSelector::Loop(){
   Long64_t jentry=-1;
   int index1=-1,index2=-1;
   int index1PFCiC=-1,index2PFCiC=-1;
+  int index1PFCiC_fake=-1,index2PFCiC_fake=-1;
   int index1CiC=-1,index2CiC=-1;
 
   while(fChain->GetEntry(++jentry)){
@@ -253,6 +254,7 @@ void HggSelector::Loop(){
 
     float mvaOut[3];
     std::pair<int,int> indices;
+    std::pair<int,int> indices_fake;
     
     if(nSigma>0 && !isData_){ //do the energy scale and energy resolution systematics
       for(int iSmear=-nSigma;iSmear<=nSigma;iSmear++){
@@ -578,12 +580,20 @@ std::pair<int,int> HggSelector::getBestPairCiC(int smearShift,int scaleShift,boo
 	}
 	bool CiC1,CiC2;
 	if(usePF){
-	  CiC1 = PhotonID->getIdCiCPF(pho1,nVtx,rho,selVtxI);
-	  CiC2 = PhotonID->getIdCiCPF(pho2,nVtx,rho,selVtxI);
+	  if(doFake) {
+	    CiC1 = PhotonID->getIdCiCPF_Fake(pho1,nVtx,rho,selVtxI);
+	    CiC2 = PhotonID->getIdCiCPF_Fake(pho2,nVtx,rho,selVtxI);
+	  }
+	  else {
+	    CiC1 = PhotonID->getIdCiCPF(pho1,nVtx,rho,selVtxI);
+	    CiC2 = PhotonID->getIdCiCPF(pho2,nVtx,rho,selVtxI);
+	  }
 	}else{
+	  // RAZOR there is no fake sample for the CiC ID
 	  CiC1 = PhotonID->getIdCiC(pho1,nVtx,rho,selVtxI);
 	  CiC2 = PhotonID->getIdCiC(pho2,nVtx,rho,selVtxI);
 	}
+	//both need to pass
 	if(!CiC1 || !CiC2) continue;
 	float thisPtSum = pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()
 	  + pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
