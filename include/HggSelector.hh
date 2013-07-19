@@ -68,7 +68,7 @@ private:
   string outputFile;
 
   std::pair<int,int> getBestPair(float*,int,int);
-  std::pair<int,int> getBestPairCiC(int,int,bool);
+  std::pair<int,int> getBestPairCiC(int,int,bool,bool);
   
 
   bool preSelectPhotons(VecbosPho*,VecbosPho*,TVector3); // kinematic photons selections

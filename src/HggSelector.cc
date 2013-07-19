@@ -529,7 +529,8 @@ float HggSelector::getMPair(int i1, int i2){
   return (pho1.p4FromVtx(vtxPos,pho1.finalEnergy) + pho2.p4FromVtx(vtxPos,pho2.finalEnergy)).M();
 }
 
-std::pair<int,int> HggSelector::getBestPairCiC(int smearShift,int scaleShift,bool usePF=true){
+//RAZOR ADDED FAKE_FAKE FLAG
+std::pair<int,int> HggSelector::getBestPairCiC(int smearShift,int scaleShift,bool usePF=true,bool doFake=false){
   std::pair<int,int> indices(-1,-1);
   //int bestCat=-1;
   //float bestMass=-99;
