@@ -324,7 +324,8 @@ bool HggPhotonID::getIdCiCPF_Fake(VecbosPho* pho, int nVertex, float rhoFastJet,
   //catch the all passing scenario
   bool all_pass = pass_charged && pass_sumgood && pass_sumbad;
 
-  bool is_fake = one_pass && !all_pass;
+  bool iso_pass = one_pass && !all_pass;
+  bool is_fake = !isopass || !pass_sietaieta; 
 
   return is_fake;    
 }
