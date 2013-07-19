@@ -15,7 +15,7 @@
 using namespace std;
 using namespace TMVA;
 
-#define debugSelector 0
+#define debugSelector 1
 
 
 //events
@@ -295,6 +295,7 @@ void HggSelector::Loop(){
 
     if(debugSelector) cout << "LOOP DONE" << endl;	  
     if(debugSelector) cout << "indicesPFCiC: " << index1PFCiC << "  " << index2PFCiC << endl;
+    if(debugSelector) cout << "indicesPFCiC_fake: " << index1PFCiC_fake << "  " << index2PFCiC_fake << endl;
 
     bool found_tight = index1PFCiC > -1 && index2PFCiC > -1;
     bool found_fake = index1PFCiC_fake > -1 && index2PFCiC_fake > -1;
@@ -378,26 +379,26 @@ void HggSelector::Loop(){
       bool calcRazor = (jetlist.size() >= min_jet_cut) && passFilters && bothEndcaps && !badEventList;
 
       if(calcRazor) {		
-	//combine the photons and jets into hemispheres      
-	vector<TLorentzVector> tmpJet = CombineJets_R_no_seed(jetlist, p1, p2);
-	vector<TLorentzVector> tmpJet_SS = CombineJets_R_SSorOS(jetlist, p1, p2, true);
-	vector<TLorentzVector> tmpJet_OS = CombineJets_R_SSorOS(jetlist, p1, p2, false);
-
-	if((tmpJet.size() != 2) || (tmpJet.size() != 2) || (tmpJet.size() != 2)) {
-	  cout << "ERROR: HEMISPHERE MAKER DOES NOT RETURN 2 HEMISPHERES" << endl;
-	}
-	
+        //combine the photons and jets into hemispheres      
+        vector<TLorentzVector> tmpJet = CombineJets_R_no_seed(jetlist, p1, p2);
+        vector<TLorentzVector> tmpJet_SS = CombineJets_R_SSorOS(jetlist, p1, p2, true);
+        vector<TLorentzVector> tmpJet_OS = CombineJets_R_SSorOS(jetlist, p1, p2, false);
+        
+        if((tmpJet.size() != 2) || (tmpJet.size() != 2) || (tmpJet.size() != 2)) {
+          cout << "ERROR: HEMISPHERE MAKER DOES NOT RETURN 2 HEMISPHERES" << endl;
+        }
+        
         TLorentzVector PFHem1 = tmpJet[0];
         TLorentzVector PFHem2 = tmpJet[1];
-	AngleHem = PFHem1.Angle(PFHem2.Vect());
-
+        AngleHem = PFHem1.Angle(PFHem2.Vect());
+        
         TLorentzVector PFHem1_SS = tmpJet_SS[0];
         TLorentzVector PFHem2_SS = tmpJet_SS[1];
-	AngleHem_SS = PFHem1_SS.Angle(PFHem2_SS.Vect());
-
+        AngleHem_SS = PFHem1_SS.Angle(PFHem2_SS.Vect());
+        
         TLorentzVector PFHem1_OS = tmpJet_OS[0];
         TLorentzVector PFHem2_OS = tmpJet_OS[1];
-	AngleHem_OS = PFHem1_OS.Angle(PFHem2_OS.Vect());
+        AngleHem_OS = PFHem1_OS.Angle(PFHem2_OS.Vect());
         
         //calculate the variables, no seed, SS, and OS
         double MT = CalcMTR(PFHem1, PFHem2, pfMet);
@@ -1397,21 +1398,20 @@ bool HggSelector::PassMETFilters(){
   //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively
 
   // remove bits 6 7 8 for now (unfilled) 
-  bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
+  bool pass =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
   //bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag);
-  if( !decision && isData_ ) {
+  if(!pass && isData_ ) {
     cout << "------------Begin MET FLAG-----------" << endl;
+    //print flags which occur
+    if( !ECALTPFilterFlag ) cout << "Ecal dead cell Flagged Bit 0";PrintEventNumbers();
+    if( !CSCHaloFilterFlag ) cout << "CSC Beam Halo Flagged Bit 3";PrintEventNumbers();
+    if( !trackerFailureFilterFlag ) cout << "tracker Failure Flagged Bit 4";PrintEventNumbers();
+    if( !HBHENoiseFilterResultFlag ) cout << "HBHE Noise Flagged Bit 6" ;PrintEventNumbers();
+    if( !hcalLaserEventFilterFlag ) cout << "HCAL Laser Flagged Bit 7" ;PrintEventNumbers();
+    if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" ;PrintEventNumbers();
+    cout << "--------------End MET FLAG-------------" << endl;
   }
-
-  //print flags which occur
-  if( !ECALTPFilterFlag ) cout << "Ecal dead cell Flagged Bit 0";PrintEventNumbers();
-  if( !CSCHaloFilterFlag ) cout << "CSC Beam Halo Flagged Bit 3";PrintEventNumbers();
-  if( !trackerFailureFilterFlag ) cout << "tracker Failure Flagged Bit 4";PrintEventNumbers();
-  if( !HBHENoiseFilterResultFlag ) cout << "HBHE Noise Flagged Bit 6" ;PrintEventNumbers();
-  if( !hcalLaserEventFilterFlag ) cout << "HCAL Laser Flagged Bit 7" ;PrintEventNumbers();
-  if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" ;PrintEventNumbers();
-  if( !decision ) cout << "--------------End MET FLAG-------------" << endl;
-  return decision;
+  return pass;
 }
 
 void HggSelector::FillRazorVarsWith(int n){

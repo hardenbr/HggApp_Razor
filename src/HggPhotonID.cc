@@ -314,10 +314,10 @@ bool HggPhotonID::getIdCiCPF_Fake(VecbosPho* pho, int nVertex, float rhoFastJet,
   if(pho->SC.r9 < cut_r9[cat]) return false;
   if(pho->HoverE > cut_hoe[cat]) return false;
 
-  bool pass_sietaieta = pho->SC.sigmaIEtaIEta > cut_sieie[cat];
-  bool pass_charged = pfChargedIsoGood03oet > cut_pfiso[cat];
-  bool pass_sumgood = isosumoetPF > cut_isoGood[cat];
-  bool pass_sumbad = isosumoetbadPF > cut_isoBad[cat];
+  bool pass_sietaieta = pho->SC.sigmaIEtaIEta < cut_sieie[cat];
+  bool pass_charged = pfChargedIsoGood03oet < cut_pfiso[cat];
+  bool pass_sumgood = isosumoetPF < cut_isoGood[cat];
+  bool pass_sumbad = isosumoetbadPF < cut_isoBad[cat];
 
   //catches all two fail scenarios except all passing
   bool one_pass = (pass_charged ^ pass_sumgood) ^ pass_sumbad;

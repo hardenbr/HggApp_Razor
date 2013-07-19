@@ -1,10 +1,10 @@
 ## Default configurations for the HggSelector
 ## Setup the MVAs
-weightFile_IdEB_2011=/home/amott/HggApp_CVS/MVAWeights/TMVAClassificationPhotonID_Barrel_PassPreSel_Variable_10_BDTnCuts2000_BDT.weights.xml
-weightFile_IdEE_2011=/home/amott/HggApp_CVS/MVAWeights/TMVAClassificationPhotonID_Endcap_PassPreSel_Variable_10_BDTnCuts2000_BDT.weights.xml
-weightFile_IdEB_2012=/home/amott/HggApp_CVS/MVAWeights/TMVA_EBpf_BDT.weights.xml
-weightFile_IdEE_2012=/home/amott/HggApp_CVS/MVAWeights/TMVA_EEpf_BDT.weights.xml
-weightFile_diPho=/home/amott/HggApp_CVS/MVAWeights/HggBambu_SMDipho_Jun19_BDTG.weights.xml
+##weightFile_IdEB_2011=/home/amott/HggApp_CVS/MVAWeights/TMVAClassificationPhotonID_Barrel_PassPreSel_Variable_10_BDTnCuts2000_BDT.weights.xml
+##weightFile_IdEE_2011=/home/amott/HggApp_CVS/MVAWeights/TMVAClassificationPhotonID_Endcap_PassPreSel_Variable_10_BDTnCuts2000_BDT.weights.xml
+##weightFile_IdEB_2012=/home/amott/HggApp_CVS/MVAWeights/TMVA_EBpf_BDT.weights.xml
+##weightFile_IdEE_2012=/home/amott/HggApp_CVS/MVAWeights/TMVA_EEpf_BDT.weights.xml
+##weightFile_diPho=/home/amott/HggApp_CVS/MVAWeights/HggBambu_SMDipho_Jun19_BDTG.weights.xml
 
 methodName_Id=AdaBoost
 methodName_diPho=Gradient
@@ -16,11 +16,10 @@ doEcalIso=yes
 ## Energy Correction Parameters
 EnergyCorrectionVersion=May2012
 #EnergyCorrectionType=96
-EnergyCorrectionWeights=/home/amott/HggApp_CVS/MVAWeights/gbrv3ph_52x.root
-EleEnergyCorrectionWeights=/home/amott/HggApp_CVS/MVAWeights/gbrv3ele_52x.root
+EnergyCorrectionWeights=/afs/cern.ch/user/h/hardenbr/2013/RAZOR_DIPHOTON/HggApp/EnergyCorrectionFiles/gbrv3ph_52x.root
+EleEnergyCorrectionWeights=/afs/cern.ch/user/h/hardenbr/2013/RAZOR_DIPHOTON/HggApp/EnergyCorrectionFiles/gbrv3ele_52x.root
 
-#Triggers=HLT_Photon36_R9Id85_OR_CaloId10_Iso50_Photon22_R9Id85_OR_CaloId10_Iso50_v6
-#Triggers=
+Triggers=HLT_Photon36_R9Id85_OR_CaloId10_Iso50_Photon22_R9Id85_OR_CaloId10_Iso50_v6
 
 MassResolutionConfig=hgg/smearing_sigma_and_errors_HCP.dat
 
@@ -32,8 +31,8 @@ redoScale=yes
 EnergyScaleCFG=./hgg/energy_scale_MORIOND.txt
 
 ##Kinematic preselection
-leadPhoEtMin=33
-subleadPhoEtMin=22
+leadPhoEtMin=40
+subleadPhoEtMin=25
 doPtOverM=no
 PtOverMLead=0.01
 PtOverMSubLead=0.01
