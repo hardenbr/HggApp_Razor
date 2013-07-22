@@ -15,7 +15,7 @@
 using namespace std;
 using namespace TMVA;
 
-#define debugSelector 1
+#define debugSelector 0
 
 
 //events
