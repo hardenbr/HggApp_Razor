@@ -1078,16 +1078,17 @@ float HggSelector::getVBFMjj(VecbosPho* pho1, VecbosPho* pho2,TVector3 SelVtx,fl
 bool HggSelector::passJetID_Razor(VecbosJet* jet){    
   bool good_jet = false;
   double EU = jet->uncorrEnergy;    
-  double fHAD = (jet->chargedhadronFraction + jet->neutralHadronFraction) / EU;
+  double fHAD = (jet->chargedHadronFraction + jet->neutralHadronFraction) / EU;
     
   if(fHAD > 0.99){
     good_jet = false;
   }
   else {
-    int nConstituents = jet->chargedHadronMultiplicity + jet->neutralHadronMultiplicity + jet->photonMultiplicty + jet->electronMultiplicity + jet->electronMultiplicity + jet->muonMultiplicity + jet->HFHadronMultiplicity + jet->HFEMMultiplicity;
+    int nConstituents = jet->chargedHadronMultiplicity + jet->neutralHadronMultiplicity + jet->photonMultiplicity + jet->electronMultiplicity + jet->electronMultiplicity + jet->muonMultiplicity + jet->HFHadronMultiplicity + jet->HFEMMultiplicity;
     int chargedMult = jet->chargedHadronMultiplicity + jet->electronMultiplicity + jet->muonMultiplicity; 
         
     float photonFrac = jet->photonEnergy / EU;
+    float electronFrac = jet->electronEnergy / EU;
 
     float neutralHadFrac = jet->neutralHadronFraction / EU;
     float chargedHadFrac = jet->chargedHadronFraction / EU;
@@ -1411,7 +1412,7 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
     //pt cut
     if(jIt->pt < 30.) continue;
     //jet id cut
-    if(!passJetID(&*jIt)) continue;
+    if(!passJetID_Razor(&*jIt)) continue;
 
     //photon matching
     if(DeltaR(jIt->eta,p1.Eta(),jIt->phi,p1.Phi()) < 0.5 ) continue;

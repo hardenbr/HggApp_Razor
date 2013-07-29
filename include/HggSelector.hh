@@ -121,6 +121,7 @@ private:
   void fillMuMuGamma();
   float getVBFMjj(VecbosPho*,VecbosPho*,TVector3,float*);
   bool passJetID(VecbosJet*);
+  bool passJetID_Razor(VecbosJet*);
   //TMVA stuff
   string weightFile_diPho;
   string methodName_diPho;

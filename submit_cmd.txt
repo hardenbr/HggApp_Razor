@@ -1,12 +1,14 @@
 
 ##LOOSE PT MORIOND CONFIG
-python batchSub.py --submit --FilesPerJob=5 --DirName="DoublePhoton_Run2012D_Prompt" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp/HggSelectorApp --isData #IFL# #OF0# hgg/selector_loosePt_MORIOND.cfg" --outputName="reduced.root" --OutputDir="/raid3/jhardenbrook/DoublePhoton_Run2012D_Prompt" Hgg_53X/Caltech/Reduced/DoublePhoton_Run2012D_Prompt.list
+python batchSub.py --submit --FilesPerJob=5 --DirName="DoublePhoton_Run2012D_Prompt" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp/HggSelectorApp --isData #IFL# #OF0# hgg/selector_loosePt_MORIOND.cfg" --outputName="reduced.root" --OutputDir="/home/raid4/jhardenbrook/ra3_diphoton/Spectra_gsq_B/red" Hgg_53X/Caltech/Reduced/DoublePhoton_Run2012D_Prompt.list
 
 ##RAZOR DIPHOTON CONFIG 2011D
-python batchSub.py --submit --FilesPerJob=5 --DirName="DoublePhoton_Run2012D_Prompt" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/HggSelectorApp --isData #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="2012D_selected.root" --OutputDir="/raid3/jhardenbrook/DoublePhoton_Run2012D_Prompt" Hgg_53X/Caltech/Reduced/DoublePhoton_Run2012D_Prompt.list
+python batchSub.py --submit --FilesPerJob=20 --DirName="DoublePhoton_Run2012D_Jan22" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/HggSelectorApp --isData #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="2012D_selected.root" --OutputDir="/raid3/jhardenbrook/DoublePhoton_Run2012D_Jan22" Hgg_53X_alex/Caltech/Reduced/DoublePhoton_Run2012D_22Jan2013.list
 
-##RAZOR DIPHOTON CONFIG 2012D w/ FAKE 
-python batchSub.py --submit --FilesPerJob=5 --DirName="DoublePhoton_Run2012D_Prompt_failgoodiso" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/HggSelectorApp --isData #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="2012D_selected.root" --OutputDir="/raid3/jhardenbrook/DoublePhoton_Run2012D_Prompt_fake_failgoodiso" Hgg_53X/Caltech/Reduced/DoublePhoton_Run2012D_Prompt.list
+python batchSub.py --submit --FilesPerJob=5 --DirName="DoublePhoton_Run2012D_Prompt_HLTmass70_fake2isofail" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/HggSelectorApp --isData #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="2012D_selected.root" --OutputDir="/raid3/jhardenbrook/DoublePhoton_Run2012D_Prompt_HLTmass70_fake2isofail" Hgg_53X/Caltech/Reduced/DoublePhoton_Run2012D_Prompt.list
+
+##REDUCE SIGNAL
+python batchSub.py --submit --FilesPerJob=5 --DirName="" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/HggSelectorApp --isData #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="_selected.root" --OutputDir="/raid4/jhardenbrook/ra3_diphoton/Spectra_gsq_B/red" Razor_53X/ra3_spectra_gsq_B.list
 
 ##RAZOR DIPHOTON CFG QCD 40_INF
 python batchSub.py --submit --FilesPerJob=5 --DirName="QCD_Pt-40_doubleEMEnriched_TuneZ2star_8TeV-pythia6" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/HggSelectorApp  #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="QCD_Pt-40_selected.root" --OutputDir="/raid3/jhardenbrook/QCD_Pt-40_doubleEMEnriched_TuneZ2star_8TeV-pythia6" Hgg_52X/Caltech/Reduced/QCD_Pt-40_doubleEMEnriched_TuneZ2star_8TeV-pythia6.list
