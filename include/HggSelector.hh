@@ -330,6 +330,9 @@ private:
   float pfMet;
   float pfMetPhi;
 
+  float pfMetType1;
+  float pfMetType1Phi;
+
   float inPU;
 
   bool eeBadScFilterFlagOut;
@@ -342,6 +345,8 @@ private:
   bool drBoundaryOut;
   bool ECALTPFilterFlagOut;
 
+
+  float ECALLaserFilter;
   bool eeBadScFilterFlag;
   bool hcalLaserEventFilterFlag;
   bool HBHENoiseFilterResultFlag;

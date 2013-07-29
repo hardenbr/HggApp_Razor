@@ -340,7 +340,7 @@ void HggSelector::Loop(){
       TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
       TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
       AnglePho = p1.Angle(p2.Vect());
-      AngleMET = DeltaPhi(pfMetPhi,CaloMETPhi);
+      AngleMET = DeltaPhi(pfMetType1Phi,CaloMETPhi);
 
       if(p1.Pt() < p2.Pt()){
 
@@ -401,9 +401,9 @@ void HggSelector::Loop(){
         AngleHem_OS = PFHem1_OS.Angle(PFHem2_OS.Vect());
         
         //calculate the variables, no seed, SS, and OS
-        double MT = CalcMTR(PFHem1, PFHem2, pfMet);
-        double MT_SS = CalcMTR(PFHem1_SS, PFHem2_SS, pfMet);
-        double MT_OS = CalcMTR(PFHem1_OS, PFHem2_OS, pfMet);
+        double MT = CalcMTR(PFHem1, PFHem2, pfMetType1);
+        double MT_SS = CalcMTR(PFHem1_SS, PFHem2_SS, pfMetType1);
+        double MT_OS = CalcMTR(PFHem1_OS, PFHem2_OS, pfMetType1);
 
         double variable = -999999.;
         double Rvariable = -999999.;
@@ -776,6 +776,7 @@ void HggSelector::setBranchAddresses(){
   fChain->SetBranchAddress("evtNumber",&evtNumber);
   //fChain->SetBranchAddress("isRealData",&_isData);
 
+  fChain->SetBranchAddress("ECALLaserFilter",&ECALLaserFilter);
   fChain->SetBranchAddress("eeBadScFilterFlag",&eeBadScFilterFlag);
   fChain->SetBranchAddress("hcalLaserEventFilterFlag",&hcalLaserEventFilterFlag);
   fChain->SetBranchAddress("HBHENoiseFilterResultFlag",&HBHENoiseFilterResultFlag);
@@ -829,6 +830,9 @@ void HggSelector::setBranchAddresses(){
 
  fChain->SetBranchAddress("PFMET",&pfMet);
  fChain->SetBranchAddress("PFMETPhi",&pfMetPhi);
+
+ fChain->SetBranchAddress("type1PFMET",&pfMetType1);
+ fChain->SetBranchAddress("type1PFMETPhi",&pfMetType1Phi);
 
 
  fChain->SetBranchAddress("CaloMETPhi", &CaloMETPhi);
@@ -1432,7 +1436,7 @@ bool HggSelector::PassMETFilters(){
   //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively
 
   // remove bits 6 7 8 for now (unfilled) 
-  bool pass =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
+  bool pass =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag && ECALLaserFilter);  
   //bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag);
   if(!pass && isData_ ) {
     cout << "------------Begin MET FLAG-----------" << endl;
