@@ -1075,6 +1075,39 @@ float HggSelector::getVBFMjj(VecbosPho* pho1, VecbosPho* pho2,TVector3 SelVtx,fl
   return jjSystem.M();
 }
 
+bool HggSelector::passJetID_Razor(VecbosJet* jet){    
+  bool good_jet = false;
+  double EU = jet->uncorrEnergy;    
+  double fHAD = (jet->chargedhadronFraction + jet->neutralHadronFraction) / EU;
+    
+  if(fHAD > 0.99){
+    good_jet = false;
+  }
+  else {
+    int nConstituents = jet->chargedHadronMultiplicity + jet->neutralHadronMultiplicity + jet->photonMultiplicty + jet->electronMultiplicity + jet->electronMultiplicity + jet->muonMultiplicity + jet->HFHadronMultiplicity + jet->HFEMMultiplicity;
+    int chargedMult = jet->chargedHadronMultiplicity + jet->electronMultiplicity + jet->muonMultiplicity; 
+        
+    float photonFrac = jet->photonEnergy / EU;
+
+    float neutralHadFrac = jet->neutralHadronFraction / EU;
+    float chargedHadFrac = jet->chargedHadronFraction / EU;
+        
+    int neutralHadMult = jet->neutralHadronMultiplicity;
+    int chargedHadMult = jet->chargedHadronMultiplicity;
+        
+    if((neutralHadFrac < 0.99) && (photonFrac < 0.99) && (nConstituents > 1)) {
+      //outside of tracker acceptance, these are the only requirementspf
+      if (fabs(jet->eta)>=2.4) good_jet = true;
+      //inside of the tracker acceptance, there are extra requirements     
+      else {
+        if ((chargedHadFrac > 0.0) && (chargedMult > 0) && (electronFrac < 0.99)) good_jet = true;
+      }
+    }
+  }
+  return good_jet;
+
+}
+
 bool HggSelector::passJetID(VecbosJet* jet){
   const int nJetCat=4;
   const float maxJetEta[nJetCat] = {2.5,2.75,3,4.7};
