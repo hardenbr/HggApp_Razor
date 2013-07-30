@@ -355,6 +355,7 @@ void HggPhotonID::fillIsoVariables(VecbosPho* pho, ReducedPhotonData* data,int n
 bool HggPhotonID::getPreSelection(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex){
   this->fillVariables(pho,nVertex,rhoFastJet,selVtxIndex);
   if(version.compare("May2012")==0) return this->getPreSelectionMay2012(pho,nVertex,rhoFastJet,selVtxIndex);
+  else if(version.compare("Razor2013")==0) return this->getPreSelectionRazor2013(pho,nVertex,rhoFastJet,selVtxIndex);
   else return this->getPreSelection2011(pho,nVertex,rhoFastJet,selVtxIndex);
 }
 
@@ -383,6 +384,37 @@ bool HggPhotonID::getPreSelectionMay2012(VecbosPho* pho, int nVertex, float rhoF
 	|| pho->dr02ChargedHadronPFIso[selVtxIndex] > 4) return false;
     if( (pho->isBarrel() && (pho->HoverE > 0.082 || pho->SC.sigmaIEtaIEta > 0.014) )
         || (!pho->isBarrel() && (pho->HoverE > 0.075 || pho->SC.sigmaIEtaIEta > 0.034) ) ) return false;
+  }
+
+
+  return true;
+}
+
+bool HggPhotonID::getPreSelectionRazor2013(VecbosPho* pho, int nVertex, float rhoFastJet, int selVtxIndex){
+  if(debugPhotonID) std::cout << "getPreSelectionRazor2013" << std::endl;
+
+  if(debugPhotonID) std::cout << "et: " << eT << "\tecalIso: " << pho->dr03EcalRecHitSumEtCone -0.012*eT
+			      << "\thcalIso: " << pho->dr03HcalTowerSumEtCone - 0.005*eT 
+			      << "\ttrkIso:  " << pho->dr03TrackIso[selVtxIndex] - 0.002*eT
+			      << "\tpfCharged: " << pho->dr02ChargedHadronPFIso[selVtxIndex] 
+			      << std::endl;
+  double ECALIso = (pho->dr03EcalRecHitSumEtCone - 0.012*eT);
+  if(!doECALIso) ECALIso=0; // don't do th ECAL isolation
+
+  if(pho->SC.r9 < 0.9){
+    if( ECALIso > 4
+        || (pho->dr03HcalTowerSumEtCone - 0.005*eT) > 4
+        || (pho->dr03TrackIso[selVtxIndex] - 0.002*eT) > 4
+	|| pho->dr02ChargedHadronPFIso[selVtxIndex] > 4) return false;
+    if( (pho->isBarrel() && (pho->HoverE > 0.1 || pho->SC.sigmaIEtaIEta > 0.014) )
+        || (!pho->isBarrel() && (pho->HoverE > 0.1 || pho->SC.sigmaIEtaIEta > 0.034) ) ) return false;
+  }else{ //(SC->r9 > 0.9
+    if( ECALIso > 50 
+        || (pho->dr03HcalTowerSumEtCone - 0.005*eT) > 50
+        || (pho->dr03TrackIso[selVtxIndex] - 0.002*eT) > 50 
+	|| pho->dr02ChargedHadronPFIso[selVtxIndex] > 4) return false;
+    if( (pho->isBarrel() && (pho->HoverE > 0.1 || pho->SC.sigmaIEtaIEta > 0.014) )
+        || (!pho->isBarrel() && (pho->HoverE > 0.1 || pho->SC.sigmaIEtaIEta > 0.034) ) ) return false;
   }
 
 

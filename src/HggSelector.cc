@@ -881,6 +881,7 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("cosThetaLeadPFCiC",&cosThetaLeadPFCiC,"cosThetaLeadPFCiC/F");
   outTree->Branch("catPFCiC",&catPFCiC_,"catPFCiC/I");
 
+  outTree->Branch("ECALLaserFilterFlag",&ECALLaserFilterFlagOut);
   outTree->Branch("eeBadScFilterFlag",&eeBadScFilterFlagOut);
   outTree->Branch("hcalLaserEventFilterFlag",&hcalLaserEventFilterFlagOut);
   outTree->Branch("HBHENoiseFilterResultFlag",&HBHENoiseFilterResultFlagOut);
@@ -1436,17 +1437,20 @@ bool HggSelector::PassMETFilters(){
   //only using MET filters Javier is using (bits 0 3 4 6 7 8 respectively
 
   // remove bits 6 7 8 for now (unfilled) 
-  bool pass =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag && ECALLaserFilter);  
+  //  bool pass =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag && ECALLaserFilter);
+  bool pass =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag && HBHENoiseFilterResultFlag && hcalLaserEventFilterFlag && eeBadScFilterFlag);  
   //bool decision =   (ECALTPFilterFlag && CSCHaloFilterFlag && trackerFailureFilterFlag);
   if(!pass && isData_ ) {
     cout << "------------Begin MET FLAG-----------" << endl;
     //print flags which occur
-    if( !ECALTPFilterFlag ) cout << "Ecal dead cell Flagged Bit 0";PrintEventNumbers();
-    if( !CSCHaloFilterFlag ) cout << "CSC Beam Halo Flagged Bit 3";PrintEventNumbers();
-    if( !trackerFailureFilterFlag ) cout << "tracker Failure Flagged Bit 4";PrintEventNumbers();
-    if( !HBHENoiseFilterResultFlag ) cout << "HBHE Noise Flagged Bit 6" ;PrintEventNumbers();
-    if( !hcalLaserEventFilterFlag ) cout << "HCAL Laser Flagged Bit 7" ;PrintEventNumbers();
-    if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" ;PrintEventNumbers();
+    PrintEventNumbers();
+    if( !ECALTPFilterFlag ) cout << "Ecal dead cell Flagged Bit 0"<< endl;
+    if( !CSCHaloFilterFlag ) cout << "CSC Beam Halo Flagged Bit 3"<< endl;
+    if( !trackerFailureFilterFlag ) cout << "tracker Failure Flagged Bit 4"<< endl;
+    if( !HBHENoiseFilterResultFlag ) cout << "HBHE Noise Flagged Bit 6" << endl;
+    if( !hcalLaserEventFilterFlag ) cout << "HCAL Laser Flagged Bit 7" << endl;
+    if( !eeBadScFilterFlag ) cout << "EE Bad SC Flagged Bit 8" << endl;
+    if( !ECALLaserFilter) cout << "ECAL Laser Filter Bit 9" << endl ;
     cout << "--------------End MET FLAG-------------" << endl;
   }
   return pass;

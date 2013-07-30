@@ -33,6 +33,7 @@ public:
 
   bool getPreSelection2011(VecbosPho*,int,float,int);
   bool getPreSelectionMay2012(VecbosPho*,int,float,int);
+  bool getPreSelectionRazor2013(VecbosPho*,int,float,int);
 
   std::map<std::string,TH1F*>* getHists(){return &InputDists;}
 

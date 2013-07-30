@@ -335,6 +335,7 @@ private:
 
   float inPU;
 
+  float ECALLaserFilterFlagOut;
   bool eeBadScFilterFlagOut;
   bool hcalLaserEventFilterFlagOut;
   bool HBHENoiseFilterResultFlagOut;
