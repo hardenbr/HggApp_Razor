@@ -291,6 +291,10 @@ private:
   int nMu_;
   std::vector<VecbosMu> *Muons_;
 
+  //RAZOR
+  int nEle_;
+  std::vector<VecbosEle> *Electrons_;
+
   int nJet_;
   std::vector<VecbosJet> *Jets_;
   

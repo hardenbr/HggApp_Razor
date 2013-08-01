@@ -817,6 +817,10 @@ void HggSelector::setBranchAddresses(){
  fChain->SetBranchAddress("nMu",&nMu_);
  fChain->SetBranchAddress("Muons",&Muons_);
 
+ //RAZOR
+ fChain->SetBranchAddress("nEle",&nEle_);
+ fChain->SetBranchAddress("Electrons",&Electrons_);
+
  fChain->SetBranchAddress("nJet",&nJet_);
  fChain->SetBranchAddress("Jets",&Jets_);
 
