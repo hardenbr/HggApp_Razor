@@ -340,6 +340,7 @@ void HggSelector::Loop(){
       TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
       TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
       AnglePho = p1.Angle(p2.Vect());
+      DeltaPhiPho = DeltaPhi(p1.Phi(),p2.Phi());
       AngleMET = DeltaPhi(pfMetType1Phi,CaloMETPhi);
 
       if(p1.Pt() < p2.Pt()){
@@ -374,9 +375,9 @@ void HggSelector::Loop(){
       badEventList = false;
       bool bothEndcaps = fabs(pho1_.SC.eta) < 2.6 && fabs(pho2_.SC.eta) < 2.6;      
       bool passFilters = PassMETFilters() || !isData_;	
-
+      bool is_beamHalo = DeltaPhiPho < .05;
       //must pass met filters! and not be in the bad event list
-      bool calcRazor = (jetlist.size() >= min_jet_cut) && passFilters && bothEndcaps && !badEventList;
+      bool calcRazor = (jetlist.size() >= min_jet_cut) && passFilters && bothEndcaps && !badEventList && !is_beamHalo;
 
       if(calcRazor) {		
         //combine the photons and jets into hemispheres      
@@ -1017,6 +1018,7 @@ void HggSelector::setupOutputTree(){
 
   //Angle Variables
   outTree->Branch("AnglePho",&AnglePho,"AnglePho/F");
+  outTree->Branch("DeltaPhiPho",&DeltaPhiPho,"DeltaPhiPho/F");
   outTree->Branch("AngleHem",&AngleHem,"AngleHem/F");
   outTree->Branch("AngleHem_OS",&AngleHem_OS,"AngleHem_OS/F");
   outTree->Branch("AngleHem_SS",&AngleHem_SS,"AngleHem_SS/F");
