@@ -487,8 +487,8 @@ void HggSelector::Loop(){
     nOutPhotonsPFCiC_ = OutPhotonsPFCiC_.size();
     nOutPhotonsCiC_ = OutPhotonsCiC_.size();
 
-    MET = pfMet;
-    METPhi = pfMetPhi;
+    MET = pfMetType1;
+    METPhi = pfMetType1Phi;
 
     lumiBlockOut = lumiBlock;
     runNumberOut = runNumber;

@@ -355,7 +355,7 @@ void HggPhotonID::fillIsoVariables(VecbosPho* pho, ReducedPhotonData* data,int n
 bool HggPhotonID::getPreSelection(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex){
   this->fillVariables(pho,nVertex,rhoFastJet,selVtxIndex);
   if(version.compare("May2012")==0) return this->getPreSelectionMay2012(pho,nVertex,rhoFastJet,selVtxIndex);
-  else if(version.compare("Razor2013")==0) return this->getPreSelectionRazor2013(pho,nVertex,rhoFastJet,selVtxIndex);
+  else if(version.compare("Razor2013")==0) return this->getPreSelectionMay2012(pho,nVertex,rhoFastJet,selVtxIndex);
   else return this->getPreSelection2011(pho,nVertex,rhoFastJet,selVtxIndex);
 }
 
