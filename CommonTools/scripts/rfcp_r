@@ -1,0 +1,63 @@
+#!/bin/bash
+
+export RFIO_USE_CASTOR_V2=YES
+export STAGE_HOST=castorpublic
+export STAGE_SVCCLASS=default
+
+if [ $# -lt 1 ]; then
+		echo 'Usage: ./rfcp_r [from_dir] <to_dir>'
+		exit
+fi
+
+if [ $# -ge 2 ]; then
+		first=$1
+		second=$2
+else
+		if [ "$FIRST_ARGUMENT" == "" ]; then
+				echo 'Usage: ./rfcp_r <from_dir> <to_dir>'
+				exit
+		fi
+		first=$FIRST_ARGUMENT
+		second=$1
+fi
+
+if [ "${first:0:7}" != "/castor" ]; then
+		cp -r $first $second
+		exit
+fi
+
+
+p=`pwd`
+cd `dirname $0`
+script_path=`pwd`
+cd $p
+cd $second
+script=`basename $0`
+script="$script_path/$script"
+
+ifFile=`rfdir $first`
+if [ $? -ne 0 ]; then
+		exit
+fi
+
+ifFile=`echo $ifFile|grep $first`
+if [ "$ifFile" != "" ]; then
+		## it is a regular file
+		echo "rfcp $first $second"
+		rfcp $first $second
+else
+		current_dir=`basename $first`
+		mkdir -p $current_dir
+		cd $current_dir
+		for i in `rfdir $first | awk '{print $9}'`; do
+				echo "$script $first/$i ./"
+				$script "$first/$i" ./
+		done
+		cd ..
+fi
+
+cd $p
+		
+
+
+

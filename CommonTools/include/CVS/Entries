@@ -1,0 +1,20 @@
+/BTagAlgoBits.h/1.1/Wed Dec  1 08:54:44 2010//
+/Conditions.hh/1.5/Sun May  2 09:22:31 2010//
+/Counters.hh/1.2/Mon Oct 27 16:46:47 2008//
+/EcalRecHitBits.h/1.1/Wed Jun  9 15:55:57 2010//
+/EfficiencyEvaluator.hh/1.6/Mon Apr 11 16:12:39 2011//
+/ElectronEffectiveArea.h/1.1/Sun May 13 17:23:21 2012//
+/FiguresOfMeritEvaluator.h/1.4/Sun Apr 15 15:52:41 2012//
+/JetIdBits.h/1.1/Tue Aug 17 15:55:46 2010//
+/LeptonIdBits.h/1.5/Fri Oct  1 16:18:54 2010//
+/LumiReWeighting.h/1.1/Fri Sep 30 13:43:30 2011//
+/LumiReWeightingStandAlone.h/1.1/Fri Oct  5 18:22:51 2012//
+/Monitor.hh/1.1/Tue Mar  4 14:38:09 2008//
+/MuonEffectiveArea.h/1.1/Sun May 13 17:23:21 2012//
+/PUWeight.h/1.4/Tue Aug 30 18:10:26 2011//
+/Selection.hh/1.4/Thu May  6 16:54:44 2010//
+/Skimmer.hh/1.1/Thu Jul 31 15:53:03 2008//
+/SprDataFiller.hh/1.1/Tue Mar  4 14:38:09 2008//
+/TriggerMask.hh/1.2/Mon Apr  7 09:21:17 2008//
+/Utils.hh/1.11/Tue Aug 17 15:56:18 2010//
+D
