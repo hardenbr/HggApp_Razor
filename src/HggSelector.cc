@@ -1,6 +1,5 @@
 #include <HggSelector.hh>
 #include "ReadConfig.hh"
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -303,13 +302,13 @@ void HggSelector::Loop(){
     //ensure we will fill one sample
     if(found_tight || found_fake){
       if(!found_tight && found_fake) {
-	//switch the photon indicies
-	index1PFCiC = index1PFCiC_fake;
-	index2PFCiC = index2PFCiC_fake;
-	iSamp = 1; //fake sample
+        //switch the photon indicies
+        index1PFCiC = index1PFCiC_fake;
+        index2PFCiC = index2PFCiC_fake;
+        iSamp = 1; //fake sample
       }
       else{
-	iSamp = 0; //tight sample
+        iSamp = 0; //tight sample
       }	
       
       //fill PFCiC variables
@@ -344,16 +343,14 @@ void HggSelector::Loop(){
       AngleMET = DeltaPhi(pfMetType1Phi,CaloMETPhi);
 
       if(p1.Pt() < p2.Pt()){
-
-	TLorentzVector tmp = p1;
-	p1=p2; p2=tmp;
-
+        TLorentzVector tmp = p1;
+        p1=p2; p2=tmp;
       }
+
       TLorentzVector gg = p1+p2;
       TVector3 boost = -1*gg.BoostVector();
       p1.Boost(boost);
       cosThetaLeadPFCiC = p1.Vect().Dot(gg.Vect())/p1.Vect().Mag()/gg.Vect().Mag();
-
       
       catPFCiC_ = getCategoryPFCiC();
       
@@ -376,6 +373,7 @@ void HggSelector::Loop(){
       bool bothEndcaps = fabs(pho1_.SC.eta) < 2.6 && fabs(pho2_.SC.eta) < 2.6;      
       bool passFilters = PassMETFilters() || !isData_;	
       bool is_beamHalo = DeltaPhiPho < .05;
+
       //must pass met filters! and not be in the bad event list
       bool calcRazor = (jetlist.size() >= min_jet_cut) && passFilters && bothEndcaps && !badEventList && !is_beamHalo;
 
@@ -1417,11 +1415,12 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
   vector<TLorentzVector> jetlist;
 
   std::vector<VecbosJet>::iterator jIt;
+
   for(jIt = Jets_->begin(); jIt != Jets_->end(); jIt++){
     //eta cut
-    if(fabs(jIt->eta) > 2.6) continue;
+    if(fabs(jIt->eta) > 2.5) continue;
     //pt cut
-    if(jIt->pt < 30.) continue;
+    if(jIt->pt < 40.) continue;
     //jet id cut
     if(!passJetID_Razor(&*jIt)) continue;
 
