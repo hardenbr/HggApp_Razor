@@ -26,6 +26,7 @@ public:
   bool getPreSelection(VecbosPho*,int,float,int);
   float getIdMVA(VecbosPho*,int,float,  int);
   bool getIdCiCPF(VecbosPho*,int,float,  int);
+  bool getEGLooseID(VecbosPho*,int,float,  int); //RAZOR
   bool getIdCiCPF_Fake(VecbosPho*,int,float,  int); //RAZOR
   bool getIdCiC(VecbosPho*,int,float,  int);
   

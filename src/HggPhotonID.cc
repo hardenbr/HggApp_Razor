@@ -291,7 +291,7 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
   if(selVtxIndex < 0 || selVtxIndex >= vertices.size()){
     cout << "WARNING: Selected Vertex Index out of range: " << selVtxIndex << "/" << vertices.size() <<endl;
     return false;
-o  }
+  }
 
   //fill the variables and apply the preselection
   this->fillVariables(pho,nVertex,rhoFastJet,selVtxIndex);
