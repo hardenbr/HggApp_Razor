@@ -321,10 +321,10 @@ o  }
   float  EA_eta[nCats+1] = {0, 1, 1.48, 2.0, 2.2, 2.3, 2.4, 10000};
   float  EA_pho[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
 
-  for(int ii = 0; ii <= nCats; ii++) {
-    float eta = pho->SC.eta;
+  for(int ii = 0; ii < nCats; ii++) {
+    float eta = fabs(pho->SC.eta);
     if (eta > EA_eta[ii] && eta < EA_eta[ii+1]){
-      chosen_EA = [ii];
+      chosen_EA = EA_pho[ii];
       break;
     }
   }
