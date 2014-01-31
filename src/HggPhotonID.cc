@@ -288,16 +288,16 @@ bool HggPhotonID::getIdCiCPF(VecbosPho* pho, int nVertex, float rhoFastJet,int s
 
 bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex)
 {
-  eT = pho->p4FromVtx(selVtxPos,pho->finalEnergy,false).Et();
-
   if(selVtxIndex < 0 || selVtxIndex >= vertices.size()){
     cout << "WARNING: Selected Vertex Index out of range: " << selVtxIndex << "/" << vertices.size() <<endl;
     return false;
 o  }
 
+  //fill the variables and apply the preselection
   this->fillVariables(pho,nVertex,rhoFastJet,selVtxIndex);
   if(! this->getPreSelection(pho,nVertex,rhoFastJet,selVtxIndex) ) return false;
 
+  //cuts for the barrel
   float sietaieta  = .012;
   float charged_had_iso03 = 2.6;
   float neutral_iso03 =  3.5; 
@@ -306,6 +306,7 @@ o  }
   float lin_photon_iso03 = .005;
   float hoe = .05;
 
+  //switch values if the photon is in the endcaps
   if(fabs(pho->SC.eta) > 1.48) {
     sietaieta = .034;
     charged_had_iso03 = 2.3;
@@ -313,11 +314,30 @@ o  }
     photon_iso03 = 999999999.9;
   }
 
+  //calculate the rho corrections for the isolation
+  float chosen_EA = 0;
+
+  const int nCats = 7;
+  float  EA_eta[nCats+1] = {0, 1, 1.48, 2.0, 2.2, 2.3, 2.4, 10000};
+  float  EA_pho[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
+
+  for(int ii = 0; ii <= nCats; ii++) {
+    float eta = pho->SC.eta;
+    if (eta > EA_eta[ii] && eta < EA_eta[ii+1]){
+      chosen_EA = [ii];
+      break;
+    }
+  }
+
+  float rhoCorr = chosen_EA * rhoFastJet;
+  
   if(pho->HoverE > hoe) return false;
   if(pho->SC.sigmaIEtaIEta > sietaieta) return false;
-  if(pfChargedIsoGood03 > charged_had_iso03 ) return false;
-  if(pho->dr03NeutralhadronPFIso > (neutral_iso03 + lin_neutral_iso03 * eT)) return false;
-  if(pho->dr03PhotonPFIso > (photon_iso03 + lin_photon_iso03 * eT)) return false;
+  if((pfChargedIsoGood03 - rhoCorr)  > charged_had_iso03 ) return false;
+  if((pho->dr03NeutralHadronPFIso - rhoCorr) > (neutral_iso03 + lin_neutral_iso03 * eT)) 
+    return false;
+  if( (pho->dr03PhotonPFIso - rhoCorr) > (photon_iso03 + lin_photon_iso03 * eT)) 
+    return false;
 
   return true;
 }
