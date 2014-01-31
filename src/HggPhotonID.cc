@@ -286,6 +286,42 @@ bool HggPhotonID::getIdCiCPF(VecbosPho* pho, int nVertex, float rhoFastJet,int s
   return true;
 }
 
+bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex)
+{
+  eT = pho->p4FromVtx(selVtxPos,pho->finalEnergy,false).Et();
+
+  if(selVtxIndex < 0 || selVtxIndex >= vertices.size()){
+    cout << "WARNING: Selected Vertex Index out of range: " << selVtxIndex << "/" << vertices.size() <<endl;
+    return false;
+o  }
+
+  this->fillVariables(pho,nVertex,rhoFastJet,selVtxIndex);
+  if(! this->getPreSelection(pho,nVertex,rhoFastJet,selVtxIndex) ) return false;
+
+  float sietaieta  = .012;
+  float charged_had_iso03 = 2.6;
+  float neutral_iso03 =  3.5; 
+  float lin_neutral_iso03 = .04;
+  float photon_iso03 = 1.3; 
+  float lin_photon_iso03 = .005;
+  float hoe = .05;
+
+  if(fabs(pho->SC.eta) > 1.48) {
+    sietaieta = .034;
+    charged_had_iso03 = 2.3;
+    neutral_iso03 = 2.9;
+    photon_iso03 = 999999999.9;
+  }
+
+  if(pho->HoverE > hoe) return false;
+  if(pho->SC.sigmaIEtaIEta > sietaieta) return false;
+  if(pfChargedIsoGood03 > charged_had_iso03 ) return false;
+  if(pho->dr03NeutralhadronPFIso > (neutral_iso03 + lin_neutral_iso03 * eT)) return false;
+  if(pho->dr03PhotonPFIso > (photon_iso03 + lin_photon_iso03 * eT)) return false;
+
+  return true;
+}
+
 bool HggPhotonID::getIdCiCPF_Fake(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex){
   if(selVtxIndex < 0 || selVtxIndex >= vertices.size()){
     cout << "WARNING: Selected Vertex Index out of range: " << selVtxIndex << "/" << vertices.size() <<endl;
@@ -390,6 +426,7 @@ bool HggPhotonID::getPreSelectionMay2012(VecbosPho* pho, int nVertex, float rhoF
   return true;
 }
 
+//deprecated
 bool HggPhotonID::getPreSelectionRazor2013(VecbosPho* pho, int nVertex, float rhoFastJet, int selVtxIndex){
   if(debugPhotonID) std::cout << "getPreSelectionRazor2013" << std::endl;
 
