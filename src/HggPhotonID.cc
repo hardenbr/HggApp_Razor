@@ -286,7 +286,7 @@ bool HggPhotonID::getIdCiCPF(VecbosPho* pho, int nVertex, float rhoFastJet,int s
   return true;
 }
 
-bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex)
+bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex, bool isFake)
 {
   if(selVtxIndex < 0 || selVtxIndex >= vertices.size()){
     cout << "WARNING: Selected Vertex Index out of range: " << selVtxIndex << "/" << vertices.size() <<endl;
@@ -318,7 +318,9 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
   float chosen_EA = 0;
 
   const int nCats = 7;
+  //categories of effective areas in eta
   float  EA_eta[nCats+1] = {0, 1, 1.48, 2.0, 2.2, 2.3, 2.4, 10000};
+  //values of the effective areas for the categories
   float  EA_pho[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
 
   for(int ii = 0; ii < nCats; ii++) {
@@ -327,19 +329,42 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
       chosen_EA = EA_pho[ii];
       break;
     }
+    else if(ii == nCats - 1){
+      cout << "WARNING!: photon candidate has unrealistic value of eta" << endl;
+      cout << "WARNING!: Setting photon rho correction area to 0" << endl;
+    }
   }
 
   float rhoCorr = chosen_EA * rhoFastJet;
   
-  if(pho->HoverE > hoe) return false;
-  if(pho->SC.sigmaIEtaIEta > sietaieta) return false;
-  if((pfChargedIsoGood03 - rhoCorr)  > charged_had_iso03 ) return false;
-  if((pho->dr03NeutralHadronPFIso - rhoCorr) > (neutral_iso03 + lin_neutral_iso03 * eT)) 
-    return false;
-  if( (pho->dr03PhotonPFIso - rhoCorr) > (photon_iso03 + lin_photon_iso03 * eT)) 
-    return false;
+  //derive the individual cuts
+  bool cut_hoe = pho->HoverE < hoe;
+  bool cut_charged_iso = (pfChargedIsoGood03 - rhoCorr)  < charged_had_iso03;
+  bool cut_sietaieta = pho->SC.sigmaIEtaIEta > sietaieta;
+  bool cut_neutral_had = (pho->dr03NeutralHadronPFIso - rhoCorr) <(neutral_iso03 + lin_neutral_iso03 * eT);
+  bool cut_pho_iso  = (pho->dr03PhotonPFIso - rhoCorr) < (photon_iso03 + lin_photon_iso03 * eT);
 
-  return true;
+  bool all_iso_pass = cut_charged_iso && cut_neutral_had && cut_pho_iso;
+
+  if(!isFake) {
+    //if this is the selection sample it must pss everything
+    return all_iso_pass && cut_hoe && cut_sietaieta;
+  }
+  else {
+    bool no_high_iso = (pho->dr03NeutralHadronPFIso - rhoCorr) < 50 && 
+      (pho->dr03NeutralHadronPFIso - rhoCorr) < 50 && 
+      (pho->dr03PhotonPFIso - rhoCorr) < 50;
+    //only one is true or all are true
+    bool one_pass_iso = (cut_charged_iso ^ cut_neutral_had) ^ cut_pho_iso;
+
+    //only 1 is true
+    bool pass_fake_iso = one_pass && !all_iso_pass;
+    
+    //two isolation fail, or the sietaieta fails and no pathologically high failures.
+    bool is_fake = (!pass_fake_iso || !cut_sietaieta) && no_high_iso;
+
+    return is_fake;      
+  }
 }
 
 bool HggPhotonID::getIdCiCPF_Fake(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex){

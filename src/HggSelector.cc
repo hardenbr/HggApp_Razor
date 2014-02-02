@@ -258,27 +258,27 @@ void HggSelector::Loop(){
     if(nSigma>0 && !isData_){ //do the energy scale and energy resolution systematics
       for(int iSmear=-nSigma;iSmear<=nSigma;iSmear++){
 
-	//do the smearing for the PFCiC Analysis
-	indices = getBestPairCiC(iSmear,0,true,false);
-	if(indices.first == -1 || indices.second==-1){
-	  mPairSmearPFCiC.push_back(-1);
-	}else{
-	  mPairSmearPFCiC.push_back(getMPair(indices.first,indices.second));
-	}
-
+        //do the smearing for the PFCiC Analysis
+        indices = getBestPairCiC(iSmear,0,true,false);
+        if(indices.first == -1 || indices.second==-1){
+          mPairSmearPFCiC.push_back(-1);
+        }else{
+          mPairSmearPFCiC.push_back(getMPair(indices.first,indices.second));
+        }
+        
       } // Done with smearing
-
+      
       for(int iScale=-nSigma;iScale<=nSigma;iScale++){ //do the scaling systematic
-	//do the smearing for the PFCiC Analysis
-	indices = getBestPairCiC(-999,iScale,true,false);
-	if(indices.first == -1 || indices.second==-1){
-	  mPairScalePFCiC.push_back(-1);
-	}else{
-	  mPairScalePFCiC.push_back(getMPair(indices.first,indices.second));
-	}
+        //do the smearing for the PFCiC Analysis
+        indices = getBestPairCiC(-999,iScale,true,false);
+        if(indices.first == -1 || indices.second==-1){
+          mPairScalePFCiC.push_back(-1);
+        }else{
+          mPairScalePFCiC.push_back(getMPair(indices.first,indices.second));
+        }
       }
     }
-
+    
     //Do the PFCiC selection
     indices = getBestPairCiC(0,0,true,false); // no scaling and default smearing
     //Get the Fake indicies
@@ -559,51 +559,49 @@ std::pair<int,int> HggSelector::getBestPairCiC(int smearShift,int scaleShift,boo
     for(int iPho1=0; iPho1<nPho_;iPho1++){
       if(photonMatchedElectron[iPho1] && doElectronVeto) continue;
       for(int iPho2=iPho1; iPho2<nPho_;iPho2++){
-
-	if(iPho1==iPho2) continue;
-	if(photonMatchedElectron[iPho2] && doElectronVeto) continue;
-	if(debugSelector) cout << ">> " << iPho1 << "  " << iPho2 << endl;
-	//scale/smear the energy of the photon
-	VecbosPho* pho1 = &(Photons_->at(iPho1));
-	VecbosPho* pho2 = &(Photons_->at(iPho2));
-	int selVtxI = this->getVertexIndex(iPho1,iPho2);
-	TVector3 vtxPos(vtxX[selVtxI],vtxY[selVtxI],vtxZ[selVtxI]);
-	if(!this->preSelectPhotons(pho1,pho2,vtxPos)) continue;
-	if(!isData_){
-	  
-	  //apply scale shift	  
-	  pho1->finalEnergy = pho1->scaledEnergy + scaleShift*pho1->scaledEnergyError;
-	  pho2->finalEnergy = pho2->scaledEnergy + scaleShift*pho2->scaledEnergyError;
-
-	  smearPhoton(pho1,smearShift);
-	  smearPhoton(pho2,smearShift);
-	}
-	bool CiC1,CiC2;
-	if(usePF){
-	  if(doFake) {
-	    CiC1 = PhotonID->getIdCiCPF_Fake(pho1,nVtx,rho,selVtxI);
-	    CiC2 = PhotonID->getIdCiCPF_Fake(pho2,nVtx,rho,selVtxI);
-	  }
-	  else {
-	    CiC1 = PhotonID->getIdCiCPF(pho1,nVtx,rho,selVtxI);
-	    CiC2 = PhotonID->getIdCiCPF(pho2,nVtx,rho,selVtxI);
-	  }
-	}else{
-	  // RAZOR there is no fake sample for the CiC ID
-	  CiC1 = PhotonID->getIdCiC(pho1,nVtx,rho,selVtxI);
-	  CiC2 = PhotonID->getIdCiC(pho2,nVtx,rho,selVtxI);
-	}
-	//both need to pass
-	if(!CiC1 || !CiC2) continue;
-	float thisPtSum = pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()
-	  + pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
-	if(thisPtSum > highestPtSum){
-	  highestPtSum = thisPtSum;
-	  indices.first = iPho1;
-	  indices.second = iPho2;
-	}
+        
+        if(iPho1==iPho2) continue;
+        if(photonMatchedElectron[iPho2] && doElectronVeto) continue;
+        if(debugSelector) cout << ">> " << iPho1 << "  " << iPho2 << endl;
+        //scale/smear the energy of the photon
+        VecbosPho* pho1 = &(Photons_->at(iPho1));
+        VecbosPho* pho2 = &(Photons_->at(iPho2));
+        int selVtxI = this->getVertexIndex(iPho1,iPho2);
+        TVector3 vtxPos(vtxX[selVtxI],vtxY[selVtxI],vtxZ[selVtxI]);
+        if(!this->preSelectPhotons(pho1,pho2,vtxPos)) continue;
+        if(!isData_){
+          
+          //apply scale shift	  
+          pho1->finalEnergy = pho1->scaledEnergy + scaleShift*pho1->scaledEnergyError;
+          pho2->finalEnergy = pho2->scaledEnergy + scaleShift*pho2->scaledEnergyError;
+          
+          smearPhoton(pho1,smearShift);
+          smearPhoton(pho2,smearShift);
+        }
+        bool CiC1,CiC2;
+        
+        if(usePF){
+          CiC1 = PhotonID->getEGLooseID(pho1,nVtx,rho,selVtxI, doFake);
+          CiC2 = PhotonID->getEGLooseID(pho2,nVtx,rho,selVtxI, doFake);
+        }else{
+          // RAZOR there is no fake sample for the CiC ID
+          CiC1 = PhotonID->getIdCiC(pho1,nVtx,rho,selVtxI);
+          CiC2 = PhotonID->getIdCiC(pho2,nVtx,rho,selVtxI);
+        }
+        //both need to pass
+        if(!CiC1 || !CiC2) continue;
+        
+        float thisPtSum = pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()
+          + pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt();	
+        
+        if(thisPtSum > highestPtSum){
+          highestPtSum = thisPtSum;
+          indices.first = iPho1;
+          indices.second = iPho2;
+        }
       }// for(iPho2...
     }// for(iPho1...
+    
     return indices;
 }
 
