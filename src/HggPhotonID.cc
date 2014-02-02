@@ -404,11 +404,11 @@ bool HggPhotonID::getIdCiCPF_Fake(VecbosPho* pho, int nVertex, float rhoFastJet,
   bool one_pass = (pass_charged ^ pass_sumgood) ^ pass_sumbad;
   //catch the all passing scenario
   bool all_pass = pass_charged && pass_sumgood && pass_sumbad;
-
   //put top end limits on the isolation inversion
   bool no_high_iso = isosumoetPF < 20 && isosumoetbadPF < 100 && pfChargedIsoGood03oet < 20;
-  bool pass_iso = one_pass && !all_pass;
-
+  //exactly 2 pass
+  bool pass_iso = one_pass && !all_pass && no_high_iso;
+  //exactly 2 isolations fail or the sietaieta fails and no pathological fails
   bool is_fake = (!pass_iso || !pass_sietaieta) && no_high_iso; 
 
   return is_fake;    
@@ -431,6 +431,35 @@ void HggPhotonID::fillIsoVariables(VecbosPho* pho, ReducedPhotonData* data,int n
   data->dr04HcalIso  = pho->dr03HcalTowerSumEtCone - 0.005*eT;
   data->dr03TrackIso = pho->dr03TrackIso[selVtxIndex] - 0.002*eT;
   data->dr02PFChargedIso = pho->dr02ChargedHadronPFIso[selVtxIndex];
+
+  //calculate the rho corrections for the isolation
+  float chosen_EA = 0;
+
+  const int nCats = 7;
+  //categories of effective areas in eta
+  float  EA_eta[nCats+1] = {0, 1, 1.48, 2.0, 2.2, 2.3, 2.4, 10000};
+  //values of the effective areas for the categories
+  float  EA_pho[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
+  
+  //determine the category for the rho correction
+  for(int ii = 0; ii < nCats; ii++) {
+    float eta = fabs(pho->SC.eta);
+    if (eta > EA_eta[ii] && eta < EA_eta[ii+1]){
+      chosen_EA = EA_pho[ii];
+      break;
+    }
+    else if(ii == nCats - 1){
+      cout << "WARNING!: photon candidate has unrealistic value of eta" << endl;
+      cout << "WARNING!: Setting photon rho correction area to 0" << endl;
+    }
+  }
+
+  float rhoCorr = chosen_EA * rhoFastJet;
+  
+  data->looseEG_ecaliso = (pfChargedIsoGood03 - rhoCorr); //RAZOR
+  data->looseEG_chargedhadiso = pfChargedIsoGood03 - rhoCorr; //RAZOR
+  data->looseEG_neutralhadiso = (pho->dr03NeutralHadronPFIso - rhoCorr); //RAZOR
+  data->looseEG_photoniso = pho->dr03PhotonPFIso - rhoCorr; //RAZOR
 }
 
 bool HggPhotonID::getPreSelection(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex){

@@ -255,8 +255,8 @@ struct ReducedPhotonData{
   int category;
   float idMVA;
   int mother;
-  float HoverE;
-  float sieie;
+  float HoverE; //RAZOR
+  float sieie; //RAZOR
   float dr03PFChargedIso;
   float isosumGood;
   float isosumBad;
@@ -264,6 +264,12 @@ struct ReducedPhotonData{
   float dr04HcalIso;
   float dr03TrackIso;
   float dr02PFChargedIso;
+
+  float looseEG_ecaliso; //RAZOR
+  float looseEG_chargedhadiso; //RAZOR
+  float looseEG_neutralhadiso; //RAZOR
+  float looseEG_photoniso; //RAZOR
+  
 
 };
 
