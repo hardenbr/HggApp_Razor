@@ -324,8 +324,8 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
   //categories of effective areas in eta
   float  EA_eta[nCats+1] = {0, 1, 1.48, 2.0, 2.2, 2.3, 2.4, 10000};
   //values of the effective areas for the categories
-  float  EA_charged[nCats] = {0.012, 0.010, 0.014, 0.012, .0.016, 0.020, 0.012};
-  float  EA_neutral[nCats] = {0,030, 0.057, 0.039, 0.015, 0.024, 0.039, 0.072};
+  float  EA_charged[nCats] = {0.012, 0.010, 0.014, 0.012, 0.016, 0.020, 0.012};
+  float  EA_neutral[nCats] = {0.030, 0.057, 0.039, 0.015, 0.024, 0.039, 0.072};
   float  EA_photon[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
 
   for(int ii = 0; ii < nCats; ii++) {
@@ -449,8 +449,8 @@ void HggPhotonID::fillIsoVariables(VecbosPho* pho, ReducedPhotonData* data,int n
   //categories of effective areas in eta
   float  EA_eta[nCats+1] = {0, 1, 1.48, 2.0, 2.2, 2.3, 2.4, 10000};
   //values of the effective areas for the categories
-  float  EA_charged[nCats] = {0.012, 0.010, 0.014, 0.012, .0.016, 0.020, 0.012};
-  float  EA_neutral[nCats] = {0,030, 0.057, 0.039, 0.015, 0.024, 0.039, 0.072};
+  float  EA_charged[nCats] = {0.012, 0.010, 0.014, 0.012, 0.016, 0.020, 0.012};
+  float  EA_neutral[nCats] = {0.030, 0.057, 0.039, 0.015, 0.024, 0.039, 0.072};
   float  EA_photon[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
   
   //determine the category for the rho correction
