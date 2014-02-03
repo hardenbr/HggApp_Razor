@@ -458,8 +458,8 @@ void HggPhotonID::fillIsoVariables(VecbosPho* pho, ReducedPhotonData* data,int n
 
 
   //linear corrections to be included in validation plots
-  lin_corr_neutral = .04 * eT;
-  lin_corr_photon = .005 * eT;
+  float lin_corr_neutral = .04 * eT;
+  float lin_corr_photon = .005 * eT;
 
   if (fabs(pho->SC.eta) > 1.48) {
     lin_corr_photon = 0;
