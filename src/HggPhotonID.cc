@@ -365,7 +365,6 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
       (pho->dr03PhotonPFIso - rhoCorr_photon - lin_photon_iso03*eT) < 50;
     //only one is true or all are true
     bool one_pass_iso = (cut_charged_iso ^ cut_neutral_had) ^ cut_pho_iso;
-
     //only 1 is true
     bool pass_fake_iso = (one_pass_iso && !all_iso_pass);
     
