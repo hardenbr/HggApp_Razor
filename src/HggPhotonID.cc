@@ -351,9 +351,9 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
     return all_iso_pass && cut_hoe && cut_sietaieta;
   }
   else {
-    bool no_high_iso = (pho->dr03NeutralHadronPFIso - rhoCorr) < 50 && 
-      (pho->dr03NeutralHadronPFIso - rhoCorr) < 50 && 
-      (pho->dr03PhotonPFIso - rhoCorr) < 50;
+    bool no_high_iso = (pho->dr03NeutralHadronPFIso - rhoCorr) < 25 && 
+      (pho->dr03NeutralHadronPFIso - rhoCorr) < 25 && 
+      (pho->dr03PhotonPFIso - rhoCorr) < 25;
     //only one is true or all are true
     bool one_pass_iso = (cut_charged_iso ^ cut_neutral_had) ^ cut_pho_iso;
 
@@ -361,7 +361,7 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
     bool pass_fake_iso = one_pass_iso && !all_iso_pass;
     
     //two isolation fail, or the sietaieta fails and no pathologically high failures.
-    bool is_fake = (pass_fake_iso || !cut_sietaieta) && no_high_iso;
+    bool is_fake = (pass_fake_iso || !cut_sietaieta) && no_high_iso && cut_hoe;
 
     return is_fake;      
   }
@@ -455,11 +455,19 @@ void HggPhotonID::fillIsoVariables(VecbosPho* pho, ReducedPhotonData* data,int n
   }
 
   float rhoCorr = chosen_EA * rhoFastJet;
-  
-  data->looseEG_ecaliso = (pfChargedIsoGood03 - rhoCorr); //RAZOR
-  data->looseEG_chargedhadiso = pfChargedIsoGood03 - rhoCorr; //RAZOR
-  data->looseEG_neutralhadiso = (pho->dr03NeutralHadronPFIso - rhoCorr); //RAZOR
-  data->looseEG_photoniso = pho->dr03PhotonPFIso - rhoCorr; //RAZOR
+
+
+  //linear corrections to be included in validation plots
+  lin_corr_neutral = .04 * eT;
+  lin_corr_photon = .005 * eT;
+
+  if (fabs(pho->SC.eta) > 1.48) {
+    lin_corr_photon = 0;
+  }
+
+  data->looseEG_chargedhadiso = pfChargedIsoGood03 - rhoCorr ; //RAZOR
+  data->looseEG_neutralhadiso = (pho->dr03NeutralHadronPFIso - rhoCorr - lin_corr_neutral ); //RAZOR
+  data->looseEG_photoniso = pho->dr03PhotonPFIso - rhoCorr - lin_corr_photon; //RAZOR
 }
 
 bool HggPhotonID::getPreSelection(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex){
