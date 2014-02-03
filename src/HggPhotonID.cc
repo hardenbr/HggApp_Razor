@@ -315,18 +315,25 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
   }
 
   //calculate the rho corrections for the isolation
-  float chosen_EA = 0;
-
+  float chosen_EA_neutral = 0;
+  float chosen_EA_charged = 0;
+  float chosen_EA_photon = 0;
+  
   const int nCats = 7;
+
   //categories of effective areas in eta
   float  EA_eta[nCats+1] = {0, 1, 1.48, 2.0, 2.2, 2.3, 2.4, 10000};
   //values of the effective areas for the categories
-  float  EA_pho[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
+  float  EA_charged[nCats] = {0.012, 0.010, 0.014, 0.012, .0.016, 0.020, 0.012};
+  float  EA_neutral[nCats] = {0,030, 0.057, 0.039, 0.015, 0.024, 0.039, 0.072};
+  float  EA_photon[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
 
   for(int ii = 0; ii < nCats; ii++) {
     float eta = fabs(pho->SC.eta);
     if (eta > EA_eta[ii] && eta < EA_eta[ii+1]){
-      chosen_EA = EA_pho[ii];
+      chosen_EA_charged = EA_charged[ii];
+      chosen_EA_neutral = EA_neutral[ii];
+      chosen_EA_photon = EA_photon[ii];
       break;
     }
     else if(ii == nCats - 1){
@@ -335,14 +342,16 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
     }
   }
 
-  float rhoCorr = chosen_EA * rhoFastJet;
+  float rhoCorr_charged = chosen_EA_charged  * rhoFastJet;
+  float rhoCorr_neutral = chosen_EA_neutral  * rhoFastJet;
+  float rhoCorr_photon = chosen_EA_photon  * rhoFastJet;
   
   //derive the individual cuts
   bool cut_hoe = pho->HoverE < hoe;
-  bool cut_charged_iso = (pfChargedIsoGood03 - rhoCorr)  < charged_had_iso03;
+  bool cut_charged_iso = (pfChargedIsoGood03 - rhoCorr_charged)  < charged_had_iso03;
   bool cut_sietaieta = pho->SC.sigmaIEtaIEta < sietaieta;
-  bool cut_neutral_had = (pho->dr03NeutralHadronPFIso - rhoCorr) < (neutral_iso03 + lin_neutral_iso03 * eT);
-  bool cut_pho_iso  = (pho->dr03PhotonPFIso - rhoCorr) < (photon_iso03 + lin_photon_iso03 * eT);
+  bool cut_neutral_had = (pho->dr03NeutralHadronPFIso - rhoCorr_neutral) < (neutral_iso03 + lin_neutral_iso03 * eT);
+  bool cut_pho_iso  = (pho->dr03PhotonPFIso - rhoCorr_photon) < (photon_iso03 + lin_photon_iso03 * eT);
 
   bool all_iso_pass = cut_charged_iso && cut_neutral_had && cut_pho_iso;
 
@@ -351,9 +360,9 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
     return all_iso_pass && cut_hoe && cut_sietaieta;
   }
   else {
-    bool no_high_iso = (pho->dr03NeutralHadronPFIso - rhoCorr) < 50 && 
-      (pho->dr03NeutralHadronPFIso - rhoCorr - lin_neutral_iso03*eT) < 50 && 
-      (pho->dr03PhotonPFIso - rhoCorr - lin_photon_iso03*eT) < 50;
+    bool no_high_iso = (pfChargedIsoGood03 - rhoCorr_charged) < 50 && 
+      (pho->dr03NeutralHadronPFIso - rhoCorr_neutral - lin_neutral_iso03*eT) < 50 && 
+      (pho->dr03PhotonPFIso - rhoCorr_photon - lin_photon_iso03*eT) < 50;
     //only one is true or all are true
     bool one_pass_iso = (cut_charged_iso ^ cut_neutral_had) ^ cut_pho_iso;
 
@@ -433,19 +442,25 @@ void HggPhotonID::fillIsoVariables(VecbosPho* pho, ReducedPhotonData* data,int n
   data->dr02PFChargedIso = pho->dr02ChargedHadronPFIso[selVtxIndex];
 
   //calculate the rho corrections for the isolation
-  float chosen_EA = 0;
+  float chosen_EA_neutral = 0;
+  float chosen_EA_charged = 0;
+  float chosen_EA_photon = 0;
 
   const int nCats = 7;
   //categories of effective areas in eta
   float  EA_eta[nCats+1] = {0, 1, 1.48, 2.0, 2.2, 2.3, 2.4, 10000};
   //values of the effective areas for the categories
-  float  EA_pho[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
+  float  EA_charged[nCats] = {0.012, 0.010, 0.014, 0.012, .0.016, 0.020, 0.012};
+  float  EA_neutral[nCats] = {0,030, 0.057, 0.039, 0.015, 0.024, 0.039, 0.072};
+  float  EA_photon[nCats] = {0.148, 0.130, 0.112, 0.216, 0.262, 0.260, 0.266};
   
   //determine the category for the rho correction
   for(int ii = 0; ii < nCats; ii++) {
     float eta = fabs(pho->SC.eta);
     if (eta > EA_eta[ii] && eta < EA_eta[ii+1]){
-      chosen_EA = EA_pho[ii];
+      chosen_EA_charged = EA_charged[ii];
+      chosen_EA_neutral = EA_neutral[ii];
+      chosen_EA_photon = EA_photon[ii];
       break;
     }
     else if(ii == nCats - 1){
@@ -454,8 +469,9 @@ void HggPhotonID::fillIsoVariables(VecbosPho* pho, ReducedPhotonData* data,int n
     }
   }
 
-  float rhoCorr = chosen_EA * rhoFastJet;
-
+  float rhoCorr_charged = chosen_EA_charged  * rhoFastJet;
+  float rhoCorr_neutral = chosen_EA_neutral  * rhoFastJet;
+  float rhoCorr_photon = chosen_EA_photon  * rhoFastJet;
 
   //linear corrections to be included in validation plots
   float lin_corr_neutral = .04 * eT;
@@ -465,9 +481,9 @@ void HggPhotonID::fillIsoVariables(VecbosPho* pho, ReducedPhotonData* data,int n
     lin_corr_photon = 0;
   }
 
-  data->looseEG_chargedhadiso = pfChargedIsoGood03 - rhoCorr ; //RAZOR
-  data->looseEG_neutralhadiso = (pho->dr03NeutralHadronPFIso - rhoCorr - lin_corr_neutral ); //RAZOR
-  data->looseEG_photoniso = pho->dr03PhotonPFIso - rhoCorr - lin_corr_photon; //RAZOR
+  data->looseEG_chargedhadiso = pfChargedIsoGood03 - rhoCorr_charged ; //RAZOR
+  data->looseEG_neutralhadiso = (pho->dr03NeutralHadronPFIso - rhoCorr_neutral - lin_corr_neutral ); //RAZOR
+  data->looseEG_photoniso = pho->dr03PhotonPFIso - rhoCorr_photon - lin_corr_photon; //RAZOR
 }
 
 bool HggPhotonID::getPreSelection(VecbosPho* pho, int nVertex, float rhoFastJet,int selVtxIndex){
@@ -503,7 +519,6 @@ bool HggPhotonID::getPreSelectionMay2012(VecbosPho* pho, int nVertex, float rhoF
     if( (pho->isBarrel() && (pho->HoverE > 0.082 || pho->SC.sigmaIEtaIEta > 0.014) )
         || (!pho->isBarrel() && (pho->HoverE > 0.075 || pho->SC.sigmaIEtaIEta > 0.034) ) ) return false;
   }
-
 
   return true;
 }
