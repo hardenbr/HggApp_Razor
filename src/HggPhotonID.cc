@@ -361,7 +361,7 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
     bool pass_fake_iso = one_pass_iso && !all_iso_pass;
     
     //two isolation fail, or the sietaieta fails and no pathologically high failures.
-    bool is_fake = (!pass_fake_iso || !cut_sietaieta) && no_high_iso;
+    bool is_fake = (pass_fake_iso || !cut_sietaieta) && no_high_iso;
 
     return is_fake;      
   }

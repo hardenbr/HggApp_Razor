@@ -739,6 +739,7 @@ ReducedPhotonData HggSelector::getReducedData(VecbosPho* pho,TVector3 selVtx,int
     p4Gen.SetPtEtaPhiE(0.,0.,0.,0.);
     data.pt_Gen = 0.; data.eta_Gen = 0.; data.phi_Gen = 0.; data.E_Gen = 0.;  
   }
+
   data.pt = p4.Pt(); data.eta = p4.Eta(); data.phi = p4.Phi(); data.E =p4.E(); data.EError = pho->finalEnergyError;
   data.EErrorSmeared = massRes->getResolution(pho);
   data.index = pho->index;
@@ -748,8 +749,14 @@ ReducedPhotonData HggSelector::getReducedData(VecbosPho* pho,TVector3 selVtx,int
   data.category = (data.r9 < 0.94)+2*(fabs(data.etaSC) > 1.48); 
   //  data.idMVA = PhotonID->getIdMVA(pho,nVtx,rho,selVtxI);  //getidmva
   data.mother = pho->genMatch.idMother; 
+  
+  data.passEGLooseID = PhotonID->getEGLooseID(pho,nVtx,rho,selVtxI,false);
+  data.passEGLooseFake = PhotonID->getEGLooseID(pho,nVtx,rho,selVtxI,true);
+
   PhotonID->fillIsoVariables(pho,&data,nVtx,rho,selVtxI);
+
   if(debugSelector) cout << "DONE Filling Reduced Data" <<endl;
+
   return data;
 }
 

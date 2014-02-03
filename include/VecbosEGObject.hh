@@ -270,7 +270,8 @@ struct ReducedPhotonData{
   float looseEG_neutralhadiso; //RAZOR
   float looseEG_photoniso; //RAZOR
   
-
+  bool passEGLooseID; //RAZOR
+  bool passEGLooseFake; //RAZOR
 };
 
 class VecbosEle{
