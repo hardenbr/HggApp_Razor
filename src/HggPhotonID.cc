@@ -351,17 +351,17 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
     return all_iso_pass && cut_hoe && cut_sietaieta;
   }
   else {
-    bool no_high_iso = (pho->dr03NeutralHadronPFIso - rhoCorr) < 25 && 
-      (pho->dr03NeutralHadronPFIso - rhoCorr) < 25 && 
-      (pho->dr03PhotonPFIso - rhoCorr) < 25;
+    bool no_high_iso = (pho->dr03NeutralHadronPFIso - rhoCorr) < 50 && 
+      (pho->dr03NeutralHadronPFIso - rhoCorr - lin_neutral_iso03*eT) < 50 && 
+      (pho->dr03PhotonPFIso - rhoCorr - lin_photon_iso03*eT) < 50;
     //only one is true or all are true
     bool one_pass_iso = (cut_charged_iso ^ cut_neutral_had) ^ cut_pho_iso;
 
     //only 1 is true
-    bool pass_fake_iso = one_pass_iso && !all_iso_pass;
+    bool pass_fake_iso = (one_pass_iso && !all_iso_pass);
     
     //two isolation fail, or the sietaieta fails and no pathologically high failures.
-    bool is_fake = (pass_fake_iso || !cut_sietaieta) && no_high_iso && cut_hoe;
+    bool is_fake = (!pass_fake_iso || !cut_sietaieta) && no_high_iso && cut_hoe;
 
     return is_fake;      
   }
