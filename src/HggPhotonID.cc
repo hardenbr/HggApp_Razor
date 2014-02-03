@@ -341,7 +341,7 @@ bool HggPhotonID::getEGLooseID(VecbosPho* pho, int nVertex, float rhoFastJet,int
   bool cut_hoe = pho->HoverE < hoe;
   bool cut_charged_iso = (pfChargedIsoGood03 - rhoCorr)  < charged_had_iso03;
   bool cut_sietaieta = pho->SC.sigmaIEtaIEta > sietaieta;
-  bool cut_neutral_had = (pho->dr03NeutralHadronPFIso - rhoCorr) <(neutral_iso03 + lin_neutral_iso03 * eT);
+  bool cut_neutral_had = (pho->dr03NeutralHadronPFIso - rhoCorr) < (neutral_iso03 + lin_neutral_iso03 * eT);
   bool cut_pho_iso  = (pho->dr03PhotonPFIso - rhoCorr) < (photon_iso03 + lin_photon_iso03 * eT);
 
   bool all_iso_pass = cut_charged_iso && cut_neutral_had && cut_pho_iso;

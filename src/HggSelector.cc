@@ -318,9 +318,27 @@ void HggSelector::Loop(){
       TVector3 vtxPos(vtxX[selectedVertex],vtxY[selectedVertex],vtxZ[selectedVertex]);
       pho1_ = Photons_->at(index1PFCiC);
       pho2_ = Photons_->at(index2PFCiC);
+
+      //check that the leading photon is always the first photon
+      TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
+      TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
+
+      //switch the two 
+      if(p1.Pt() < p2.Pt()){
+	pho1_ = Photons_->at(index2PFCiC);
+	pho2_ = Photons_->at(index1PFCiC);
+      }
+
+      //pairs of photon reduced objects to be written to the trees
       OutPhotonsPFCiC_.push_back(getReducedData(&pho1_,vtxPos,selectedVertex));
       OutPhotonsPFCiC_.push_back(getReducedData(&pho2_,vtxPos,selectedVertex));
 
+      //angles and met variables
+      AnglePho = p1.Angle(p2.Vect());
+      DeltaPhiPho = DeltaPhi(p1.Phi(),p2.Phi());
+      AngleMET = DeltaPhi(pfMetType1Phi,CaloMETPhi);
+
+      //mass and vertex information
       mPairPFCiC_ = (pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy) + pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy)).M();
       mPairNoCorrPFCiC_ = (pho1_.p4FromVtx(vtxPos,pho1_.energy) + pho2_.p4FromVtx(vtxPos,pho2_.energy)).M();
       mPairResPFCiC_ = massRes->getMassResolutionEonly(&pho1_,&pho2_,vtxPos);
@@ -335,17 +353,6 @@ void HggSelector::Loop(){
       MjjPFCiC_  = this->getVBFMjj(&pho1_,&pho2_,vtxPos,jpt);
       ptJet1PFCiC_ = jpt[0];
       ptJet2PFCiC_ = jpt[1];
-
-      TLorentzVector p1 = pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy);
-      TLorentzVector p2 = pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy);
-      AnglePho = p1.Angle(p2.Vect());
-      DeltaPhiPho = DeltaPhi(p1.Phi(),p2.Phi());
-      AngleMET = DeltaPhi(pfMetType1Phi,CaloMETPhi);
-
-      if(p1.Pt() < p2.Pt()){
-        TLorentzVector tmp = p1;
-        p1=p2; p2=tmp;
-      }
 
       TLorentzVector gg = p1+p2;
       TVector3 boost = -1*gg.BoostVector();
