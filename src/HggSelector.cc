@@ -291,7 +291,6 @@ void HggSelector::Loop(){
 
     indices = make_pair(-1,-1);
 
-
     if(debugSelector) cout << "LOOP DONE" << endl;	  
     if(debugSelector) cout << "indicesPFCiC: " << index1PFCiC << "  " << index2PFCiC << endl;
     if(debugSelector) cout << "indicesPFCiC_fake: " << index1PFCiC_fake << "  " << index2PFCiC_fake << endl;
@@ -541,7 +540,6 @@ bool HggSelector::preSelectPhotons(VecbosPho* pho1,VecbosPho* pho2,TVector3 vtxP
     float M = (pho1->p4FromVtx(vtxPos,pho1->finalEnergy) + pho2->p4FromVtx(vtxPos,pho2->finalEnergy)).M();
     if( pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()/M < PtOverMSubLead || pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt()/M < PtOverMSubLead ) return false;
     if( pho1->p4FromVtx(vtxPos,pho1->finalEnergy).Pt()/M < PtOverMLead && pho2->p4FromVtx(vtxPos,pho2->finalEnergy).Pt()/M < PtOverMLead ) return false;
-    
   }
 
   return true;
@@ -750,8 +748,8 @@ ReducedPhotonData HggSelector::getReducedData(VecbosPho* pho,TVector3 selVtx,int
   //  data.idMVA = PhotonID->getIdMVA(pho,nVtx,rho,selVtxI);  //getidmva
   data.mother = pho->genMatch.idMother; 
   
-  data.passEGLooseID = PhotonID->getEGLooseID(pho,nVtx,rho,selVtxI,false);
-  data.passEGLooseFake = PhotonID->getEGLooseID(pho,nVtx,rho,selVtxI,true);
+  data.passEGLooseID = PhotonID->getEGLooseID(pho,nVtx,rho,selVtxI,false); //RAZOR
+  data.passEGLooseFake = PhotonID->getEGLooseID(pho,nVtx,rho,selVtxI,true); //RAZOR
 
   PhotonID->fillIsoVariables(pho,&data,nVtx,rho,selVtxI);
 
@@ -1202,6 +1200,7 @@ int HggSelector::getVertexIndex(int indexPho1,int indexPho2){
       break;
     }
   }
+
   if(debugSelector) cout << "Returning Vertex Index: " << selectedVertex <<endl;
   return selectedVertex;
 }
