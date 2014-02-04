@@ -282,7 +282,7 @@ def main():
             queue = queueString
             #queue = "all.q@compute-2-2.local,all.q@compute-2-4.local,all.q@compute-3-2.local"
             logarea = wd + "/" + DirName
-            bsub = "qsub -o -$s/log -e $s/log  -q  %s %s" % (logarea, logarea, queue,scriptFile)
+            bsub = "qsub -q  %s %s" % (queue,scriptFile)
             print bsub
             #os.system(bsub)
             

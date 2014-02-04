@@ -11,6 +11,8 @@ python batchSub_hggcompile.py --submit --FilesPerJob=5 --DirName="DoublePhoton_R
 
 python batchSub_hggcompile.py --submit --FilesPerJob=5 --DirName="DoublePhoton_Run2012C_Jan22" --CMD="/wntmp/scratch/#DIR#/HggSelectorApp --isData #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="2012C_selected.root" --OutputDir="/raid3/jhardenbrook/DoublePhoton_Run2012C_Jan22" Hgg_53X_alex/Caltech/Reduced/DoublePhoton_Run2012C_22Jan2013.list
 
+##SIGNAL COMPILE
+python batchSub_hggcompile.py --submit --FilesPerJob=1 --DirName="ra3_diphoton_Spectra_gsq_B" --CMD="/wntmp/scratch/#DIR#/HggSelectorApp #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="gsq_b_sel.root" --OutputDir="/home/raid4/jhardenbrook/ra3_diphoton/Spectra_gsq_B/sel" /home/raid4/jhardenbrook/ra3_diphoton/Spectra_gsq_B/red/res/red.list
 
 #2012A,B,C
 python batchSub.py --submit --FilesPerJob=5 --DirName="Photon_Run2012A_Jan22" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/HggSelectorApp --isData #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="2012A_selected.root" --OutputDir="/raid3/jhardenbrook/Photon_Run2012A_Jan22" Hgg_53X_alex/Caltech/Reduced/Photon_Run2012A_22Jan2013.list
@@ -20,6 +22,7 @@ python batchSub.py --submit --FilesPerJob=5 --DirName="DoublePhoton_Run2012B_Jan
 python batchSub.py --submit --FilesPerJob=5 --DirName="DoublePhoton_Run2012C_Jan22" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/HggSelectorApp --isData #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="2012C_selected.root" --OutputDir="/raid3/jhardenbrook/DoublePhoton_Run2012C_Jan22" Hgg_53X_alex/Caltech/Reduced/DoublePhoton_Run2012C_22Jan2013.list
 
 python batchSub.py --submit --FilesPerJob=5 --DirName="DoublePhoton_Run2012D_Prompt_HLTmass70_fake2isofail" --CMD="/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/HggSelectorApp --isData #IFL# #OF0# hgg/selector_Razor_Diphoton.cfg" --outputName="2012D_selected.root" --OutputDir="/raid3/jhardenbrook/DoublePhoton_Run2012D_22Jan" Hgg_53X_alex/Caltech/Reduced/DoublePhoton_Run2012D_22Jan2013.list
+
 
 
 ##SIGNAL SELECTION
