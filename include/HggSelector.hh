@@ -5,6 +5,7 @@
 #include <HggEGEnergyCorrector.hh>
 //#include <HggVertexing.hh>
 #include <HggEnergyScale.hh>
+#include "JECUReader.hh"
 
 #include <vector>
 #include <iostream>
@@ -292,6 +293,10 @@ private:
   std::vector<VecbosMu> *Muons_;
 
   //RAZOR
+
+  //Jet energy corrector
+  JECUReader       jecReader;
+
   int nEle_;
   std::vector<VecbosEle> *Electrons_;
 
@@ -376,6 +381,16 @@ private:
   float PFMR;
   float PFR;
 
+  //JEC UP AND DOWN
+  float PFMR_UP;
+  float PFR_UP;
+  float PFMR_DOWN;
+  float PFR_DOWN;
+
+  //missing energy correction
+  TLorentzVector corrUp;
+  TLorentzVector corrDown;
+
   //hemispheres
   float ptHem1;
   float etaHem1;
@@ -393,6 +408,7 @@ private:
   float PFR_SS;
 
   //hemispheres
+
   float ptHem1_SS;
   float etaHem1_SS;
   float phiHem1_SS;
