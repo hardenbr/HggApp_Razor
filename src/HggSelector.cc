@@ -11,6 +11,7 @@
 #include "TMVA/Reader.h"
 #include "TRandom3.h"
 #include "HggPhysUtils.cc"
+#include "JECUReader.cc"
 using namespace std;
 using namespace TMVA;
 
@@ -103,12 +104,13 @@ int HggSelector::init(){
   //  InitEventFlag("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/AllBadABCDNEWTAUID.txt");
 
   //RAZOR initialize JEC corrector
-  if(!isData) {
+  //  jecReader = new JECUReader();
+  if(!isData_) {
     jecReader.setCorrections("/home/amott/HggApp/JEC/Summer13_V5_Uncertainties/Summer13_V5_MC_Uncertainty_AK5PFchs.txt");
   }else{
     jecReader.setCorrections("/home/amott/HggApp/JEC/Summer13_V5_Uncertainties/Summer13_V5_DATA_Uncertainty_AK5PFchs.txt");
   }
-  assert(jecReader.isValid());
+  //  assert(jecReader.isValid());
   
   this->setBranchAddresses();
   this->setupOutputTree();
@@ -331,8 +333,8 @@ void HggSelector::Loop(){
 
       //switch the two 
       if(p1.Pt() < p2.Pt()){
-	pho1_ = Photons_->at(index2PFCiC);
-	pho2_ = Photons_->at(index1PFCiC);
+        pho1_ = Photons_->at(index2PFCiC);
+        pho2_ = Photons_->at(index1PFCiC);
       }
 
       //pairs of photon reduced objects to be written to the trees
@@ -400,83 +402,83 @@ void HggSelector::Loop(){
 
       //do the JEC scale up
       if(calcRazor_up) {
-	vector<TLorentzVector> tmpJet_up = CombineJets_R_no_seed(jetlist_up, p1, p2);
-	if(tmpJet_up.size() != 2) {
+        vector<TLorentzVector> tmpJet_up = CombineJets_R_no_seed(jetlist_up, p1, p2);
+        if(tmpJet_up.size() != 2) {
           cout << "ERROR: HEMISPHERE MAKER DOES NOT RETURN 2 HEMISPHERES" << endl;
         }
         TLorentzVector PFHem1_up = tmpJet_up[0];
         TLorentzVector PFHem2_up = tmpJet_up[1];
-
-	//build the met vector
-	TVector3 met_tmp;
-	met_tmp.SetPtEtaPhi(pfMetType1,0,pfMetType1Phi);
-
-	//get the transverse part of the correction
-	TVector3 corr = corrDown.Vect();
-	jetCorrUp = corr.Mag();
-	corr.SetZ(0);
-
-	//add the correction. since the jet scale is larger so is the met
-	//jets are in the opposite direction of met so we subtract the correction
-	met_tmp-=corr;
-
-	//calculate the mt with the corrected met and hemispheres
+        
+        //build the met vector
+        TVector3 met_tmp;
+        met_tmp.SetPtEtaPhi(pfMetType1,0,pfMetType1Phi);
+        
+        //get the transverse part of the correction
+        TVector3 corr = corrDown.Vect();
+        jetcorrUp = corr.Mag();
+        corr.SetZ(0);
+        
+        //add the correction. since the jet scale is larger so is the met
+        //jets are in the opposite direction of met so we subtract the correction
+        met_tmp-=corr;
+        
+        //calculate the mt with the corrected met and hemispheres
         double MT_up = CalcMTR(PFHem1_up, PFHem2_up, met_tmp.Mag());
         double variable_up = -999999.;
         double Rvariable_up = -999999.;
-
+        
         variable_up = CalcGammaMRstar(PFHem1_up, PFHem2_up);
-        if(variable_up > 0) Rvariable_up = MT_up/variable_up
-
+        if(variable_up > 0) Rvariable_up = MT_up/variable_up;
+        
         PFMR_UP = variable_up;
         PFR_UP = Rvariable_up;
       }
       else{
-	jetcorrUp = -999
-	PFMR_UP = -999
-	PFR_UP = -999
+        jetcorrUp = -999;
+        PFMR_UP = -999;
+        PFR_UP = -999;
       }
-
+      
       //do the JEC scale down
       if(calcRazor_down) {
-	vector<TLorentzVector> tmpJet_down = CombineJets_R_no_seed(jetlist_down, p1, p2);
-	if(tmpJet_down.size() != 2) {
+        vector<TLorentzVector> tmpJet_down = CombineJets_R_no_seed(jetlist_down, p1, p2);
+        if(tmpJet_down.size() != 2) {
           cout << "ERROR: HEMISPHERE MAKER DOES NOT RETURN 2 HEMISPHERES" << endl;
         }
         TLorentzVector PFHem1_down = tmpJet_down[0];
         TLorentzVector PFHem2_down = tmpJet_down[1];
-
-
-	//build the met vector
-	TVector3 met_tmp;
-	met_tmp.SetPtEtaPhi(pfMetType1,0,pfMetType1Phi);
-
-	//extract the 3 vector of the overall correction
-	TVector3 corr = corrUp.Vect();
-	jetcorrDown = corr.Mag();
-	corr.SetZ(0);
-
-	//add the correction. since the jets smaller  so does the missing energy
-	//the correction is always in the direction of the jets whereas the
-	//met is in the opposte direction so it is += not -=
-	met_tmp+=corr;
-
+        
+        
+        //build the met vector
+        TVector3 met_tmp;
+        met_tmp.SetPtEtaPhi(pfMetType1,0,pfMetType1Phi);
+        
+        //extract the 3 vector of the overall correction
+        TVector3 corr = corrUp.Vect();
+        jetcorrDown = corr.Mag();
+        corr.SetZ(0);
+        
+        //add the correction. since the jets smaller  so does the missing energy
+        //the correction is always in the direction of the jets whereas the
+        //met is in the opposte direction so it is += not -=
+        met_tmp+=corr;
+        
         double MT_down = CalcMTR(PFHem1_down, PFHem2_down, met_tmp.Mag());
         double variable_down = -999999.;
         double Rvariable_down = -999999.;
-
+        
         variable_down = CalcGammaMRstar(PFHem1_down, PFHem2_down);
-        if(variable_down > 0) Rvariable_down = MT_down/variable_down
-
+        if(variable_down > 0) Rvariable_down = MT_down/variable_down;
+          
         PFMR_DOWN = variable_down;
         PFR_DOWN = Rvariable_down;
       }
       else{
-	jetCorrDown = -999
-	PFMR_DOWN = -999
-	PFR_DOWN = -999
+        jetcorrDown = -999;
+        PFMR_DOWN = -999;
+        PFR_DOWN = -999;
       }
-
+      
       //NOMINAL JEC SCALE
       if(calcRazor) {		
         //combine the photons and jets into hemispheres      
@@ -1544,34 +1546,35 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
     if(DeltaR(jIt->eta,p1.Eta(),jIt->phi,p1.Phi()) < 0.5 ) continue;
     if(DeltaR(jIt->eta,p2.Eta(),jIt->phi,p2.Phi()) < 0.5 ) continue;
 
+    //parse the jet four momentum
+    TLorentzVector jet_p4 = jIt->getP4();
+
     float corr = 1; // corr*jetpt = corrected jet
     float corr_parse = 0; // corr_parse*jetpt = correction to jet
 
     //read in the corrections
     if (down_zero_up == -1) { //JEC down 
       corr_parse = jecReader.getCorrection(jet_p4.Pt(),jet_p4.Eta(),JECUReader::kDown);
-      corr -= corr_parse
-
+      corr -= corr_parse;
     }
     else if (down_zero_up == 1) { //JEC up
       corr_parse= jecReader.getCorrection(jet_p4.Pt(),jet_p4.Eta(),JECUReader::kUp);      
-      corr+= corr_prase
+      corr+= corr_parse;;
     }
 
     //correct the 4 momentum
-    TLorentzVector jet_p4 = jIt->getP4();
     jet_p4.SetPtEtaPhiM(jet_p4.Pt()*corr, jet_p4.Eta(), jet_p4.Phi(), 0. );
 
     //calculate the correction for the MET
-    TLorentzVector corr;
-    corr.SetPtEtaPhiM(jet_p4.Pt()*(corr_parse),jet_p4.Eta(), jet_p4.Phi(), 0.); 
+    TLorentzVector corr_vec;
+    corr_vec.SetPtEtaPhiM(jet_p4.Pt()*(corr_parse),jet_p4.Eta(), jet_p4.Phi(), 0.); 
 
     //add it to the total correction for the MET
     if (down_zero_up == 1) { //up
-      corrUp += corr;
+      corrUp += corr_vec;
     }
     if (down_zero_up == -1) { //down
-      corrDown += corr;
+      corrDown += corr_vec;
     }
 
     jetlist.push_back(jet_p4);

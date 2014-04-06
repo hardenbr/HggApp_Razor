@@ -5,7 +5,6 @@
 #include <HggEGEnergyCorrector.hh>
 //#include <HggVertexing.hh>
 #include <HggEnergyScale.hh>
-#include "JECUReader.hh"
 
 #include <vector>
 #include <iostream>
@@ -16,6 +15,7 @@
 #include "TMVA/Factory.h"
 #include "TMVA/Reader.h"
 #include "TH1F.h"
+#include "JECUReader.hh"
 
 using namespace std;
 //#include "HggVertexing.hh"
@@ -45,7 +45,7 @@ public:
   vector<TLorentzVector> CombineJets_R_SSorOS(vector<TLorentzVector> myjets,TLorentzVector ph1, TLorentzVector ph2, bool SS);
   double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
   double CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met);
-  vector<TLorentzVector> GetJetList(TLorentzVector p1, TLorentzVector p2);
+  vector<TLorentzVector> GetJetList(TLorentzVector p1, TLorentzVector p2, int down_zero_up);
   bool PassMETFilters(); //check the actual bits
   void FillRazorVarsWith(int n); 
   void PrintEventNumbers();
@@ -295,7 +295,7 @@ private:
   //RAZOR
 
   //Jet energy corrector
-  JECUReader       jecReader;
+  JECUReader jecReader;
 
   int nEle_;
   std::vector<VecbosEle> *Electrons_;
