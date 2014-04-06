@@ -388,6 +388,9 @@ private:
   float PFR_DOWN;
 
   //missing energy correction
+  float jetcorrUp;
+  float jetcorrDown;
+
   TLorentzVector corrUp;
   TLorentzVector corrDown;
 

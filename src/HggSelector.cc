@@ -376,8 +376,8 @@ void HggSelector::Loop(){
       vector<TLorentzVector> jetlist_down = GetJetList(p1,p2,-1); //-1=downcorrection
       
       nJets = jetlist.size();
-      nJets_up = jetlist_up.size();
-      nJets_down = jetlist_down.size();
+      //      nJets_up = jetlist_up.size();
+      //      nJets_down = jetlist_down.size();
 
       //cut on the number of jets in the event
       float min_jet_cut = 1;
@@ -413,10 +413,12 @@ void HggSelector::Loop(){
 
 	//get the transverse part of the correction
 	TVector3 corr = corrDown.Vect();
+	jetCorrUp = corr.Mag();
 	corr.SetZ(0);
 
 	//add the correction. since the jet scale is larger so is the met
-	met_tmp+=corr;
+	//jets are in the opposite direction of met so we subtract the correction
+	met_tmp-=corr;
 
 	//calculate the mt with the corrected met and hemispheres
         double MT_up = CalcMTR(PFHem1_up, PFHem2_up, met_tmp.Mag());
@@ -430,6 +432,7 @@ void HggSelector::Loop(){
         PFR_UP = Rvariable_up;
       }
       else{
+	jetcorrUp = -999
 	PFMR_UP = -999
 	PFR_UP = -999
       }
@@ -450,11 +453,13 @@ void HggSelector::Loop(){
 
 	//extract the 3 vector of the overall correction
 	TVector3 corr = corrUp.Vect();
+	jetcorrDown = corr.Mag();
 	corr.SetZ(0);
 
 	//add the correction. since the jets smaller  so does the missing energy
-	met_tmp-=corr;
-
+	//the correction is always in the direction of the jets whereas the
+	//met is in the opposte direction so it is += not -=
+	met_tmp+=corr;
 
         double MT_down = CalcMTR(PFHem1_down, PFHem2_down, met_tmp.Mag());
         double variable_down = -999999.;
@@ -467,6 +472,7 @@ void HggSelector::Loop(){
         PFR_DOWN = Rvariable_down;
       }
       else{
+	jetCorrDown = -999
 	PFMR_DOWN = -999
 	PFR_DOWN = -999
       }
@@ -1078,6 +1084,9 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("PFMR_DOWN",&PFMR_DOWN,"PFMR_DOWN/F");
   outTree->Branch("PFR_DOWN",&PFR_DOWN,"PFR_DOWN/F");
 
+  outTree->Branch("jetcorrUp",&jetcorrUp,"jetcorrUp/F");
+  outTree->Branch("jetcorrDown",&jetcorrDown,"jetcorrDown/F");
+
   outTree->Branch("ptHem1",&ptHem1,"ptHem1/F");
   outTree->Branch("etaHem1",&etaHem1,"etaHem1/F");
   outTree->Branch("phiHem1",&phiHem1,"phiHem1/F");
@@ -1558,10 +1567,10 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
     corr.SetPtEtaPhiM(jet_p4.Pt()*(corr_parse),jet_p4.Eta(), jet_p4.Phi(), 0.); 
 
     //add it to the total correction for the MET
-    if (down_zero_up == 1) {
+    if (down_zero_up == 1) { //up
       corrUp += corr;
     }
-    if (down_zero_up == -1) {
+    if (down_zero_up == -1) { //down
       corrDown += corr;
     }
 
