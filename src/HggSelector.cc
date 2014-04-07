@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-//
 
 //includes for the TMVA ID
 #include "TMVA/Tools.h"
@@ -203,6 +202,7 @@ int HggSelector::init(){
 }
 
 void HggSelector::Loop(){
+  
   if(!valid) return;
 
   if(this->init()!=0){
@@ -213,6 +213,7 @@ void HggSelector::Loop(){
   cout << "Getting Entries ... "  << endl;
   Long64_t nEntries = fChain->GetEntries();
   cout << "N Events: " << nEntries << endl;
+
   Long64_t jentry=-1;
   int index1=-1,index2=-1;
   int index1PFCiC=-1,index2PFCiC=-1;
@@ -339,13 +340,20 @@ void HggSelector::Loop(){
       }
 
       //pairs of photon reduced objects to be written to the trees
-      OutPhotonsPFCiC_.push_back(getReducedData(&pho1_,vtxPos,selectedVertex));
-      OutPhotonsPFCiC_.push_back(getReducedData(&pho2_,vtxPos,selectedVertex));
+      ReducedPhotonData reduced_data_pho1 = getReducedData(&pho1_,vtxPos,selectedVertex);
+      ReducedPhotonData reduced_data_pho2 = getReducedData(&pho2_,vtxPos,selectedVertex);
+      OutPhotonsPFCiC_.push_back(reduced_data_pho1);
+      OutPhotonsPFCiC_.push_back(reduced_data_pho2);
+      if(debugSelector) cout << "Size of OutPhotonsPFCiC: " << OutPhotonsPFCiC_.size()<< endl;      
+
+      if(debugSelector) cout << "Completed pushing reduced photon objects out" << endl;
 
       //angles and met variables
       AnglePho = p1.Angle(p2.Vect());
       DeltaPhiPho = DeltaPhi(p1.Phi(),p2.Phi());
       AngleMET = DeltaPhi(pfMetType1Phi,CaloMETPhi);
+
+      if(debugSelector) cout << "mass and vertex information...." << endl;
 
       //mass and vertex information
       mPairPFCiC_ = (pho1_.p4FromVtx(vtxPos,pho1_.finalEnergy) + pho2_.p4FromVtx(vtxPos,pho2_.finalEnergy)).M();
@@ -373,11 +381,15 @@ void HggSelector::Loop(){
       //////////////CALCULATE RAZOR VARIABLES/////////////
       //////////////ONLY FOR PFCIC ANALYSIS//////////////      
 
+      if(debugSelector) cout << "get jet lists ...." << endl;
+
       //get the jet list
       vector<TLorentzVector> jetlist = GetJetList(p1,p2,0); //0=nocorr
       vector<TLorentzVector> jetlist_up = GetJetList(p1,p2,1); //1=upcorrection
       vector<TLorentzVector> jetlist_down = GetJetList(p1,p2,-1); //-1=downcorrection
       
+      if(debugSelector) cout << "jet lists assembled ...." << endl;
+
       nJets = jetlist.size();
       //      nJets_up = jetlist_up.size();
       //      nJets_down = jetlist_down.size();
@@ -400,6 +412,8 @@ void HggSelector::Loop(){
       bool calcRazor = (jetlist.size() >= min_jet_cut) && passFilters && bothEndcaps && !badEventList && !is_beamHalo;
       bool calcRazor_up = (jetlist_up.size() >= min_jet_cut) && passFilters && bothEndcaps && !badEventList && !is_beamHalo;
       bool calcRazor_down = (jetlist_down.size() >= min_jet_cut) && passFilters && bothEndcaps && !badEventList && !is_beamHalo;
+
+      if(debugSelector) cout << "Calc Razor Up ...." << calcRazor_up << endl;
 
       //do the JEC scale up
       if(calcRazor_up) {
@@ -439,7 +453,9 @@ void HggSelector::Loop(){
         PFMR_UP = -999;
         PFR_UP = -999;
       }
-      
+
+      if(debugSelector) cout << "Calc Razor Down ...." << calcRazor_down << endl;      
+
       //do the JEC scale down
       if(calcRazor_down) {
         vector<TLorentzVector> tmpJet_down = CombineJets_R_no_seed(jetlist_down, p1, p2);
@@ -480,6 +496,8 @@ void HggSelector::Loop(){
         PFR_DOWN = -999;
       }
       
+      if(debugSelector) cout << "Calc Razor Nominal ...." << calcRazor << endl;      
+
       //NOMINAL JEC SCALE
       if(calcRazor) {		
         //combine the photons and jets into hemispheres      
@@ -608,6 +626,8 @@ void HggSelector::Loop(){
     drBoundaryOut                = drBoundary;
     ECALTPFilterFlagOut          = ECALTPFilterFlag;
 
+    if(debugSelector) cout << "Fill the outTree ...."  << endl;      
+    
     outTree->Fill();
   }//while(fChain...
 
@@ -853,6 +873,8 @@ ReducedPhotonData HggSelector::getReducedData(VecbosPho* pho,TVector3 selVtx,int
 
   if(debugSelector) cout << "DONE Filling Reduced Data" <<endl;
 
+  if(debugSelector) cout << "PHOTON pt: " << data.pt << endl;
+  if(debugSelector) cout << "PHOTON passEGLooseED: " << data.passEGLooseID << endl;
   return data;
 }
 
@@ -911,7 +933,7 @@ void HggSelector::setBranchAddresses(){
 
   //fChain->SetBranchAddress("pileupWeight", &pileupWeight);
  
- //objects
+  //objects
   fChain->SetBranchAddress("nPho",&nPho_);
   fChain->SetBranchAddress("Photons",&Photons_);
   
@@ -921,12 +943,12 @@ void HggSelector::setBranchAddresses(){
   fChain->SetBranchAddress("ggVerticesVertexIndex",&ggVerticesVertexIndex);
   fChain->SetBranchAddress("ggVerticesPerEvtMVA",&ggVerticesPerEvtMVA);
   
-  fChain->SetBranchAddress("nMu",&nMu_);
-  fChain->SetBranchAddress("Muons",&Muons_);
+  //  fChain->SetBranchAddress("nMu",&nMu_);
+  //fChain->SetBranchAddress("Muons",&Muons_);
   
   //RAZOR
-  fChain->SetBranchAddress("nEle",&nEle_);
-  fChain->SetBranchAddress("Electrons",&Electrons_);
+  //  fChain->SetBranchAddress("nEle",&nEle_);
+  //fChain->SetBranchAddress("Electrons",&Electrons_);
   
   fChain->SetBranchAddress("nJet",&nJet_);
   fChain->SetBranchAddress("Jets",&Jets_);
@@ -959,7 +981,9 @@ void HggSelector::setBranchAddresses(){
 
 void HggSelector::setupOutputTree(){
   outTree = new TTree("HggOutput","");
+  
   outTree->Branch("trigger",&trigger_,"trigger/I");
+  
   outTree->Branch("mPair",&mPair_,"mPair/F");
   outTree->Branch("mPairNoCorr",&mPairNoCorr_,"mPairNoCorr/F");
   outTree->Branch("mPairRes",&mPairRes_,"mPairRes/F");
@@ -977,6 +1001,7 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("cosThetaLead",&cosThetaLead,"cosThetaLead/F");
   outTree->Branch("cat",&cat_,"cat/I");
 
+  
   outTree->Branch("mPairPFCiC",&mPairPFCiC_,"mPairPFCiC/F");
   outTree->Branch("mPairNoCorrPFCiC",&mPairNoCorrPFCiC_,"mPairNoCorrPFCiC/F");
   outTree->Branch("mPairResPFCiC",&mPairResPFCiC_,"mPairResPFCiC/F");
@@ -992,6 +1017,7 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("cosThetaLeadPFCiC",&cosThetaLeadPFCiC,"cosThetaLeadPFCiC/F");
   outTree->Branch("catPFCiC",&catPFCiC_,"catPFCiC/I");
 
+
   outTree->Branch("ECALLaserFilterFlag",&ECALLaserFilterFlagOut);
   outTree->Branch("eeBadScFilterFlag",&eeBadScFilterFlagOut);
   outTree->Branch("hcalLaserEventFilterFlag",&hcalLaserEventFilterFlagOut);
@@ -1002,6 +1028,7 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("drDead",&drDeadOut);
   outTree->Branch("drBoundary",&drBoundaryOut);
   outTree->Branch("ECALTPFilterFlag",&ECALTPFilterFlagOut);
+
 
   outTree->Branch("mPairCiC",&mPairCiC_,"mPairCiC/F");
   outTree->Branch("mPairNoCorrCiC",&mPairNoCorrCiC_,"mPairNoCorrCiC/F");
@@ -1017,12 +1044,14 @@ void HggSelector::setupOutputTree(){
   outTree->Branch("ptJet2CiC",&ptJet2CiC_,"ptJet2CiC");
   outTree->Branch("cosThetaLeadCiC",&cosThetaLeadCiC,"cosThetaLeadCiC/F");
 
+  /*
   outTree->Branch("nPhoton",&nOutPhotons_,"nPhoton/I");
-  outTree->Branch("Photon",&OutPhotons_);
-  outTree->Branch("nPhotonPFCiC",&nOutPhotonsPFCiC_,"nPhotonPFCiC/I");
-  outTree->Branch("PhotonPFCiC",&OutPhotonsPFCiC_);
-  outTree->Branch("nPhotonCiC",&nOutPhotonsCiC_,"nPhotonCiC/I");
+  outTree->Branch("Photon",&OutPhotons_);*/
+  //outTree->Branch("nPhotonPFCiC",&nOutPhotonsPFCiC_,"nPhotonPFCiC/I");
+  outTree->Branch("PhotonPFCiC","vector<ReducedPhotonData>",&OutPhotonsPFCiC_);
+  /*  outTree->Branch("nPhotonCiC",&nOutPhotonsCiC_,"nPhotonCiC/I");
   outTree->Branch("PhotonCiC",&OutPhotonsCiC_);
+  */
 
   outTree->Branch("MET",&MET);
   outTree->Branch("METPhi",&METPhi);
@@ -1553,6 +1582,8 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
     float corr = 1; // corr*jetpt = corrected jet
     float corr_parse = 0; // corr_parse*jetpt = correction to jet
 
+    if(debugSelector) cout << "Applying Jet Corrections: " << down_zero_up << endl;
+
     //read in the corrections
     if (down_zero_up == -1) { //JEC down 
       corr_parse = jecReader.getCorrection(jet_p4.Pt(),jet_p4.Eta(),JECUReader::kDown);
@@ -1562,6 +1593,8 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
       corr_parse= jecReader.getCorrection(jet_p4.Pt(),jet_p4.Eta(),JECUReader::kUp);      
       corr+= corr_parse;;
     }
+
+    if(debugSelector) cout << "Jet Correction: " << corr << endl;
 
     //correct the 4 momentum
     jet_p4.SetPtEtaPhiM(jet_p4.Pt()*corr, jet_p4.Eta(), jet_p4.Phi(), 0. );

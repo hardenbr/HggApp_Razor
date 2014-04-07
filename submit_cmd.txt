@@ -42,3 +42,4 @@ python batchSub.py --submit --FilesPerJob=5 --DirName="QCD_Pt-30to40_doubleEMEnr
 ./HggSelectorApp --isData ../list.txt test.root hgg/selector_Razor_Diphoton.cfg
 
 
+./HggSelectorApp --isData test_list.txt test.root hgg/selector_Razor_Diphoton.cfg
