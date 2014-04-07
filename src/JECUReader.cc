@@ -11,7 +11,7 @@ JECUReader::~JECUReader() {
 
 bool JECUReader::setCorrections(const char* fileName) {
   std::fstream inFileStream(fileName);
-  std::cout << fileName << std::endl;
+  std::cout << "Using JEC correction file: " <<fileName << std::endl;
 
   if(!inFileStream.is_open()) {
     std::cout << "JECUReader ERROR: Cannot open correction file " << fileName << std::endl;

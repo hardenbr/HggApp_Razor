@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+//
 
 //includes for the TMVA ID
 #include "TMVA/Tools.h"
@@ -15,7 +15,7 @@
 using namespace std;
 using namespace TMVA;
 
-#define debugSelector 0
+#define debugSelector 1
 
 
 //events
@@ -106,9 +106,9 @@ int HggSelector::init(){
   //RAZOR initialize JEC corrector
   //  jecReader = new JECUReader();
   if(!isData_) {
-    jecReader.setCorrections("/home/amott/HggApp/JEC/Summer13_V5_Uncertainties/Summer13_V5_MC_Uncertainty_AK5PFchs.txt");
+    jecReader.setCorrections("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/ALEX_JEC/Summer13_V5_MC_Uncertainty_AK5PFchs.txt");
   }else{
-    jecReader.setCorrections("/home/amott/HggApp/JEC/Summer13_V5_Uncertainties/Summer13_V5_DATA_Uncertainty_AK5PFchs.txt");
+    jecReader.setCorrections("/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/ALEX_JEC/Summer13_V5_DATA_Uncertainty_AK5PFchs.txt");
   }
   //  assert(jecReader.isValid());
   
@@ -212,6 +212,7 @@ void HggSelector::Loop(){
   this->setDefaults();
   cout << "Getting Entries ... "  << endl;
   Long64_t nEntries = fChain->GetEntries();
+  cout << "N Events: " << nEntries << endl;
   Long64_t jentry=-1;
   int index1=-1,index2=-1;
   int index1PFCiC=-1,index2PFCiC=-1;
@@ -908,51 +909,51 @@ void HggSelector::setBranchAddresses(){
   fChain->SetBranchAddress("rho", &rho);
   fChain->SetBranchAddress("rhoEtaMax44", &rhoEtaMax44);
 
-  fChain->SetBranchAddress("pileupWeight", &pileupWeight);
+  //fChain->SetBranchAddress("pileupWeight", &pileupWeight);
  
  //objects
- fChain->SetBranchAddress("nPho",&nPho_);
- fChain->SetBranchAddress("Photons",&Photons_);
+  fChain->SetBranchAddress("nPho",&nPho_);
+  fChain->SetBranchAddress("Photons",&Photons_);
+  
+  fChain->SetBranchAddress("photonMatchedElectron",photonMatchedElectron);
+  fChain->SetBranchAddress("nPair",&nPair_); 
+  fChain->SetBranchAddress("ggVerticesPhotonIndices",&ggVerticesPhotonIndices);
+  fChain->SetBranchAddress("ggVerticesVertexIndex",&ggVerticesVertexIndex);
+  fChain->SetBranchAddress("ggVerticesPerEvtMVA",&ggVerticesPerEvtMVA);
+  
+  fChain->SetBranchAddress("nMu",&nMu_);
+  fChain->SetBranchAddress("Muons",&Muons_);
+  
+  //RAZOR
+  fChain->SetBranchAddress("nEle",&nEle_);
+  fChain->SetBranchAddress("Electrons",&Electrons_);
+  
+  fChain->SetBranchAddress("nJet",&nJet_);
+  fChain->SetBranchAddress("Jets",&Jets_);
 
- fChain->SetBranchAddress("photonMatchedElectron",photonMatchedElectron);
- fChain->SetBranchAddress("nPair",&nPair_); 
- fChain->SetBranchAddress("ggVerticesPhotonIndices",&ggVerticesPhotonIndices);
- fChain->SetBranchAddress("ggVerticesVertexIndex",&ggVerticesVertexIndex);
- fChain->SetBranchAddress("ggVerticesPerEvtMVA",&ggVerticesPerEvtMVA);
+  //  fChain->SetBranchAddress("nGenHiggs",&nGenHiggs);
+  //  fChain->SetBranchAddress("GenHiggs",&GenHiggs);
+  
+  //  fChain->SetBranchAddress("nGenPho",&nGenPho);
+  //fChain->SetBranchAddress("GenPhotons",&GenPhotons);
 
- fChain->SetBranchAddress("nMu",&nMu_);
- fChain->SetBranchAddress("Muons",&Muons_);
+  //  fChain->SetBranchAddress("nPU",&inPU);
 
- //RAZOR
- fChain->SetBranchAddress("nEle",&nEle_);
- fChain->SetBranchAddress("Electrons",&Electrons_);
+  fChain->SetBranchAddress("PFMET",&pfMet);
+  fChain->SetBranchAddress("PFMETPhi",&pfMetPhi);
 
- fChain->SetBranchAddress("nJet",&nJet_);
- fChain->SetBranchAddress("Jets",&Jets_);
-
- fChain->SetBranchAddress("nGenHiggs",&nGenHiggs);
- fChain->SetBranchAddress("GenHiggs",&GenHiggs);
-
- fChain->SetBranchAddress("nGenPho",&nGenPho);
- fChain->SetBranchAddress("GenPhotons",&GenPhotons);
-
- fChain->SetBranchAddress("nPU",&inPU);
-
- fChain->SetBranchAddress("PFMET",&pfMet);
- fChain->SetBranchAddress("PFMETPhi",&pfMetPhi);
-
- fChain->SetBranchAddress("type1PFMET",&pfMetType1);
- fChain->SetBranchAddress("type1PFMETPhi",&pfMetType1Phi);
+  fChain->SetBranchAddress("type1PFMET",&pfMetType1);
+  fChain->SetBranchAddress("type1PFMETPhi",&pfMetType1Phi);
 
 
- fChain->SetBranchAddress("CaloMETPhi", &CaloMETPhi);
- fChain->SetBranchAddress("CaloMET", &CaloMET);
+  fChain->SetBranchAddress("CaloMETPhi", &CaloMETPhi);
+  fChain->SetBranchAddress("CaloMET", &CaloMET);
 
- vector<string>::const_iterator trigIt;
- int i=0;
- for(trigIt=triggers.begin();trigIt!=triggers.end();trigIt++,i++){
-   fChain->SetBranchAddress(trigIt->c_str(),&(triggerDec[i]));
- }
+  vector<string>::const_iterator trigIt;
+  int i=0;
+  for(trigIt=triggers.begin();trigIt!=triggers.end();trigIt++,i++){
+    fChain->SetBranchAddress(trigIt->c_str(),&(triggerDec[i]));
+  }
 
 }
 
