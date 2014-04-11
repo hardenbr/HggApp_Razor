@@ -14,7 +14,7 @@
 using namespace std;
 using namespace TMVA;
 
-#define debugSelector 1
+#define debugSelector 0
 
 
 //events
@@ -956,10 +956,10 @@ void HggSelector::setBranchAddresses(){
   //  fChain->SetBranchAddress("nGenHiggs",&nGenHiggs);
   //  fChain->SetBranchAddress("GenHiggs",&GenHiggs);
   
-  //  fChain->SetBranchAddress("nGenPho",&nGenPho);
-  //fChain->SetBranchAddress("GenPhotons",&GenPhotons);
+  fChain->SetBranchAddress("nGenPho",&nGenPho);
+  fChain->SetBranchAddress("GenPhotons",&GenPhotons);
 
-  //  fChain->SetBranchAddress("nPU",&inPU);
+  fChain->SetBranchAddress("nPU",&inPU);
 
   fChain->SetBranchAddress("PFMET",&pfMet);
   fChain->SetBranchAddress("PFMETPhi",&pfMetPhi);
@@ -1047,7 +1047,7 @@ void HggSelector::setupOutputTree(){
   /*
   outTree->Branch("nPhoton",&nOutPhotons_,"nPhoton/I");
   outTree->Branch("Photon",&OutPhotons_);*/
-  //outTree->Branch("nPhotonPFCiC",&nOutPhotonsPFCiC_,"nPhotonPFCiC/I");
+  outTree->Branch("nPhotonPFCiC",&nOutPhotonsPFCiC_,"nPhotonPFCiC/I");
   outTree->Branch("PhotonPFCiC","vector<ReducedPhotonData>",&OutPhotonsPFCiC_);
   /*  outTree->Branch("nPhotonCiC",&nOutPhotonsCiC_,"nPhotonCiC/I");
   outTree->Branch("PhotonCiC",&OutPhotonsCiC_);
