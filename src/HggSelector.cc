@@ -383,7 +383,11 @@ void HggSelector::Loop(){
 
       if(debugSelector) cout << "get jet lists ...." << endl;
 
-      //get the jet list
+      //reset the corrections
+      corrUp.SetPtEtaPhiM(0,0,0,0);
+      corrDown.SetPtEtaPhiM(0,0,0,0);
+
+      //get the jet lists
       vector<TLorentzVector> jetlist = GetJetList(p1,p2,0); //0=nocorr
       vector<TLorentzVector> jetlist_up = GetJetList(p1,p2,1); //1=upcorrection
       vector<TLorentzVector> jetlist_down = GetJetList(p1,p2,-1); //-1=downcorrection
@@ -1565,10 +1569,9 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
   std::vector<VecbosJet>::iterator jIt;
 
   for(jIt = Jets_->begin(); jIt != Jets_->end(); jIt++){
+
     //eta cut
     if(fabs(jIt->eta) > 2.5) continue;
-    //pt cut
-    if(jIt->pt < 40.) continue;
     //jet id cut
     if(!passJetID_Razor(&*jIt)) continue;
 
@@ -1598,6 +1601,10 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
 
     //correct the 4 momentum
     jet_p4.SetPtEtaPhiM(jet_p4.Pt()*corr, jet_p4.Eta(), jet_p4.Phi(), 0. );
+
+    //apply PT cut after corrections
+    //pt cut
+    if(jet_p4.Pt()*corr < 40.) continue;
 
     //calculate the correction for the MET
     TLorentzVector corr_vec;
