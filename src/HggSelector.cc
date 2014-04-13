@@ -1570,6 +1570,8 @@ vector<TLorentzVector> HggSelector::GetJetList(TLorentzVector p1, TLorentzVector
 
   for(jIt = Jets_->begin(); jIt != Jets_->end(); jIt++){
 
+    //corrections are only valid for high enough pt jets
+    if(jIt->pt < 30.) continue;
     //eta cut
     if(fabs(jIt->eta) > 2.5) continue;
     //jet id cut
