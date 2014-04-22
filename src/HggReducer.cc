@@ -112,6 +112,8 @@ void HggReducer::Loop(string outFileName, int start, int stop) {
     if(jentry == stop) break;
     if (jentry%500 == 0) cout << ">>> Processing event # " << jentry << endl;
 
+    commentLHE_ = commentLHE;
+    
     runNumberO=runNumber;
     evtNumberO=eventNumber;
     lumiBlockO=lumiBlock;
@@ -706,6 +708,9 @@ outTree->Branch("evtNumber",&evtNumberO,"evtNumber/I");
 
  //FOR MONTE CARLO:
   if(!_isData){
+    //comment LHE for SMS
+    outTree->Branch("commentLHE", &commentLHE_);
+      
     //generator level information
     outTree->Branch("procID",&procID,"procID/I");
     outTree->Branch("qScale",&qScale,"qScale/F");

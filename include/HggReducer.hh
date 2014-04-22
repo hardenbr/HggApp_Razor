@@ -94,6 +94,7 @@ private:
   TTree * outTree;
   // define variables for the output tree:
   vector<string> triggerNames; // list of all the triggers to consider
+  vector<string> commentLHE_; // list of all the triggers to consider
   int * triggerBits;       // this will be an array of the trigger decision per event (for the output tree)
 
   // ...

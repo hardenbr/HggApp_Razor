@@ -24,6 +24,7 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
 
    // Declaration of leaf types
+  vector<string>  *commentLHE; //RAZOR  
    Int_t           nl1Technical;
    Int_t           l1Technical[3];   //[nl1Technical]
    Int_t           nl1Global;
@@ -1038,7 +1039,8 @@ public :
    Int_t           nHFPMT;
    Double_t        sumEHFPMT;
 
-   // List of branches
+  // List of branches
+  TBranch        *b_commentLHE;   //!                                                                                                                                       
    TBranch        *b_nl1Technical;   //!
    TBranch        *b_l1Technical;   //!
    TBranch        *b_nl1Global;   //!
@@ -2124,6 +2126,7 @@ void VecbosBase::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
+   fChain->SetBranchAddress("commentLHE", &commentLHE, &b_commentLHE); //RAZOR
    fChain->SetBranchAddress("nl1Technical", &nl1Technical, &b_nl1Technical);
    fChain->SetBranchAddress("l1Technical", l1Technical, &b_l1Technical);
    fChain->SetBranchAddress("nl1Global", &nl1Global, &b_nl1Global);
