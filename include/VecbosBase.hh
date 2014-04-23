@@ -2120,11 +2120,15 @@ void VecbosBase::Init(TTree *tree)
 
    // Set object pointer
    nameHLT = 0;
+   commentLHE = 0;
+
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
    fCurrent = -1;
    fChain->SetMakeClass(1);
+
+   cout << "setting up branch addresses" << endl;
 
    fChain->SetBranchAddress("commentLHE", &commentLHE, &b_commentLHE); //RAZOR
    fChain->SetBranchAddress("nl1Technical", &nl1Technical, &b_nl1Technical);

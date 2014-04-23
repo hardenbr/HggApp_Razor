@@ -27,7 +27,7 @@ using namespace std;
 #include "../src/HggPhysUtils.cc"
 #include "assert.h"
 
-#define debugReducer 0
+#define debugReducer 1
 
 HggReducer::HggReducer(TTree *tree) : Vecbos(tree) {
   _goodRunLS = false;
@@ -107,12 +107,16 @@ void HggReducer::Loop(string outFileName, int start, int stop) {
   cout << "Starting with Entry: " << start << endl;
   cout << "Number of entries = " << stop << endl;
   
-  Long64_t jentry = start-1;
-  while(fChain->GetEntry(++jentry)){
+  Int_t jentry = start-1;
+  
+  cout << "fChain Has number of events: " << fChain->GetEntries() << endl;
+
+  while(true){
+    jentry += 1;
+    fChain->GetEntry(jentry);
+
     if(jentry == stop) break;
     if (jentry%500 == 0) cout << ">>> Processing event # " << jentry << endl;
-
-    commentLHE_ = commentLHE;
     
     runNumberO=runNumber;
     evtNumberO=eventNumber;
@@ -120,7 +124,10 @@ void HggReducer::Loop(string outFileName, int start, int stop) {
 
     //filters:
     if(nTrack > 5000 || nPV > 160) {
-      if(debugReducer) cout << "dropping event: too many tracks/PVs: " << nTrack << "  " << nPV << endl; 
+      if(debugReducer){
+	cout << "dropping event: too many tracks/PVs: " << nTrack << "  " << nPV << endl; 
+	cout << "event Number: " << evtNumberO << endl;
+      }
       continue;
     }
 
@@ -165,7 +172,7 @@ void HggReducer::Loop(string outFileName, int start, int stop) {
     this->clearAll();
     this->fillVertexInfo();
 
-    this->fillMuons();
+    //this->fillMuons();
     this->fillElectrons();
     this->fillJets();
     // setup the photons
@@ -314,7 +321,7 @@ void HggReducer::Loop(string outFileName, int start, int stop) {
     outTree->Fill();
   } // end of main loop
 
-  cout << "Writing Tree:" << endl;
+  cout << "Writing Tree.." << endl;
 
   TFile *file = new TFile(outFileName.c_str(),"RECREATE");
   outTree->Write();
@@ -614,50 +621,51 @@ void HggReducer::fillGeneratorInfo(){
 void HggReducer::setOutputBranches(){
 
   //Event info
+  outTree->Branch("commentLHE",&commentLHE); //RAZOR
   outTree->Branch("lumiBlock",&lumiBlockO,"lumiBlock/I");
- outTree->Branch("runNumber",&runNumberO,"runNumber/I");
-outTree->Branch("evtNumber",&evtNumberO,"evtNumber/I");
- outTree->Branch("bunchX",&bunchX,"bunchX/I");
- outTree->Branch("orbitNumber",&orbitNumber,"orbitNumber/I");
- outTree->Branch("evtTime",&evtTime,"evtTime/I");
- outTree->Branch("isRealData",&_isData,"isRealData/I");
+  outTree->Branch("runNumber",&runNumberO,"runNumber/I");
+  outTree->Branch("evtNumber",&evtNumberO,"evtNumber/I");
+  outTree->Branch("bunchX",&bunchX,"bunchX/I");
+  outTree->Branch("orbitNumber",&orbitNumber,"orbitNumber/I");
+  outTree->Branch("evtTime",&evtTime,"evtTime/I");
+  outTree->Branch("isRealData",&_isData,"isRealData/I");
 
- // MET Flags
- outTree->Branch("ECALLaserFilter",&ECALLaserFilter,"ECALLaserFilter/B");
- outTree->Branch("eeBadScFilterFlag",&eeBadScFilterFlag,"eeBadScFilterFlag/B");
- outTree->Branch("hcalLaserEventFilterFlag",&hcalLaserEventFilterFlag,"hcalLaserEventFilterFlag/B");
- outTree->Branch("HBHENoiseFilterResultFlag",&HBHENoiseFilterResultFlag,"HBHENoiseFilterResultFlag/B");
- outTree->Branch("isNotDeadEcalCluster",&isNotDeadEcalCluster,"isNotDeadEcalCluster/B");
- outTree->Branch("trackerFailureFilterFlag",&trackerFailureFilterFlag,"trackerFailureFilterFlag/B");
- outTree->Branch("CSCHaloFilterFlag",&CSCHaloFilterFlag,"CSCHaloFilterFlag/B");
- outTree->Branch("drDead",&drDead,"drDead/B");
- outTree->Branch("drBoundary",&drBoundary,"drBoundary/B");
- outTree->Branch("ECALTPFilterFlag",&ECALTPFilterFlag,"ECALTPFilterFlag/B");
+  // MET Flags
+  outTree->Branch("ECALLaserFilter",&ECALLaserFilter,"ECALLaserFilter/B");
+  outTree->Branch("eeBadScFilterFlag",&eeBadScFilterFlag,"eeBadScFilterFlag/B");
+  outTree->Branch("hcalLaserEventFilterFlag",&hcalLaserEventFilterFlag,"hcalLaserEventFilterFlag/B");
+  outTree->Branch("HBHENoiseFilterResultFlag",&HBHENoiseFilterResultFlag,"HBHENoiseFilterResultFlag/B");
+  outTree->Branch("isNotDeadEcalCluster",&isNotDeadEcalCluster,"isNotDeadEcalCluster/B");
+  outTree->Branch("trackerFailureFilterFlag",&trackerFailureFilterFlag,"trackerFailureFilterFlag/B");
+  outTree->Branch("CSCHaloFilterFlag",&CSCHaloFilterFlag,"CSCHaloFilterFlag/B");
+  outTree->Branch("drDead",&drDead,"drDead/B");
+  outTree->Branch("drBoundary",&drBoundary,"drBoundary/B");
+  outTree->Branch("ECALTPFilterFlag",&ECALTPFilterFlag,"ECALTPFilterFlag/B");
 
- ///information for the vertex
- outTree->Branch("nVtx",&nVtx,"nVtx/I");
- outTree->Branch("vtxX",vtxX,"vtxX[nVtx]/F");
- outTree->Branch("vtxY",vtxY,"vtxY[nVtx]/F");
- outTree->Branch("vtxZ",vtxZ,"vtxZ[nVtx]/F");
- outTree->Branch("vtxChi2",vtxChi2,"vtxChi2[nVtx]/F");
- outTree->Branch("vtxNdof",vtxNdof,"vtxNdof[nVtx]/F");
- outTree->Branch("vtxNormalizedChi2",vtxNormalizedChi2,"vtxNormalizedChi2[nVtx]/F");
- outTree->Branch("vtxTrackSize",vtxTrackSize,"vtxTrackSize[nVtx]/I");
- outTree->Branch("vtxIsFake",vtxIsFake,"vtxIsFake[nVtx]/I");
- outTree->Branch("vtxIsValid",vtxIsValid,"vtxIsValid[nVtx]/I");
+  ///information for the vertex
+  outTree->Branch("nVtx",&nVtx,"nVtx/I");
+  outTree->Branch("vtxX",vtxX,"vtxX[nVtx]/F");
+  outTree->Branch("vtxY",vtxY,"vtxY[nVtx]/F");
+  outTree->Branch("vtxZ",vtxZ,"vtxZ[nVtx]/F");
+  outTree->Branch("vtxChi2",vtxChi2,"vtxChi2[nVtx]/F");
+  outTree->Branch("vtxNdof",vtxNdof,"vtxNdof[nVtx]/F");
+  outTree->Branch("vtxNormalizedChi2",vtxNormalizedChi2,"vtxNormalizedChi2[nVtx]/F");
+  outTree->Branch("vtxTrackSize",vtxTrackSize,"vtxTrackSize[nVtx]/I");
+  outTree->Branch("vtxIsFake",vtxIsFake,"vtxIsFake[nVtx]/I");
+  outTree->Branch("vtxIsValid",vtxIsValid,"vtxIsValid[nVtx]/I");
  
- //physics declared -- should be set by the JSON, but can't hurt
- outTree->Branch("phyDeclared",&phyDeclared,"phyDeclared/I");
- 
- 
- outTree->Branch("rho", &rho,"rho/F");
- outTree->Branch("rhoEtaMax44", &rhoEtaMax44,"rhoEtaMax44/F");
+  //physics declared -- should be set by the JSON, but can't hurt
+  outTree->Branch("phyDeclared",&phyDeclared,"phyDeclared/I");
  
  
+  outTree->Branch("rho", &rho,"rho/F");
+  outTree->Branch("rhoEtaMax44", &rhoEtaMax44,"rhoEtaMax44/F");
  
- outTree->Branch("pileupBunchX","std::vector<short>", &pileupBunchX);
- outTree->Branch("pileupNInteraction","std::vector<short>", &pileupNInteraction);
- outTree->Branch("pileupTrueNumInterations",&pileupTrueNumInterations);
+ 
+ 
+  outTree->Branch("pileupBunchX","std::vector<short>", &pileupBunchX);
+  outTree->Branch("pileupNInteraction","std::vector<short>", &pileupNInteraction);
+  outTree->Branch("pileupTrueNumInterations",&pileupTrueNumInterations);
  
 
   //trigger -- here we depart a bit from Yong's original code
